@@ -1,0 +1,129 @@
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--tg-theme-secondary-bg-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px 0 40px 0;
+    z-index: 1000;
+}
+
+.navItem {
+    color: #666;
+    text-decoration: none;
+    padding: 10px;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.navIcon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+/*.navItem:hover .navIcon {*/
+/*    transform: translateY(-3px);*/
+/*}*/
+
+.navText {
+    display: block;
+    font-size: 12px;
+    margin-top: 5px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.navItem:hover {
+    cursor: pointer;
+}
+
+.profileAvatar {
+    display: none;
+}
+
+.searchContainer {
+    display: none;
+}
+
+@media(min-width: 1200px) {
+
+    .navItem {
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .searchLink {
+        display: none;
+    }
+
+    .navItem:hover {
+        background: rgb(0,0,0,.1);
+    }
+
+    .navItem.active {
+        background: var(--tg-theme-button-color, #2196F3);
+    }
+
+    .navItem.active * {
+        color: var(--tg-theme-bg-color, #fff) !important;
+    }
+
+    .profileIcon {
+        display: none !important;
+    }
+
+    .profileAvatar {
+        display: flex;
+        align-items: center;
+    }
+
+    .profileAvatar img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+    }
+
+    .navIcon {
+        width: 32px;
+        height: 32px;
+        background: rgb(0,0,0,.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .searchContainer {
+        display: block;
+    }
+
+}
+
+@media(max-width: 1200px) {
+    .activeIcon {
+        fill: var(--tg-theme-button-color, #2196F3);
+    }
+}
+
+/*.navItem:hover .navText {*/
+/*    opacity: 1;*/
+/*}*/
+
+/*.active {*/
+/*    color: #007bff;*/
+/*}*/
+
+/*.active .navIcon {*/
+/*    transform: translateY(-3px);*/
+/*}*/
+
+/*.active .navText {*/
+/*    opacity: 1;*/
+/*}*/

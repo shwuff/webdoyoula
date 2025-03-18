@@ -1,0 +1,182 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: sans-serif;
+
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    border: 1px solid var(--tg-theme-border-color);
+    border-radius: 8px;
+}
+
+/* Прогресс-бар */
+.progressBar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center; /* центрируем кружки по вертикали */
+}
+
+/* Линия фоновая */
+.progressLine {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--tg-theme-secondary-bg-color);
+    z-index: 0;
+    transform: translateY(-50%);
+}
+
+/* Заполненная часть, которая будет анимироваться */
+.progressLineFill {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 2px;
+    background-color: var(--tg-theme-button-color);
+    z-index: 0;
+    transform: translateY(-50%);
+    width: 0; /* начальное значение, при шаге 1 = 0% */
+    transition: width 0.4s ease;
+}
+
+/* Кружки (шаги) */
+.stepCircle {
+    position: relative;
+    z-index: 1; /* над линиями */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--tg-theme-secondary-bg-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+/* Когда шаг активен - заливаем цветом */
+.stepCircle.active {
+    background: var(--tg-theme-button-color);
+    animation: spin 0.6s ease; /* Быстрая прокрутка при активации */
+}
+
+/* Анимация вращения (4 оборота) */
+@keyframes spin {
+    0%   { transform: rotate(0deg);   }
+    100% { transform: rotate(1440deg); } /* 1440deg = 4 оборота */
+}
+
+.stepIcon {
+    font-size: 14px;
+    fill: #fff !important;
+}
+
+.stepCircle:not(.active) .stepIcon {
+    fill: var(--tg-theme-text-color) !important;
+}
+
+.content {
+    width: 100%;
+    background: var(--tg-theme-bg-color);
+    border-radius: 4px;
+    padding: 20px;
+}
+
+/* Содержание шага */
+.stepContent {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+}
+
+.stepContent h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--tg-theme-text-color);
+}
+
+/* Инпуты */
+input[type="text"],
+input[type="number"],
+textarea {
+    border: 1px solid var(--tg-theme-hint-color);
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    outline: none;
+}
+
+.amountsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.amountBtn {
+    min-width: 50px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    font-size: 16px;
+    padding: 0 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border: 1px solid var(--tg-theme-button-color);
+}
+
+.amountBtn:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.amountBtn.active {
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    transform: translateY(-2px);
+}
+
+.amountBtn:active {
+    transform: scale(0.95);
+}
+
+.photoGrid {
+    display: grid;
+    height: calc(100vh - 200px);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-top: 0px;
+    padding-bottom: 100px;
+    overflow-y: auto;
+    /*overflow-y: auto;*/
+    /*height: calc(100vh - 350px);*/
+
+}
+
+.photoCard {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 250px;
+}
+
+.photoImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}

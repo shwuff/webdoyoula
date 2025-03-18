@@ -1,0 +1,202 @@
+.profileContainer {
+    width: 100%;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    overflow-y: auto;
+    height: calc(100vh - 80px);
+}
+
+.profileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.profileAvatarWrapper {
+    width: 15%;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+    padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profileAvatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid white;
+    aspect-ratio: 1/1;
+}
+
+.profileStats {
+    display: flex;
+    justify-content: space-around;
+    flex-grow: 1;
+    text-align: center;
+    height: 100%;
+}
+
+.statNumber {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.statLabel {
+    font-size: 14px;
+    color: gray;
+}
+
+@media(max-width: 800px) {
+    .statNumber {
+        font-size: 14px;
+        font-weight: bold;
+    }
+}
+
+.profileUserInfo {
+    padding: 5px;
+}
+
+.profileName {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.profileUsername {
+    color: gray;
+    font-size: 14px;
+}
+
+.profileDescription {
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.profileButtons {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btnPrimary {
+    background-color: #0095f6;
+    color: white;
+    border: none;
+}
+
+.btnOutlinePrimary {
+    border: 1px solid #0095f6;
+    color: #0095f6;
+    background-color: white;
+}
+
+.btnOutlineSecondary {
+    border: 1px solid #ccc;
+    color: #333;
+    background-color: white;
+}
+
+.statBlock {
+    display: block;
+}
+
+.editBlock {
+    width: 100%;
+    background: var(--tg-theme-bg-color, #fff);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+    display: flex;
+    flex-direction: column;
+}
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px;
+    height: calc(100vh - 90px);
+    overflow-y: auto;
+    background-color: var(--tg-theme-bg-color, #fff);
+}
+.center-content-block {
+    width: 100%;
+    max-width: 600px;
+    margin:auto;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: #6d6d72;
+
+}
+pageTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.textarea {
+    width: 100%;
+    resize: none;
+    height: 80px;
+    padding: 10px;
+    font-size: 16px;
+    color: var(--tg-theme-text-color, #000);
+    border-radius: 8px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.textarea:focus {
+    border: 1px solid #0077ff;
+}
+.modalTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Список пользователей */
+.userList {
+    list-style: none;
+    padding: 5px;
+    width: 100%;
+}
+
+.userItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.userItem:last-child {
+    border-bottom: none;
+}
+
+/* Информация о пользователе */
+.userInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.noUsers {
+    text-align: center;
+    color: gray;
+    font-size: 14px;
+    margin-top: 10px;
+}

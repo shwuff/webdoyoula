@@ -1,0 +1,70 @@
+
+.payment-modal-content {
+    padding: 16px;
+    font-family: Arial, sans-serif;
+}
+
+.payment-modal-content h2 {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.payment-plans {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
+
+.payment-plan {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 16px;
+    width: 200px;
+    text-align: center;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease;
+}
+
+.payment-plan:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.plan-label {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.plan-price {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.buy-button {
+    background-color: #2196f3;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.buy-button:hover {
+    background-color: #1976d2;
+}
+
+.divider {
+    margin: 24px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+.model-plan {
+    margin: 0 auto; /* чтобы отдельно стояла по центру */
+    width: 220px;
+}

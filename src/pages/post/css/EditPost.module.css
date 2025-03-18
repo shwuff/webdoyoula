@@ -1,0 +1,142 @@
+.editBlock {
+    width: 100%;
+    background: var(--tg-theme-bg-color, #fff);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Подпись к полю */
+.label {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: #6d6d72;
+
+}
+
+.iconRight{
+    margin-left: 10px;
+}
+/* Текстовая область */
+.textarea {
+    width: 100%;
+    resize: none;
+    height: 80px;
+    padding: 10px;
+    font-size: 16px;
+    color: var(--tg-theme-text-color, #000);
+    border-radius: 8px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.textarea:focus {
+    border: 1px solid #0077ff;
+}
+
+/* Галерея изображений */
+.imageList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* Одна карточка изображения */
+.imageItem {
+    position: relative;
+    max-width: 100px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+/* Сама картинка (масштабируем под родительский блок) */
+.postImage {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+}
+
+/* Кнопка "Удалить" */
+.removeButton {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(255, 0, 0, 0.8);
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.removeButton:hover {
+    background: rgba(255, 0, 0, 1);
+}
+
+/* Обёртка для поля ввода файлов */
+.fileInputWrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    margin-top: 12px;
+    border: 1px solid #c7c7cc;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f9f9f9;
+    transition: background 0.3s;
+}
+
+.fileInputWrapper:hover {
+    background: #f3f3f3;
+}
+
+/* Сам <input type="file"> скрываем */
+.fileInput {
+    position: absolute;
+    font-size: 100px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+}
+
+/* Стили видимого label */
+.fileInputLabel {
+    display: inline-block;
+    padding: 10px 16px;
+    font-size: 16px;
+    color: #0077ff;
+}
+
+/* Кнопка "Сохранить" */
+.saveButton {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    background: #0077ff;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 14px rgba(0, 119, 255, 0.4);
+}
+
+.saveButton:hover {
+    background: #005ecc;
+}
+
+.saveButton:active {
+    transform: scale(0.98);
+}
