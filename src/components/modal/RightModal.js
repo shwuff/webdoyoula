@@ -28,7 +28,7 @@ const RightModal = ({
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className={styles.rightModalHeader}>
-                        <CloseButton onClick={isBackButton ? onBack : onClose} />
+                        <CloseButton onClick={isBackButton ? onBack : onClose} isBack={isBackButton} />
                     </div>
                     {children}
                 </motion.div>
