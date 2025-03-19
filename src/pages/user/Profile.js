@@ -3,9 +3,6 @@ import { useAuth } from "../../context/UserContext";
 import styles from './css/Profile.module.css';
 import {useNavigate, useParams} from "react-router-dom";
 import { useWebSocket } from "../../context/WebSocketContext";
-import ViewPosts from "../post/ViewPosts";
-import ViewGallery from "../gallery/ViewGallery";
-import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import Modal from "../../components/modal/Modal";
@@ -21,8 +18,8 @@ const Profile = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
 
-    const [posts, setPosts] = useState([]);
-    const [images, setImages] = useState([]);
+    // const [posts, setPosts] = useState([]);
+    // const [images, setImages] = useState([]);
     const [followUsers, setFollowUsers] = useState([]);
     const [modalTitle, setModalTitle] = useState("");
     const [isFollowLoading, setIsFollowLoading] = useState(false);
@@ -38,7 +35,7 @@ const Profile = () => {
         addHandler('receive_followers', handleFollowers);
 
         return () => deleteHandler('receive_followers');
-    }, []);
+    }, [addHandler, deleteHandler]);
 
 
     const handleShowFollowers = () => {
@@ -61,7 +58,7 @@ const Profile = () => {
         addHandler('receive_followings', handleFollowing);
 
         return () => deleteHandler('receive_followings');
-    }, []);
+    }, [addHandler, deleteHandler]);
 
     const handleShowFollowing = () => {
         setModalTitle("Подписки");
@@ -86,7 +83,7 @@ const Profile = () => {
         if(isModalOpen === false) {
             BackButton.hide();
         }
-    }, [isModalOpen]);
+    }, [isModalOpen, BackButton]);
 
     // useEffect(() => {
     //     const handleInviteSub = (msg) => {
@@ -109,25 +106,25 @@ const Profile = () => {
         if (userId && userData) {
             sendData({ action: 'getProfile', data: { jwt: token, userId } });
         }
-    }, [userId, userData]);
+    }, [userId, userData, sendData, token]);
 
     useEffect(() => {
         const handleGetPosts = (msg) => {
             // console.log(msg.post)
-            setPosts((prev) => [
-                ...prev,
-                msg.post
-            ].sort((a, b) => b.post_id - a.post_id));
-            setImages((prev) => [
-                ...prev,
-                ...msg.photos
-            ])
+            // setPosts((prev) => [
+            //     ...prev,
+            //     msg.post
+            // ].sort((a, b) => b.post_id - a.post_id));
+            // setImages((prev) => [
+            //     ...prev,
+            //     ...msg.photos
+            // ])
         }
 
         addHandler('receive_user_post', handleGetPosts);
 
         return () => deleteHandler('receive_user_post');
-    }, []);
+    }, [addHandler, deleteHandler]);
 
     useEffect(() => {
         const handleGetProfile = (msg) => {
@@ -139,7 +136,7 @@ const Profile = () => {
 
         return () => deleteHandler('get_user_answere');
 
-    }, [userData]);
+    }, [userData, addHandler, deleteHandler]);
 
     // useEffect(() => {
     //     if(tempUserData) {
@@ -152,11 +149,6 @@ const Profile = () => {
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
     const scrollTimeoutRef = useRef(null);
-    const [selectedUserId, setSelectedUserId] = useState(tempUserData?.id);
-
-    useEffect(() => {
-        setSelectedUserId(tempUserData?.id);
-    }, [tempUserData]);
 
     const handleScroll = (e) => {
         if (scrollTimeoutRef.current) {
