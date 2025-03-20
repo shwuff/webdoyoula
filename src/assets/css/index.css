@@ -4,7 +4,7 @@
     text-decoration: none;
     list-style: none;
     font-family: Arial, sans-serif;
-    color: var(--tg-theme-text-color, #fff);
+    color: var(--tg-theme-text-color, #000);
     box-sizing: border-box;
     user-select: none;
 }
