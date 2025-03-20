@@ -16,6 +16,7 @@ import Content from "./pages/user/settings/Content";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Snackbar, Alert, CircularProgress as MUICircularProgress } from "@mui/material";
+import Auth from "./pages/user/auth/Auth";
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -29,24 +30,47 @@ const App = () => {
     window.Telegram.WebApp.setBottomBarColor(themeParams.secondary_bg_color);
 
     const { login, setUserData, setMyModels, token } = useAuth();
-    const { addHandler, deleteHandler, isConnected } = useWebSocket();
+    const { addHandler, deleteHandler, isConnected, sendData } = useWebSocket();
 
     const [notification, setNotification] = useState(null);
     const [progress, setProgress] = useState(100);
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         if(isConnected) {
             addHandler('authorization', (msg) => {
+
+                if (msg.token) {
+                    localStorage.setItem('auth_token', msg.token);
+                }
+
                 login(msg.token);
                 setUserData(msg.user);
                 setMyModels(msg.myModels);
+                setLoading(false);
             });
 
             return () => {
                 deleteHandler('authorization');
             }
         }
-    }, [isConnected])
+    }, [isConnected]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('auth_token');
+        if (token && isConnected) {
+            console.log(token)
+            sendData({
+                action: "handleGetMyProfile",
+                data: {
+                    jwt: token
+                }
+            });
+        } else if(isConnected) {
+            setLoading(false);
+        }
+    }, [isConnected]);
 
     useEffect(() => {
         if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.platform === 'ios') {
@@ -145,7 +169,7 @@ const App = () => {
     //
     // }, []);
 
-    if(!token) {
+    if(loading) {
         return (
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -153,7 +177,11 @@ const App = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        );
+        )
+    }
+
+    if(!token) {
+        return <Auth />;
     }
 
     return (
@@ -172,6 +200,7 @@ const App = () => {
                     : '0'}}>
                 <Routes>
                     <Route path="/" element={<FeedPage />} />
+                    {/*<Route path="/profile/auth" element={<Auth />} />*/}
                     <Route path="/search" element={<Search />} />
                     <Route path="/bookmark" element={<Bookmark />} />
                     <Route path="/settings" element={<Settings />} />

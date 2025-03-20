@@ -21,9 +21,9 @@ a, div, button {
     -webkit-tap-highlight-color: transparent;
 }
 
-button:active {
-    background-color: transparent !important;
-}
+/*button:active {*/
+/*    background-color: transparent !important;*/
+/*}*/
 
 
 .text-center {
