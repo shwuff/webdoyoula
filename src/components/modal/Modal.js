@@ -1,8 +1,27 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Modal = ({ isOpen, onClose, children, style, isFirst = true }) => {
+
+    useEffect(() => {
+        const handleKeydown = (e) => {
+            if (e.key === "Escape") {
+                onClose();
+            }
+        };
+
+        // Добавляем обработчик при открытии модала
+        if (isOpen) {
+            document.addEventListener("keydown", handleKeydown);
+        }
+
+        // Убираем обработчик при закрытии модала
+        return () => {
+            document.removeEventListener("keydown", handleKeydown);
+        };
+    }, [isOpen, onClose]);
+
     return (
         <AnimatePresence>
             {isOpen && (
