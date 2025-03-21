@@ -47,13 +47,13 @@ a, div, button {
 }
 
 .btn-primary {
-    background: var(--tg-theme-button-color, blue);
-    border: 1px solid var(--tg-theme-button-color, blue);
+    background: var(--tg-theme-button-color, #2196F3);
+    border: 1px solid var(--tg-theme-button-color, #2196F3);
     color: #fff;
 }
 
 .btn-outline-primary {
-    border: 1px solid var(--tg-theme-button-color, blue);
+    border: 1px solid var(--tg-theme-button-color, #2196F3);
     background: inherit;
     color: var(--tg-theme-text-color, #000);
 }

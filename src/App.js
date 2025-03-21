@@ -91,6 +91,31 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        const handleUpdatePhotosLeft = (msg) => {
+            setUserData(prev => ({
+                ...prev,
+                photos_left: msg.photos_left
+            }));
+        }
+
+        addHandler('update_photos_left_count', handleUpdatePhotosLeft);
+
+        return () => deleteHandler('update_photos_left_count');
+    }, []);
+
+    useEffect(() => {
+        const handleInvoice = (msg) => {
+            if(msg.platform === 'telegram') {
+                window.Telegram.WebApp.openInvoice(msg.link);
+            }
+        }
+
+        addHandler('open_invoice', handleInvoice);
+
+        return () => deleteHandler('open_invoice');
+    }, []);
+
+    useEffect(() => {
         const handleRedirect = (msg) => {
             navigate(msg.url);
         }
