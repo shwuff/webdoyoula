@@ -8,6 +8,8 @@ import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosLis
 import Modal from "../../components/modal/Modal";
 import SubscribeButton from "../../components/buttons/SubscribeButton";
 import CloseButton from "../../components/buttons/CloseButton";
+import EditData from './settings/EditData';
+
 
 const Profile = () => {
     const { userData, token } = useAuth();
@@ -225,6 +227,7 @@ const Profile = () => {
                     <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
                     <p className={styles.profileUsername}>@{tempUserData.username}</p>
                     <p className={styles.profileDescription}>{tempUserData.bio}</p>
+                    <EditData />
                 </div>
                 {
                     !isMyProfile && (
