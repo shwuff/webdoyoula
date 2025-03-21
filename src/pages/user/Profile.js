@@ -7,6 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import Modal from "../../components/modal/Modal";
 import SubscribeButton from "../../components/buttons/SubscribeButton";
+import CloseButton from "../../components/buttons/CloseButton";
 
 const Profile = () => {
     const { userData, token } = useAuth();
@@ -274,8 +275,13 @@ const Profile = () => {
                 isOpen={isModalOpen}
                 onClose={closeModal}
             >
-                <div className="p-2">
+                <div className="p-2 w-100 d-flex justify-content-between">
                     <h2 className={styles.modalTitle}>{modalTitle}</h2>
+                    {
+                        !userData.isTelegram && (
+                            <CloseButton onClick={closeModal} />
+                        )
+                    }
                 </div>
 
                 {

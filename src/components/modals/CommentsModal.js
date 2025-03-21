@@ -6,6 +6,7 @@ import Modal from "../modal/Modal";
 import { Avatar, List, ListItem, ListItemText, Divider, TextField, Button, Typography } from '@mui/material';
 import {useNavigate} from "react-router-dom";
 import CommentIcon from './../../assets/icons/chat.png';
+import CloseButton from "../buttons/CloseButton";
 
 const getTimeAgo = (timestamp) => {
     const date = new Date(timestamp);
@@ -96,9 +97,16 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
                 <img src={CommentIcon} className="comment"  onClick={() => setOpen(true)} alt={"Comment icon"} style={{width: 24, height: 24}} />
             </button>
             <Modal isOpen={isOpen} onClose={() => setOpen(false)} style={{ overflowY: "auto" }} isFirst={false}>
-                <Typography variant="h6" style={{ marginTop: '16px', padding: 5 }}>
-                    Комментарии
-                </Typography>
+                <div className={'w-100 d-flex justify-content-between'}>
+                    <Typography variant="h6" style={{ marginTop: '16px', padding: 5 }}>
+                        Комментарии
+                    </Typography>
+                    {
+                        !userData.isTelegram && (
+                            <CloseButton onClick={() => setOpen(false)} />
+                        )
+                    }
+                </div>
                 <div className="w-100 mt-2" style={{padding: 5}}>
                     <TextField
                         fullWidth
