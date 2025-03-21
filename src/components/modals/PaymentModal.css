@@ -10,37 +10,40 @@
 }
 
 .payment-plans {
+    width: 100%;
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 16px;
-    justify-content: center;
 }
 
 .payment-plan {
     border: 1px solid #eee;
+    max-width: 600px;
     border-radius: 10px;
     padding: 16px;
-    width: 200px;
-    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #fff;
     transition: box-shadow 0.2s ease;
 }
 
 .payment-plan:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
 }
 
 .plan-label {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
-    margin-bottom: 8px;
 }
 
 .plan-price {
     font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 12px;
+    font-weight: 400;
+    color: gray;
 }
 
 .buy-button {
