@@ -60,7 +60,6 @@ const App = () => {
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
         if (token && isConnected) {
-            console.log(token)
             sendData({
                 action: "handleGetMyProfile",
                 data: {
@@ -106,7 +105,11 @@ const App = () => {
     useEffect(() => {
         const handleInvoice = (msg) => {
             if(msg.platform === 'telegram') {
-                window.Telegram.WebApp.openInvoice(msg.link);
+                try {
+                    window.Telegram.WebApp.openInvoice(msg.link);
+                } catch (error) {
+                    window.open(msg.link);
+                }
             }
         }
 
