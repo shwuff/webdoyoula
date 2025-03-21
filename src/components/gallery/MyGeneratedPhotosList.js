@@ -13,7 +13,6 @@ import Backdrop from "@mui/material/Backdrop";
 import LikeHeart from "../buttons/LikeHeart";
 import PhotoPostModal from "../modals/PhotoPostModal";
 import {BiPlay} from "react-icons/bi";
-import {BsPlay} from "react-icons/bs";
 
 Modal.setAppElement('#app');
 
@@ -99,7 +98,15 @@ const MyGeneratedPhotosList = ({
     const photosRef = useRef(myPhotos);
     const isLoadingRef = useRef(false);
 
-    const [requestId, setRequestId] = useState(crypto.randomUUID());
+    const generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+        });
+    };
+
+    const [requestId, setRequestId] = useState(generateUUID());
 
     const BackButton = window.Telegram.WebApp.BackButton;
 

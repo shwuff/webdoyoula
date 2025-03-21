@@ -20,8 +20,9 @@ const SearchInput = ({
             placeholder={placeholder}
             sx={{
                 "& .MuiOutlinedInput-root": {
-                    borderRadius: "50px",
+                    borderRadius: "10px",
                     paddingLeft: "8px",
+                    background: "var(--secondary-bg-color)",
                     "& fieldset": {
                         borderColor: "#ddd",
                     },
@@ -29,7 +30,7 @@ const SearchInput = ({
                         borderColor: "#bbb",
                     },
                     "&.Mui-focused fieldset": {
-                        borderColor: "#2196F3",
+                        borderColor: "var(--primary-color)",
                     },
                 },
                 "& .MuiInputBase-input": {
@@ -37,7 +38,7 @@ const SearchInput = ({
                     border: 0
                 },
                 "& .MuiFormControl-root:active": {
-                    border: "1px solid #2196F3"
+                    border: "1px solid var(--primary-color)"
                 }
             }}
             InputProps={{

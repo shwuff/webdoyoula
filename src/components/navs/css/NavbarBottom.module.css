@@ -3,7 +3,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--secondary-bg-color);
     display: flex;
     justify-content: space-around;
     align-items: center;

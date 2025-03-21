@@ -198,8 +198,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                         </div>
                                     )
                                 }
-                                <div className={styles.imageBlock} style={{ height: window.Telegram.WebApp?.safeAreaInset?.top
-                                    ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `max-content`, position: "relative", textAlign: "center" }}>
+                                <div className={styles.imageBlock} style={{ maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
+                                    ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}>
                                     <div className={styles.leftNav} onClick={() => prevPhoto(selectedPhoto)}>
                                         <button
                                             className={styles.navButton}

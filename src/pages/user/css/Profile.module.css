@@ -14,7 +14,7 @@
 }
 
 .profileAvatarWrapper {
-    width: 15%;
+    width: 20%;
     border-radius: 50%;
     background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
     padding: 3px;
@@ -50,8 +50,27 @@
 }
 
 @media(max-width: 800px) {
+
+    .statLabel {
+        font-size: 70%;
+        color: gray;
+    }
+
     .statNumber {
         font-size: 14px;
+        font-weight: bold;
+    }
+}
+
+@media(min-width: 1200px) {
+
+    .statLabel {
+        font-size: 22px;
+        color: gray;
+    }
+
+    .statNumber {
+        font-size: 20px;
         font-weight: bold;
     }
 }

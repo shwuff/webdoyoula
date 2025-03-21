@@ -62,8 +62,8 @@ const App = () => {
 
         document.documentElement.style.setProperty('--primary-color', '#2196F3');
         document.documentElement.style.setProperty('--text-color', '#000');
-        document.documentElement.style.setProperty('--bg-color', '#fff');
-        document.documentElement.style.setProperty('--secondary-bg-color', '#dad6d6');
+        document.documentElement.style.setProperty('--bg-color', '##f4f4f5');
+        document.documentElement.style.setProperty('--secondary-bg-color', '#f4f4f5');
 
         if (token && isConnected) {
             sendData({

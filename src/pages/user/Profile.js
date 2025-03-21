@@ -203,21 +203,21 @@ const Profile = () => {
                     <div className={styles.profileStats}>
                         <div className={styles.statBlock}>
                             <p className={styles.statNumber}>{tempUserData.count_photos_gallery}</p>
-                            <p className={styles.statLabel}>Публикации</p>
+                            <p className={styles.statLabel}>публикации</p>
                         </div>
                         <div className={styles.statBlock} onClick={() => {
                             openModal();
                             handleShowFollowers();
                         }}>
                             <p className={styles.statNumber}>{tempUserData.followersCount}</p>
-                            <p className={styles.statLabel}>Подписчики</p>
+                            <p className={styles.statLabel}>подписчики</p>
                         </div>
                         <div className={styles.statBlock} onClick={() => {
                             openModal();
                             handleShowFollowing();
                         }}>
                             <p className={styles.statNumber}>{tempUserData.followingCount}</p>
-                            <p className={styles.statLabel}>Подписки</p>
+                            <p className={styles.statLabel}>подписки</p>
                         </div>
                     </div>
                 </div>
