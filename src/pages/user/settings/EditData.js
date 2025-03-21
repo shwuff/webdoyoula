@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styles from './../css/EditData.module.css';
-import RightModal from '../../../components/modal/WebAppModal';
+import RightModal from '../../../components/modal/RightModal';
 
 const EditData = () => {
     const [profileImage, setProfileImage] = useState(null);
