@@ -60,7 +60,6 @@ const App = () => {
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
         if (token && isConnected) {
-            console.log(token)
             sendData({
                 action: "handleGetMyProfile",
                 data: {
@@ -88,6 +87,35 @@ const App = () => {
         addHandler('notification', handleNotification);
 
         return () => deleteHandler('notification');
+    }, []);
+
+    useEffect(() => {
+        const handleUpdatePhotosLeft = (msg) => {
+            setUserData(prev => ({
+                ...prev,
+                photos_left: msg.photos_left
+            }));
+        }
+
+        addHandler('update_photos_left_count', handleUpdatePhotosLeft);
+
+        return () => deleteHandler('update_photos_left_count');
+    }, []);
+
+    useEffect(() => {
+        const handleInvoice = (msg) => {
+            if(msg.platform === 'telegram') {
+                try {
+                    window.Telegram.WebApp.openInvoice(msg.link);
+                } catch (error) {
+                    window.open(msg.link);
+                }
+            }
+        }
+
+        addHandler('open_invoice', handleInvoice);
+
+        return () => deleteHandler('open_invoice');
     }, []);
 
     useEffect(() => {
