@@ -7,13 +7,11 @@ import { useWebSocket } from "../../context/WebSocketContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }) => {
-    const { token } = useAuth();
+    const { token, userData } = useAuth();
     const { sendData } = useWebSocket();
 
-    // Храним выбранный пакет, если нужно
     const [selectedOption, setSelectedOption] = useState(null);
 
-    // Шаги внутри модального окна
     const [paymentStep, setPaymentStep] = useState(1);
 
     const paymentOptions = [
@@ -30,27 +28,27 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
         stars: 249
     };
 
-    // Допустим, первая страница — это выбор пакета
-    // При нажатии «Купить» переходим на step = 2
     const handleBuyClick = (option) => {
-        setSelectedOption(option);
-        setPaymentStep(2);
+        if(userData.language_code === 'ru') {
+            setSelectedOption(option);
+            setPaymentStep(2);
+        } else {
+            setSelectedOption(option);
+            handleConfirmPurchase("XTR");
+        }
     };
 
-    // Допустим, на втором шаге у нас выбор валюты
-    // и потом отправка на сервер
     const handleConfirmPurchase = (currency) => {
+        console.log(selectedOption)
         if (!selectedOption) return;
-        // Пример отправки на WebSocket
         sendData({
             action: "purchase_generates",
             data: {
                 jwt: token,
-                id: selectedOption.id,
+                optionId: selectedOption.id,
                 currency: currency
             }
         });
-        // После отправки можно закрыть модалку или сделать что нужно
         setOpenPaymentModal(false);
         setPaymentStep(1);
     };
@@ -76,42 +74,38 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                     {paymentStep === 1 && (
                         <motion.div
                             key="step1"
-                            initial={{ x: 100, opacity: 0 }}
+                            initial={{ x: -100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -100, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
+                            exit={{ x: 100, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
                         >
                             <h2>Пополнение баланса</h2>
                             <div className="payment-plans">
                                 {paymentOptions.map((option) => (
-                                    <div className="payment-plan" key={option.id}>
+                                    <div className="payment-plan" onClick={() => handleBuyClick(option)} key={option.id}>
                                         <div className="plan-label">{option.label}</div>
                                         <div className="plan-price">
                                             {isRubles ? `${option.rub} руб` : `${option.stars} stars`}
                                         </div>
-                                        <button
-                                            className="buy-button"
-                                            onClick={() => handleBuyClick(option)}
-                                        >
-                                            Купить
-                                        </button>
+                                        {/*<button*/}
+                                        {/*    className="buy-button"*/}
+                                        {/*    onClick={() => handleBuyClick(option)}*/}
+                                        {/*>*/}
+                                        {/*    Купить*/}
+                                        {/*</button>*/}
                                     </div>
                                 ))}
                             </div>
 
                             <hr className="divider" />
 
-                            <div className="payment-plan model-plan">
-                                <div className="plan-label">{modelOption.label}</div>
-                                <div className="plan-price">
-                                    {isRubles ? `${modelOption.rub} руб` : `${modelOption.stars} stars`}
+                            <div className="payment-plans">
+                                <div className="payment-plan" onClick={() => handleBuyClick(modelOption)}>
+                                    <div className="plan-label">{modelOption.label}</div>
+                                    <div className="plan-price">
+                                        {isRubles ? `${modelOption.rub} руб` : `${modelOption.stars} stars`}
+                                    </div>
                                 </div>
-                                <button
-                                    className="buy-button"
-                                    onClick={() => handleBuyClick(modelOption)}
-                                >
-                                    Купить
-                                </button>
                             </div>
                         </motion.div>
                     )}
@@ -122,7 +116,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                             initial={{ x: 100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: -100, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
+                            transition={{ duration: 0.2 }}
                         >
                             <h2>Выберите метод оплаты</h2>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -134,7 +128,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                                 </button>
                                 <button
                                     className="buy-button"
-                                    onClick={() => handleConfirmPurchase('STARS')}
+                                    onClick={() => handleConfirmPurchase('XTR')}
                                 >
                                     Оплатить звёздами
                                 </button>
