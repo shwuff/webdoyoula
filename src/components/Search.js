@@ -3,6 +3,7 @@ import { useWebSocket } from "../context/WebSocketContext";
 import { useAuth } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import SearchInput from "./input/SearchInput";
+import SettingsHamburger from "./modals/SettingsHamburger";
 
 const users = ["Komissar1", "Komi", "Alex", "JohnDoe", "Komrad", "Kevin", "Markus"];
 
@@ -63,16 +64,23 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
 
     return (
         <div className={from != 'navbar' ? "globalBlock" : ""}>
-            <div className={"center-content-block-search"}>
-                <SearchInput
-                    value={searchQuery}
-                    onChange={(e) => {
-                        handleOnChangeSearch(e.target.value);
-                        setSearchQuery(e.target.value);
-                    }}
-                    onFocus={() => setIsInputFocused(true)}
-                    onBlur={() => setIsInputFocused(false)}
-                />
+            <div className={"center-content-block-search d-flex"}>
+                <div className={'d-flex align-items-center w-100'}>
+                    {/*{*/}
+                    {/*    from === 'navbar' && (*/}
+                    {/*        <SettingsHamburger style={{marginRight: 5}} />*/}
+                    {/*    )*/}
+                    {/*}*/}
+                    <SearchInput
+                        value={searchQuery}
+                        onChange={(e) => {
+                            handleOnChangeSearch(e.target.value);
+                            setSearchQuery(e.target.value);
+                        }}
+                        onFocus={() => setIsInputFocused(true)}
+                        onBlur={() => setIsInputFocused(false)}
+                    />
+                </div>
                 {searchQuery.length < 1 && searchResults.length > 0 && shouldShowResults && (
                     <div className="w-100 d-flex justify-content-end">
                         <p
