@@ -112,8 +112,8 @@ textarea {
     border-radius: 4px;
     padding: 10px;
     font-size: 14px;
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-text-color);
+    background: var(--bg-color);
+    color: var(--text-color);
     outline: none;
 }
 

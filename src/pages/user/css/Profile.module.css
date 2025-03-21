@@ -16,8 +16,6 @@
 .profileAvatarWrapper {
     width: 20%;
     border-radius: 50%;
-    background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
-    padding: 3px;
     display: flex;
     justify-content: center;
     align-items: center;
