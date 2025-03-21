@@ -64,7 +64,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
 
     return (
         <div className={from != 'navbar' ? "globalBlock" : ""}>
-            <div className={"center-content-block-search d-flex"}>
+            <div className={"center-content-block-search"}>
                 <div className={'d-flex align-items-center w-100'}>
                     {/*{*/}
                     {/*    from === 'navbar' && (*/}
