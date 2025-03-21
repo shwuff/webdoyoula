@@ -47,15 +47,15 @@ a, div, button {
 }
 
 .btn-primary {
-    background: var(--tg-theme-button-color, #2196F3);
-    border: 1px solid var(--tg-theme-button-color, #2196F3);
+    background: var(--primary-color);
+    border: 1px solid var(--primary-color);
     color: #fff;
 }
 
 .btn-outline-primary {
-    border: 1px solid var(--tg-theme-button-color, #2196F3);
+    border: 1px solid var(--primary-color);
     background: inherit;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
 }
 
 .horizontal-list {
@@ -64,13 +64,23 @@ a, div, button {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color);
     padding: 10px 0;
     gap: 8px;
 }
 
 .p-2 {
     padding: 2vw;
+}
+
+.p-2-phone {
+    padding: 2vw;
+}
+
+@media (min-width: 800px) {
+    .p-2-phone {
+        padding: 0;
+    }
 }
 
 .w-100 {
@@ -96,13 +106,11 @@ a, div, button {
     animation: rotate 2s linear infinite;
 }
 
-/* Оформление круга */
 .spinner circle {
     fill: none;
     stroke: #3498db;
     stroke-width: 4;
     stroke-linecap: round;
-    /* Начальные параметры штриха */
     stroke-dasharray: 1,200;
     stroke-dashoffset: 0;
     animation: dash 1.5s ease-in-out infinite;
@@ -115,7 +123,6 @@ a, div, button {
     }
 }
 
-/* Анимация штриха: он сначала растёт, потом укорачивается */
 @keyframes dash {
     0% {
         stroke-dasharray: 1,200;
@@ -142,15 +149,14 @@ a, div, button {
 .amountBtn {
     min-width: 50px;
     height: 40px;
-    border: none;
     border-radius: 8px;
-    background: var(--tg-theme-secondary-bg-color);
-    color: var(--tg-theme-text-color);
+    background: var(--secondary-bg-color);
+    color: var(--text-color);
     font-size: 16px;
     padding: 0 10px;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
-    border: 1px solid var(--tg-theme-button-color);
+    border: 1px solid var(--primary-color);
 }
 
 .amountBtn:hover {
@@ -158,8 +164,8 @@ a, div, button {
 }
 
 .amountBtn.active {
-    background: var(--tg-theme-button-color);
-    color: var(--tg-theme-button-text-color);
+    background: var(--primary-color);
+    color: var(--text-color);
     transform: translateY(-2px);
 }
 
@@ -191,6 +197,7 @@ a, div, button {
     width: 100%;
     max-width: 600px;
     margin:auto;
+    padding: 3px
 }
 
 .center-content-block-search {
@@ -211,7 +218,7 @@ a, div, button {
     padding: 4px;
     height: calc(100vh - 90px);
     overflow-y: auto;
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--bg-color);
 }
 
 .modalOverlay {
@@ -222,7 +229,7 @@ a, div, button {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--bg-color);
     display: flex;
     justify-content: center;
     z-index: 1000;
@@ -238,7 +245,7 @@ a, div, button {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: var(--tg-theme-secondary-bg-color, #9a9595);
+    background: var(--secondary-bg-color);
     z-index: 1000;
     border: none;
     color: white;
@@ -256,7 +263,7 @@ a, div, button {
 
 .modalContent {
     position: relative;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color);
     border: none;
     padding: 0;
     width: 100%;
@@ -284,7 +291,7 @@ a, div, button {
     font-size: 16px;
     outline: none;
     transition: border-color 0.3s;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
     text-align: left;
 }
 
@@ -292,7 +299,7 @@ a, div, button {
     border-color: #007bff;
 }
 .search-box {
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
     padding: 5px;
 }
 .search-results {
@@ -303,7 +310,7 @@ a, div, button {
     padding: 5px;
     list-style: none;
     width: 100%;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
 }
 
 .search-item {
@@ -320,7 +327,7 @@ a, div, button {
 }
 
 .search-item:hover {
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
 }
 .user-avatar-search {
     width: 40px;
@@ -382,7 +389,7 @@ a, div, button {
 }
 .editBlock {
     width: 100%;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
@@ -402,7 +409,7 @@ a, div, button {
     height: 80px;
     padding: 10px;
     font-size: 16px;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
     border-radius: 8px;
     outline: none;
     transition: border 0.3s;
@@ -465,7 +472,7 @@ a, div, button {
         display: flex;
         justify-content: center;
         align-items: start;
-        background: var(--tg-theme-bg-color);
+        background: var(--bg-color);
     }
 
     .navbar-content {
@@ -505,7 +512,7 @@ a, div, button {
         display: flex;
         justify-content: center;
         align-items: start;
-        background: var(--tg-theme-bg-color);
+        background: var(--bg-color);
         border-right: 1px solid rgb(0,0,0,.1);
     }
 
@@ -525,9 +532,9 @@ a, div, button {
 }
 
 .iconButton {
-    color: var(--tg-theme-text-color, #000);
-    background: var(--tg-theme-bg-color, #fff);
-    border: 1px solid var(--tg-theme-text-color, #000);
+    color: var(--text-color);
+    background: var(--bg-color);
+    border: 1px solid var(--text-color);
 }
 
 .MuiInputBase-input:active .MuiOutlinedInput-root {

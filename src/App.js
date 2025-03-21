@@ -59,6 +59,12 @@ const App = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
+
+        document.documentElement.style.setProperty('--primary-color', '#2196F3');
+        document.documentElement.style.setProperty('--text-color', '#000');
+        document.documentElement.style.setProperty('--bg-color', '#fff');
+        document.documentElement.style.setProperty('--secondary-bg-color', '#dad6d6');
+
         if (token && isConnected) {
             sendData({
                 action: "handleGetMyProfile",
