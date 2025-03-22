@@ -554,7 +554,15 @@ const MyGeneratedPhotosList = ({
 
             {
                 selectedModel.status === 'waiting' && photosSortModel === selectedModel.id && (
-                    <TrainAvatarProcess model={selectedModel} />
+                    <TrainAvatarProcess model={selectedModel} setModel={setSelectedModel} />
+                )
+            }
+
+            {
+                selectedModel.status === 'training' && photosSortModel === selectedModel.id && (
+                    <p style={{marginTop: 5}}>
+                        Модель <b>{selectedModel.name}</b> обучается! Вам придет уведомление в бота по готовности
+                    </p>
                 )
             }
 

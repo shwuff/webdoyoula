@@ -42,8 +42,6 @@ export const WebSocketProvider = ({ children }) => {
                     if (metaData.media && metaData.media.length > 0) {
                         for (let photo of metaData.media) {
 
-                            console.log(photo)
-
                             const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.fileType === 'video/mp4' ? "video/mp4" : "image/webp" });
 
                             images.push({
@@ -78,7 +76,6 @@ export const WebSocketProvider = ({ children }) => {
                     if (handlersRef.current[metaData.action]) {
                         handlersRef.current[metaData.action]?.(payload);
                     }
-
                 } catch (error) {
                     console.error("❌ Error message:", error);
                 }
