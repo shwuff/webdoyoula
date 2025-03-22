@@ -30,7 +30,6 @@ const TrainAvatarProcess = ({ model }) => {
         const tempRequestId = generateUUID();
         setRequestId(tempRequestId);
 
-        // Запрос серверу на получение уже загруженных фото
         sendData({
             action: "get_images_for_training",
             data: {
@@ -45,7 +44,6 @@ const TrainAvatarProcess = ({ model }) => {
 
         const handleGetEducationImages = (msg) => {
             if (!msg.media || !msg.files) return;
-            console.log("Получили изображения для обучения:", msg);
 
             const newPhotos = msg.media.map((imageObj, index) => {
                 return {
@@ -131,44 +129,52 @@ const TrainAvatarProcess = ({ model }) => {
         return () => deleteHandler("train_model_upload_result");
     }, [addHandler, deleteHandler]);
 
-    // --- [3] УДАЛЕНИЕ ФОТО ---
     const handleDeletePhoto = (index) => {
         const photo = photos[index];
 
-        // Если уже есть serverId (или photo.id), удалим с сервера
         const serverImageId = photo.serverId || photo.id;
-        if (photo.isFromServer && serverImageId) {
+        if (serverImageId) {
             sendData({
                 action: "delete_image_for_training",
                 data: {
                     jwt: token,
-                    imageId: serverImageId   // что-то такое
+                    imageId: serverImageId
                 }
             });
         }
 
-        // Локально удаляем из state
         setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
     };
 
-    // Обработчик ответа на удаление
+    useEffect(() => {
+        const handleTrainModelUploadResult = (msg) => {
+
+            const tempRequestId = generateUUID();
+            setRequestId(tempRequestId);
+
+            sendData({
+                action: "get_images_for_training",
+                data: {
+                    jwt: token,
+                    modelId: model.id,
+                    requestId: tempRequestId
+                }
+            });
+        };
+
+        addHandler("train_model_upload_result", handleTrainModelUploadResult);
+        return () => deleteHandler("train_model_upload_result");
+    }, [addHandler, deleteHandler]);
+
     useEffect(() => {
         const handleDeleteImageResult = (msg) => {
-            // msg = { action: 'delete_image_for_training_result', success: true, imageId: 123, ... }
-            // Можно дополнительно убедиться, что мы убрали из state.
-            // Но мы уже убираем сразу, так что тут можно просто логировать результат.
-            if (msg.success) {
-                console.log(`Изображение ${msg.imageId} успешно удалено на сервере.`);
-            } else {
-                console.error(`Ошибка удаления изображения на сервере: `, msg.error);
-            }
+
         };
 
         addHandler("delete_image_for_training_result", handleDeleteImageResult);
         return () => deleteHandler("delete_image_for_training_result");
     }, [addHandler, deleteHandler]);
 
-    // --- [4] ЗУМ / ДИАЛОГ ---
     const handleOpenDialog = (photo) => {
         setSelectedPhoto(photo);
         setIsDialogOpen(true);
@@ -179,7 +185,6 @@ const TrainAvatarProcess = ({ model }) => {
         setSelectedPhoto(null);
     };
 
-    // Чистим blob URL при размонтировании
     useEffect(() => {
         return () => {
             photos.forEach((photo) => {

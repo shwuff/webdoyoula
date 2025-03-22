@@ -128,7 +128,6 @@ export const WebSocketProvider = ({ children }) => {
     };
 
      const sendData = async (data, files = []) => {
-        // Проверка: WebSocket-соединение открыто?
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
             console.error('[WS] WebSocket is not open, unable to send data');
             return;
@@ -167,7 +166,6 @@ export const WebSocketProvider = ({ children }) => {
                 offset += fb.length;
             }
 
-            // 8) Отправляем через WebSocket
             wsRef.current.send(finalBuffer);
 
         } catch (error) {
