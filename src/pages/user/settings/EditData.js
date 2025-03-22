@@ -9,14 +9,18 @@ import {
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import RightModal from '../../../components/modal/RightModal';
+import { useAuth } from "./../../../context/UserContext";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const EditData = () => {
+  const {userData} = useAuth();
   const [profileImage, setProfileImage] = useState(null);
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState(userData.first_name);
+  const [surname, setSurname] = useState(userData.last_name);
+  const [username, setUsername] = useState(userData.username);
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef(null);
+  console.log(userData)
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -49,24 +53,53 @@ const EditData = () => {
         onClose={() => setIsOpen(false)}
       >
         <Box sx={{ width: '100%', p: 2, textAlign: 'center' }}>
-          <Typography variant="h6" gutterBottom>
-            Редактировать профиль
-          </Typography>
+        
 
           <Box sx={{ position: 'relative', mb: 2 }}>
-            <Avatar
-              src={profileImage || "https://via.placeholder.com/150"}
-              sx={{ width: 80, height: 80, cursor: 'pointer', margin: 'auto' }}
-              onClick={() => fileInputRef.current.click()}
-            />
-            <IconButton
-              color="primary"
-              component="span"
-              sx={{ position: 'absolute', bottom: 0, right: 'calc(50% - 24px)' }}
-              onClick={() => fileInputRef.current.click()}
+          
+            {/* Контейнер для аватара с затемнением */}
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'inline-block',
+                width: 100,
+                height: 100,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                backgroundColor: '#000',
+              }}
             >
-              <PhotoCamera fontSize="small" />
-            </IconButton>
+              <Avatar
+                src={userData.photo_url}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  filter: 'brightness(50%)', 
+                }}
+              />
+              
+              <IconButton
+                color="primary"
+                component="span"
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  fill: "#fff",
+                  transition: "0.25s all",
+                  '&:hover': {
+                    transform: 'translate(-50%, -50%) scale(1.2)', 
+                  }
+                  
+                }}
+                onClick={() => fileInputRef.current.click()}
+              >
+                <PhotoCamera fontSize="large" style = {{fill: "#fff"}} />
+                <AddCircleIcon sx={{ position: 'absolute', bottom: 3, right: -2, fontSize: '20px', fill: '#fff' }} />
+              </IconButton>
+            </Box>
             <input
               type="file"
               hidden
@@ -85,7 +118,7 @@ const EditData = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               sx={{ mb: 2 }}
-              required
+              
             />
 
             <TextField
@@ -96,7 +129,7 @@ const EditData = () => {
               value={surname}
               onChange={(e) => setSurname(e.target.value)}
               sx={{ mb: 2 }}
-              required
+              
             />
 
             <TextField
@@ -107,7 +140,6 @@ const EditData = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               sx={{ mb: 3 }}
-              required
             />
 
             <Button
