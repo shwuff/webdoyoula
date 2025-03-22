@@ -13,6 +13,7 @@ import Backdrop from "@mui/material/Backdrop";
 import LikeHeart from "../buttons/LikeHeart";
 import PhotoPostModal from "../modals/PhotoPostModal";
 import {BiPlay} from "react-icons/bi";
+import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
 
 Modal.setAppElement('#app');
 
@@ -85,6 +86,7 @@ const MyGeneratedPhotosList = ({
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [closingModal, setClosingModal] = useState(false);
     const [photosSortModel, setPhotosSortModel] = useState(0);
+    const [selectedModel, setSelectedModel] = useState([]);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
 
     const [selectedImages, setSelectedImages] = useState([]);
@@ -452,6 +454,12 @@ const MyGeneratedPhotosList = ({
         photosRef.current = [];
         setPhotosPage(1);
         setPhotosSortModel(value);
+        for (let i = 0; i < myModels.length; i++) {
+            if (myModels[i].id === value) {
+                setSelectedModel(myModels[i]);
+                break;
+            }
+        }
         resetLastPageRef();
         resetFetchingRef();
         isLoadingRef.current = false;
@@ -543,6 +551,12 @@ const MyGeneratedPhotosList = ({
                     />
                 ))}
             </div>
+
+            {
+                selectedModel.status === 'waiting' && photosSortModel === selectedModel.id && (
+                    <TrainAvatarProcess model={selectedModel} />
+                )
+            }
 
             <PhotoPostModal
                 isModalOpen={isModalOpen}

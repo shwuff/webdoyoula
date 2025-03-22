@@ -463,7 +463,23 @@ a, div, button {
     overflow-y: auto;
 }
 
+.d-block-xl {
+    display: none;
+}
+
+.d-block-sm {
+    display: block;
+}
+
 @media(min-width: 800px) {
+
+    .d-block-xl {
+        display: block;
+    }
+
+    .d-block-sm {
+        display: none;
+    }
 
     #navbarBottom {
         width: 100px;

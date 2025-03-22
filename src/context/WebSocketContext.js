@@ -42,9 +42,7 @@ export const WebSocketProvider = ({ children }) => {
                     if (metaData.media && metaData.media.length > 0) {
                         for (let photo of metaData.media) {
 
-                            if(photo.fileType) {
-
-                            }
+                            console.log(photo)
 
                             const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.fileType === 'video/mp4' ? "video/mp4" : "image/webp" });
 
@@ -65,7 +63,8 @@ export const WebSocketProvider = ({ children }) => {
                                 author: photo.author,
                                 prompt_id: photo.prompt_id,
                                 count_views: photo.count_views,
-                                count_generated_with_prompt: photo.count_generated_with_prompt
+                                count_generated_with_prompt: photo.count_generated_with_prompt,
+                                size: photo.size
                             });
                             offset += photo.size;
                         }
@@ -128,50 +127,52 @@ export const WebSocketProvider = ({ children }) => {
         delete handlersRef.current[action];
     };
 
-    const sendData = async (data, files = []) => {
+     const sendData = async (data, files = []) => {
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-            console.error('[WS] < WebSocket is not open, unable to send data');
+            console.error('[WS] WebSocket is not open, unable to send data');
             return;
         }
 
         try {
-            const jsonString = JSON.stringify(data);
-            const jsonBuffer = new TextEncoder().encode(jsonString);
-            const jsonLengthBuffer = new Uint32Array([jsonBuffer.length]);
+            // 1) Собираем метаданные о файлах
+            const fileMetas = [];
+            const fileBuffers = [];
 
-            let fileBuffers = [];
-            let metaData = [];
             for (const file of files) {
                 const arrayBuffer = await file.arrayBuffer();
-                metaData.push({ name: file.name, type: file.type, size: arrayBuffer.byteLength });
+                fileMetas.push({
+                    name: file.name,
+                    type: file.type,
+                    size: arrayBuffer.byteLength,
+                });
                 fileBuffers.push(new Uint8Array(arrayBuffer));
             }
 
-            const metaString = JSON.stringify({ files: metaData });
-            const metaBuffer = new TextEncoder().encode(metaString);
-            const metaLengthBuffer = new Uint32Array([metaBuffer.length]); // Следующие 4 байта - длина мета-информации
+            data.files = fileMetas;
 
-            const finalBuffer = new Uint8Array(
-                8 + jsonBuffer.length + metaBuffer.length + fileBuffers.reduce((sum, b) => sum + b.length, 0)
-            );
+            const jsonString = JSON.stringify(data);
+            const jsonBuffer = new TextEncoder().encode(jsonString);
 
-            finalBuffer.set(new Uint8Array(jsonLengthBuffer.buffer), 0);
+            const totalLength = 4 + jsonBuffer.length + fileBuffers.reduce((acc, b) => acc + b.length, 0);
+            const finalBuffer = new Uint8Array(totalLength);
+
+            new DataView(finalBuffer.buffer).setUint32(0, jsonBuffer.length, true);
+
             finalBuffer.set(jsonBuffer, 4);
 
-            finalBuffer.set(new Uint8Array(metaLengthBuffer.buffer), 4 + jsonBuffer.length);
-            finalBuffer.set(metaBuffer, 8 + jsonBuffer.length);
-
-            let offset = 8 + jsonBuffer.length + metaBuffer.length;
-            for (const buffer of fileBuffers) {
-                finalBuffer.set(buffer, offset);
-                offset += buffer.length;
+            let offset = 4 + jsonBuffer.length;
+            for (const fb of fileBuffers) {
+                finalBuffer.set(fb, offset);
+                offset += fb.length;
             }
 
             wsRef.current.send(finalBuffer);
+
         } catch (error) {
-            console.error("[WS] ❌ Error with send binary message:", error);
+            console.error('[WS] ❌ Error with send binary message:', error);
         }
     };
+
 
 
     return (

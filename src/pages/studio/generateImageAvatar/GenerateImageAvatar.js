@@ -266,22 +266,28 @@ const GenerateImageAvatar = () => {
                         <h2>Выберите используемую модель</h2>
                         <div className={styles.amountsContainer}>
                             {myModels?.map((model) => (
-                                <button
-                                    key={model.id}
-                                    className={`${styles.amountBtn} ${selectedModel === model.id ? styles.active : ''}`}
-                                    onClick={() => {
-                                        setSelectedModel(model.id);
-                                        if(promptId !== undefined) {
-                                            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                            setStep(4);
-                                            setGenerationType('prompt');
-                                        } else {
-                                            nextStep();
-                                        }
-                                    }}
-                                >
-                                    {model.name}
-                                </button>
+                                <>
+                                    {
+                                        model.status === 'ready' && (
+                                            <button
+                                                key={model.id}
+                                                className={`${styles.amountBtn} ${selectedModel === model.id ? styles.active : ''}`}
+                                                onClick={() => {
+                                                    setSelectedModel(model.id);
+                                                    if(promptId !== undefined) {
+                                                        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                                                        setStep(4);
+                                                        setGenerationType('prompt');
+                                                    } else {
+                                                        nextStep();
+                                                    }
+                                                }}
+                                            >
+                                                {model.name}
+                                            </button>
+                                        )
+                                    }
+                                </>
                             ))}
                         </div>
                     </div>
