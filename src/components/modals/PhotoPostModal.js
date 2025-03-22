@@ -214,6 +214,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                         src={selectedPhoto.blob_url}
                                         alt={`photo-${selectedPhoto.id}`}
                                         className={styles.modalImage}
+                                        style={{maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
+                                                ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`}}
                                     />
 
                                     <div className={styles.rightNav} onClick={() => nextPhoto(selectedPhoto)}>
