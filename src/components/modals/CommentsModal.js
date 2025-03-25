@@ -124,7 +124,7 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
                         onClick={() => handleCreateComment(photoGallery.id, userData.id)}
                         style={{ marginTop: '16px' }}
                     >
-                        Опубликовать
+                        {t('to_publish')}
                     </Button>
                 </div>
                 <List>
