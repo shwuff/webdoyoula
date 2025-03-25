@@ -12,7 +12,7 @@ import RightModal from '../../../components/modal/RightModal';
 import { useAuth } from "./../../../context/UserContext";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-const EditData = () => {
+const EditData = ({ userId }) => {
   const {userData} = useAuth();
   const [profileImage, setProfileImage] = useState(null);
   const [name, setName] = useState(userData.first_name);
@@ -40,13 +40,21 @@ const EditData = () => {
 
   return (
     <>
-      <Button
-        variant="contained"
-        onClick={() => setIsOpen(true)}
-        sx={{ bgcolor: '#2196F3', fontSize: '16px', borderRadius: '8px', px: 3 }}
-      >
-        Редактировать профиль
-      </Button>
+        <Button
+            variant="contained"
+            onClick={() => setIsOpen(true)}
+            sx={{ bgcolor: '#2196F3', fontSize: '16px', borderRadius: '8px', px: 3 }}
+        >
+            Редактировать профиль
+        </Button>
+
+        <Button
+            variant="contained"
+            onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}`}
+            sx={{ bgcolor: '#2196F3', fontSize: '16px', borderRadius: '8px', px: 3, marginLeft: 2 }}
+        >
+            Поделиться профилем
+        </Button>
 
       <RightModal
         isOpen={isOpen}

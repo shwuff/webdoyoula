@@ -227,7 +227,7 @@ const Profile = () => {
                     <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
                     <p className={styles.profileUsername}>@{tempUserData.username}</p>
                     <p className={styles.profileDescription}>{tempUserData.bio}</p>
-                    <EditData />
+                    <EditData userId={tempUserData.id} />
                 </div>
                 {
                     !isMyProfile && (
