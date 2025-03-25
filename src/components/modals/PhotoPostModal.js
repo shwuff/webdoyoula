@@ -159,12 +159,11 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                 {
                                     profileGallery && (
                                         <div className="p-2 d-flex align-items-center justify-content-between">
-                                            <Box display="flex" alignItems="center" gap={1}>
+                                            <Box display="flex" alignItems="center" gap={1} onClick={() => navigate(`/profile/${selectedPhoto.author.id}`)}>
                                                 <Avatar
                                                     src={selectedPhoto.author.photo_url}
                                                     alt={`${selectedPhoto.author.first_name} ${selectedPhoto.author.last_name}`}
                                                     sx={{ width: 40, height: 40 }}
-                                                    onClick={() => navigate(`/profile/${selectedPhoto.author.id}`)}
                                                 />
 
                                                 <Box>
