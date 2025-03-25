@@ -67,7 +67,8 @@ const CreateContent = () => {
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
                     <div className={"p-2-phone"}>
                         <p>Баланс фотографий: {userData.photos_left}</p>
-                        <button className={"btn btn-primary"} onClick={() => setOpenPaymentModal(true)}>
+                        <p>Баланс моделей: {userData.models_left}</p>
+                        <button className={"btn btn-primary"} style={{marginTop: 4}} onClick={() => setOpenPaymentModal(true)}>
                             Пополнить баланс
                         </button>
                     </div>
