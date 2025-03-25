@@ -40,13 +40,13 @@ const EditData = () => {
 
   return (
     <>
-      <Button
-        variant="contained"
-        onClick={() => setIsOpen(true)}
-        sx={{ bgcolor: '#2196F3', fontSize: '16px', borderRadius: '8px', px: 3 }}
-      >
-        Изменить
-      </Button>
+        <Button
+            variant="contained"
+            onClick={() => setIsOpen(true)}
+            sx={{ bgcolor: 'var(--button-color)', fontSize: '12px', borderRadius: '8px', px: 3 }}
+        >
+            Редактировать профиль
+        </Button>
 
       <RightModal
         isOpen={isOpen}

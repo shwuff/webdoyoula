@@ -60,7 +60,7 @@ const App = () => {
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
 
-        document.documentElement.style.setProperty('--primary-color', '#2196F3');
+        document.documentElement.style.setProperty('--button-color', '#2196F3');
         document.documentElement.style.setProperty('--text-color', '#000');
         document.documentElement.style.setProperty('--bg-color', '##f4f4f5');
         document.documentElement.style.setProperty('--secondary-bg-color', '#f4f4f5');

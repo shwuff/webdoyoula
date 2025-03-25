@@ -1,8 +1,9 @@
 import React, {useEffect} from 'react';
 import {useAuth} from "../../context/UserContext";
 import {useWebSocket} from "../../context/WebSocketContext";
+import {Button} from "@mui/material";
 
-const SubscribeButton = ({sub, setSub, userId, setFollowersCount = (count) => {}}) => {
+const SubscribeButton = ({ sub, setSub, userId, setFollowersCount = (count) => {} }) => {
 
     const { token } = useAuth();
     const {addHandler, deleteHandler, sendData} = useWebSocket();
@@ -25,10 +26,11 @@ const SubscribeButton = ({sub, setSub, userId, setFollowersCount = (count) => {}
     }, []);
 
     return (
-        <button className={`btn ${sub ? 'btn-primary' : 'btn-outline-primary'}`}
+        <Button variant={sub ? "contained" : "outlined"}
+                sx={{ bgcolor: sub ? 'var(--button-color)' : 'var(--bg-color)', fontSize: '12px', borderRadius: "8px" }}
                 onClick={handleSub}>
             {sub ? "Отписаться" : "Подписаться"}
-        </button>
+        </Button>
     );
 };
 
