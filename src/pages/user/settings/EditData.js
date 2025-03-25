@@ -45,7 +45,7 @@ const EditData = () => {
         onClick={() => setIsOpen(true)}
         sx={{ bgcolor: '#2196F3', fontSize: '16px', borderRadius: '8px', px: 3 }}
       >
-        Изменить
+        Редактировать профиль
       </Button>
 
       <RightModal
