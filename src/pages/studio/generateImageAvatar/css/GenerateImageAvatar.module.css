@@ -107,11 +107,9 @@
 input[type="text"],
 input[type="number"],
 textarea {
-    /*border: 1px solid var(--hint-color, #2196F3);*/
     border-radius: 4px;
     padding: 10px;
     font-size: 14px;
-    background: var(--bg-color);
     color: var(--text-color);
     outline: none;
 }

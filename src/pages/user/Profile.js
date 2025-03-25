@@ -12,7 +12,7 @@ import EditData from './settings/EditData';
 import {Button} from "@mui/material";
 
 const Profile = () => {
-    const { userData, token } = useAuth();
+    const { userData, token, setUserData } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
 
     const [isMyProfile, setMyProfile] = useState(true);
@@ -133,6 +133,14 @@ const Profile = () => {
         const handleGetProfile = (msg) => {
             setTempUserData(msg.user);
             setMyProfile(msg.user.id === userData.id);
+
+            if(msg.user.id === userData.id) {
+                setUserData(prev => ({
+                    ...prev,
+                    photo_url: msg.user.photo_url
+                }))
+            }
+
         }
 
         addHandler('get_user_answere', handleGetProfile);
