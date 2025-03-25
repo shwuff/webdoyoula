@@ -97,7 +97,7 @@
 .profileButtons {
     display: flex;
     gap: 10px;
-    padding: 10px;
+    padding: 5px;
 }
 
 .btn {
@@ -190,6 +190,8 @@ pageTitle {
 .userList {
     list-style: none;
     padding: 5px;
+    height: 100%;
+    overflow-y: auto;
     width: 100%;
 }
 
