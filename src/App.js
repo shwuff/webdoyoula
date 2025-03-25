@@ -60,7 +60,6 @@ const App = () => {
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
         if (token && isConnected) {
-            console.log(token)
             sendData({
                 action: "handleGetMyProfile",
                 data: {
