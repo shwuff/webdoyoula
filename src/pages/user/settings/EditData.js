@@ -11,32 +11,64 @@ import { PhotoCamera } from '@mui/icons-material';
 import RightModal from '../../../components/modal/RightModal';
 import { useAuth } from "./../../../context/UserContext";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from './../../../utils/cropImage';
+import {useWebSocket} from "../../../context/WebSocketContext";
 
 const EditData = () => {
-  const {userData} = useAuth();
-  const [profileImage, setProfileImage] = useState(null);
-  const [name, setName] = useState(userData.first_name);
-  const [surname, setSurname] = useState(userData.last_name);
-  const [username, setUsername] = useState(userData.username);
-  const [isOpen, setIsOpen] = useState(false);
-  const fileInputRef = useRef(null);
-  console.log(userData)
+    const { userData, token } = useAuth();
+    const { sendData, addHandler, deleteHandler } = useWebSocket();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+    const [profileImage, setProfileImage] = useState(userData.photo_url);
+    const [name, setName] = useState(userData.first_name);
+    const [surname, setSurname] = useState(userData.last_name);
+    const [username, setUsername] = useState(userData.username);
+    const [isOpen, setIsOpen] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const [cropImageSrc, setCropImageSrc] = useState(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [openCropModal, setOpenCropModal] = useState(false);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCropImageSrc(reader.result);
+                setOpenCropModal(true);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleUploadNewPic = (base64) => {
+        sendData({
+            action: "handle_update_user_pic",
+            data: {
+                jwt: token,
+                image: base64
+            }
+        });
     }
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({ profileImage, name, username });
-  };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log({ profileImage, name, username });
+
+        sendData({
+            action: "update_personal_data",
+            data: {
+                jwt: token,
+                username,
+                first_name: name,
+                last_name: surname
+            }
+        })
+
+      };
 
   return (
     <>
@@ -52,6 +84,41 @@ const EditData = () => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       >
+
+          <RightModal isOpen={openCropModal} onClose={() => setOpenCropModal(false)}>
+              <Box sx={{ position: 'relative', height: 300, width: '100%' }}>
+                  <Cropper
+                      image={cropImageSrc}
+                      crop={crop}
+                      zoom={zoom}
+                      aspect={1}
+                      onCropChange={setCrop}
+                      onZoomChange={setZoom}
+                      onCropComplete={(_, croppedPixels) => setCroppedAreaPixels(croppedPixels)}
+                  />
+              </Box>
+
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                  <Button
+                      variant="outlined"
+                      onClick={() => setOpenCropModal(false)}
+                  >
+                      Отмена
+                  </Button>
+                  <Button
+                      variant="contained"
+                      onClick={async () => {
+                          const base64 = await getCroppedImg(cropImageSrc, croppedAreaPixels);
+                          setProfileImage(base64);
+                          setOpenCropModal(false);
+                          handleUploadNewPic(base64)
+                      }}
+                  >
+                      Сохранить
+                  </Button>
+              </Box>
+          </RightModal>
+
         <Box sx={{ width: '100%', p: 2, textAlign: 'center' }}>
         
 
@@ -70,7 +137,7 @@ const EditData = () => {
               }}
             >
               <Avatar
-                src={userData.photo_url}
+                src={profileImage}
                 sx={{
                   width: '100%',
                   height: '100%',
