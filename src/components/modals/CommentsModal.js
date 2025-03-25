@@ -7,6 +7,7 @@ import { Avatar, List, ListItem, ListItemText, Divider, TextField, Button, Typog
 import {useNavigate} from "react-router-dom";
 import CommentIcon from './../../assets/icons/chat.png';
 import CloseButton from "../buttons/CloseButton";
+import {useTranslation} from "react-i18next";
 
 const getTimeAgo = (timestamp) => {
     const date = new Date(timestamp);
@@ -39,6 +40,7 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
     const { addHandler, deleteHandler, sendData } = useWebSocket();
     const { token, userData } = useAuth();
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     useEffect(() => {
         const handleReceiveNewComment = (msg) => {
