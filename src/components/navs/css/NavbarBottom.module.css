@@ -68,11 +68,11 @@
     }
 
     .navItem.active {
-        background: var(--tg-theme-button-color, #2196F3);
+        background: var(--button-color, #2196F3);
     }
 
     .navItem.active * {
-        color: var(--tg-theme-bg-color, #fff) !important;
+        color: var(--bg-color, #fff) !important;
     }
 
     .profileIcon {
@@ -108,7 +108,7 @@
 
 @media(max-width: 1200px) {
     .activeIcon {
-        fill: var(--tg-theme-button-color, #2196F3);
+        fill: var(--button-color, #2196F3);
     }
 }
 

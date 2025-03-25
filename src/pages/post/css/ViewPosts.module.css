@@ -33,7 +33,7 @@
 }
 .editBlock {
     width: 100%;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
@@ -54,7 +54,7 @@
     margin: 0 auto;
     padding: 5px;
     overflow-y: auto;
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--bg-color, #fff);
 }
 .center-content-block {
     width: 100%;
@@ -94,7 +94,7 @@
     height: 80px;
     padding: 10px;
     font-size: 16px;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
     border-radius: 8px;
     outline: none;
     transition: border 0.3s;
@@ -194,7 +194,7 @@ button {
 .username {
     font-weight: 600;
     margin-right: 8px;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
 }
 
 .menuButton {
@@ -286,7 +286,7 @@ button {
     padding: 0 16px;
     font-weight: 600;
     font-size: 14px;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
     margin-bottom: 8px;
 }
 
@@ -295,7 +295,7 @@ button {
     padding: 0 16px;
     font-size: 14px;
     margin-bottom: 8px;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
 }
 
 /* Комментарии */

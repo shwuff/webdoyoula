@@ -1,6 +1,6 @@
 .editBlock {
     width: 100%;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--bg-color, #fff);
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
@@ -27,7 +27,7 @@
     height: 80px;
     padding: 10px;
     font-size: 16px;
-    color: var(--tg-theme-text-color, #000);
+    color: var(--text-color, #000);
     border-radius: 8px;
     outline: none;
     transition: border 0.3s;

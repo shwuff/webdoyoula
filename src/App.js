@@ -61,9 +61,17 @@ const App = () => {
         const token = localStorage.getItem('auth_token');
 
         document.documentElement.style.setProperty('--button-color', '#2196F3');
+        document.documentElement.style.setProperty('--primary-color', '#2d88ff');
         document.documentElement.style.setProperty('--text-color', '#000');
-        document.documentElement.style.setProperty('--bg-color', '##f4f4f5');
+        document.documentElement.style.setProperty('--bg-color', '#FFFFFF');
         document.documentElement.style.setProperty('--secondary-bg-color', '#f4f4f5');
+        document.documentElement.style.setProperty('--header-bg-color', '#f2f2f7');
+        document.documentElement.style.setProperty('--section-bg-color', '#f2f2f7');
+        document.documentElement.style.setProperty('--border-color', '#2196F3');
+        document.documentElement.style.setProperty('--hint-color', '#2196F3');
+        document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
+        document.documentElement.style.setProperty('--secondary-text-color', '#888888');
+
 
         if (token && isConnected) {
             sendData({
@@ -219,12 +227,12 @@ const App = () => {
     }
 
     return (
-        <div className="App" style={{background: "var(--tg-theme-bg-color)", width: "100vw", height: "100vh"}}>
+        <div className="App" style={{background: "var(--bg-color)", width: "100vw", height: "100vh"}}>
             {
                 window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && (
                     <div style={{width: "100%", height: window.Telegram.WebApp?.safeAreaInset?.top
                             ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
-                            : '0', background: "var(--tg-theme-bg-color)", display: "fixed", position: "absolute", zIndex: 500}}>
+                            : '0', background: "var(--bg-color)", display: "fixed", position: "absolute", zIndex: 500}}>
 
                     </div>
                 )

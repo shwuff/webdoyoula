@@ -144,7 +144,7 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
                                         </Typography>
                                     }
                                     secondary={
-                                        <Typography style={{ fontSize: "14px", color: "var(--tg-theme-text-color)" }}>
+                                        <Typography style={{ fontSize: "14px", color: "var(--text-color)" }}>
                                             {comment.text}
                                         </Typography>
                                     }

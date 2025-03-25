@@ -44,13 +44,13 @@
     padding: 5px;
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
-    background-color: var(--tg-theme-bg-color, #f4f5f6);
+    background-color: var(--bg-color, #f4f5f6);
     overflow-y: auto;
 }
 
 .profileCard {
     padding: 0;
-    background-color: var(--tg-theme-bg-color);
+    background-color: var(--bg-color);
     transition: transform 0.3s ease;
 }
 
@@ -79,14 +79,13 @@
 .profileName {
     font-size: 2.2rem;
     font-weight: bold;
-    color: var(--tg-theme-text-color, #333);
+    color: var(--text-color, #333);
     margin-bottom: 5px;
 }
 
-/* Никнейм пользователя */
 .profileUsername {
     font-size: 1.2rem;
-    color: var(--tg-theme-secondary-text-color, #888);
+    color: var(--secondary-text-color, #888);
     margin-bottom: 20px;
 }
 
@@ -110,7 +109,7 @@
     display: flex;
     justify-content: space-around;
     margin-top: 10px;
-    /*border-bottom: 2px solid var(--tg-theme-border-color, #ddd);*/
+    /*border-bottom: 2px solid var(--border-color, #ddd);*/
 }
 
 /* Кнопка вкладки */
@@ -126,7 +125,7 @@
 /* Активная вкладка */
 .activeTab {
     /*font-weight: 600;*/
-    border-bottom: 2px solid var(--tg-theme-primary-color, #2d88ff);
+    border-bottom: 2px solid var(--primary-color, #2d88ff);
 }
 
 /* Контент вкладки */
@@ -141,7 +140,7 @@
 
 .tabContent p {
     font-size: 1rem;
-    color: var(--tg-theme-text-color, #555);
+    color: var(--text-color);
 }
 
 /* Адаптивность для мобильных устройств */

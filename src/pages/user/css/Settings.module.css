@@ -4,12 +4,12 @@
     padding: 5px;
     height: calc(100vh - 90px);
     overflow-y: auto;
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--bg-color, #fff);
 }
 
 .block {
     width: calc(100% - 25px);
-    background-color: var(--tg-theme-header-bg-color, #f2f2f7);
+    background-color: var(--header-bg-color, #f2f2f7);
     border-radius: 12px;
     padding: 4px 8px;
     margin-bottom: 20px;
@@ -28,8 +28,8 @@
     justify-content: space-between;
     padding: 10px 10px;
     font-size: 17px;
-    color: var(--tg-theme-text-color, #000);
-    background-color: var(--tg-theme-section-bg-color, #f2f2f7);
+    color: var(--text-color, #000);
+    background-color: var(--section-bg-color, #f2f2f7);
     cursor: pointer;
 }
 
@@ -37,7 +37,6 @@
     border-top: none;
 }
 
-/* Стили для иконок и текста внутри элемента */
 .leftIcon {
     margin-right: 12px;
     display: flex;
