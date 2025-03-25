@@ -30,18 +30,29 @@
     transition: box-shadow 0.2s ease;
 }
 
+.payment-plan-buttons {
+    max-width: 600px;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease;
+}
+
 .payment-plan:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     cursor: pointer;
 }
 
 .plan-label {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 .plan-price {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 400;
     color: gray;
 }

@@ -1,17 +1,17 @@
-// PaymentModal.jsx
 import React, { useState } from 'react';
 import RightModal from "../modal/RightModal";
 import "./PaymentModal.css";
 import { useAuth } from "../../context/UserContext";
 import { useWebSocket } from "../../context/WebSocketContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }) => {
     const { token, userData } = useAuth();
     const { sendData } = useWebSocket();
 
     const [selectedOption, setSelectedOption] = useState(null);
-
+    const [currencyType, setCurrencyType] = useState(isRubles ? 'rub' : 'stars');
     const [paymentStep, setPaymentStep] = useState(1);
 
     const paymentOptions = [
@@ -20,6 +20,12 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
         { id: 3, label: "500 фотографий", rub: 2549, stars: 2199 },
         { id: 4, label: "1000 фотографий", rub: 4999, stars: 3999 },
     ];
+
+    const handleCurrencyChange = (event, newCurrency) => {
+        if (newCurrency !== null) {
+            setCurrencyType(newCurrency);
+        }
+    };
 
     const modelOption = {
         id: 5,
@@ -53,7 +59,6 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
         setPaymentStep(1);
     };
 
-    // Нажатие «Назад» (если на 2 шаге)
     const handleBack = () => {
         setPaymentStep(1);
     };
@@ -65,7 +70,6 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                 setOpenPaymentModal(false);
                 setPaymentStep(1);
             }}
-            // Если мы не на первом шаге, показываем кнопку «назад»
             isBackButton={paymentStep > 1}
             onBack={handleBack}
         >
@@ -81,18 +85,27 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                         >
                             <h2>Пополнение баланса</h2>
                             <div className="payment-plans">
+                                {isRubles && (
+                                    <div className="payment-plan-buttons">
+                                        <ToggleButtonGroup
+                                            value={currencyType}
+                                            exclusive
+                                            onChange={handleCurrencyChange}
+                                            color="primary"
+                                            sx={{ mb: 2 }}
+                                        >
+                                            <ToggleButton value="rub">Рубли</ToggleButton>
+                                            <ToggleButton value="stars">Звёзды</ToggleButton>
+                                        </ToggleButtonGroup>
+                                    </div>
+                                )}
+
                                 {paymentOptions.map((option) => (
                                     <div className="payment-plan" onClick={() => handleBuyClick(option)} key={option.id}>
                                         <div className="plan-label">{option.label}</div>
                                         <div className="plan-price">
-                                            {isRubles ? `${option.rub} руб` : `${option.stars} stars`}
+                                            {currencyType === 'rub' ? `${option.rub} руб` : `${option.stars} Stars`}
                                         </div>
-                                        {/*<button*/}
-                                        {/*    className="buy-button"*/}
-                                        {/*    onClick={() => handleBuyClick(option)}*/}
-                                        {/*>*/}
-                                        {/*    Купить*/}
-                                        {/*</button>*/}
                                     </div>
                                 ))}
                             </div>
@@ -103,7 +116,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                                 <div className="payment-plan" onClick={() => handleBuyClick(modelOption)}>
                                     <div className="plan-label">{modelOption.label}</div>
                                     <div className="plan-price">
-                                        {isRubles ? `${modelOption.rub} руб` : `${modelOption.stars} stars`}
+                                        {currencyType === 'rub' ? `${modelOption.rub} руб` : `${modelOption.stars} Stars`}
                                     </div>
                                 </div>
                             </div>

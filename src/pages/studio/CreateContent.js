@@ -60,13 +60,9 @@ const CreateContent = () => {
         { title: "Создать картинку", url: "/studio/generate-image-avatar", available: true }
     ];
 
-    if(!userData) {
-        return 'Loading...';
-    }
-
     return (
         <div className={"globalBlock"} id={"generatedPhotosList"} onScroll={handleScroll}>
-            <PaymentModal openPaymentModal={openPaymentModal} setOpenPaymentModal={setOpenPaymentModal} />
+            <PaymentModal openPaymentModal={openPaymentModal} setOpenPaymentModal={setOpenPaymentModal} isRubles={userData.language_code === 'ru'} />
             <div className="center-content-block">
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
                     <div className={"p-2-phone"}>
