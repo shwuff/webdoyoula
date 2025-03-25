@@ -4,6 +4,7 @@ import { useAuth } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import SearchInput from "./input/SearchInput";
 import SettingsHamburger from "./modals/SettingsHamburger";
+import {useTranslation} from "react-i18next";
 
 const users = ["Komissar1", "Komi", "Alex", "JohnDoe", "Komrad", "Kevin", "Markus"];
 
@@ -16,6 +17,8 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
     const { token } = useAuth();
     const navigate = useNavigate();
+
+    const {t} = useTranslation();
 
     const handleOnChangeSearch = (textSearch) => {
         sendData({ action: "search_users", data: { jwt: token, params: textSearch } });
@@ -94,7 +97,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                             className={"text-muted"}
                             style={{ cursor: "pointer" }}
                         >
-                            Очистить историю поиска
+                            {t('clear_search_history')}
                         </p>
                     </div>
                 )}

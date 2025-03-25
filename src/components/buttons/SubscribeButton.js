@@ -2,11 +2,13 @@ import React, {useEffect} from 'react';
 import {useAuth} from "../../context/UserContext";
 import {useWebSocket} from "../../context/WebSocketContext";
 import {Button} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 const SubscribeButton = ({ sub, setSub, userId, setFollowersCount = (count) => {} }) => {
 
     const { token } = useAuth();
     const {addHandler, deleteHandler, sendData} = useWebSocket();
+    const {t} = useTranslation();
 
     const handleSub = () => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -29,7 +31,7 @@ const SubscribeButton = ({ sub, setSub, userId, setFollowersCount = (count) => {
         <Button variant={sub ? "contained" : "outlined"}
                 sx={{ bgcolor: sub ? 'var(--button-color)' : 'var(--bg-color)', fontSize: '12px', borderRadius: "8px" }}
                 onClick={handleSub}>
-            {sub ? "Отписаться" : "Подписаться"}
+            {sub ? t('unfollow') : t('follow')}
         </Button>
     );
 };

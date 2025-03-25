@@ -10,10 +10,13 @@ import SubscribeButton from "../../components/buttons/SubscribeButton";
 import CloseButton from "../../components/buttons/CloseButton";
 import EditData from './settings/EditData';
 import {Button} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 const Profile = () => {
     const { userData, token, setUserData } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
+
+    const {t} = useTranslation();
 
     const [isMyProfile, setMyProfile] = useState(true);
     const [tempUserData, setTempUserData] = useState(null);
@@ -42,7 +45,7 @@ const Profile = () => {
 
 
     const handleShowFollowers = () => {
-        setModalTitle("Подписчики");
+        setModalTitle(t('followers'));
         BackButton.show();
         BackButton.onClick(() => {setIsModalOpen(false)});
         setIsFollowLoading(true);
@@ -64,7 +67,7 @@ const Profile = () => {
     }, [addHandler, deleteHandler]);
 
     const handleShowFollowing = () => {
-        setModalTitle("Подписки");
+        setModalTitle(t('follows'));
         BackButton.show();
         BackButton.onClick(() => {setIsModalOpen(false)});
         setIsFollowLoading(true);
@@ -213,21 +216,21 @@ const Profile = () => {
                     <div className={styles.profileStats}>
                         <div className={styles.statBlock}>
                             <p className={styles.statNumber}>{tempUserData.count_photos_gallery}</p>
-                            <p className={styles.statLabel}>публикации</p>
+                            <p className={styles.statLabel}>{t('posts')}</p>
                         </div>
                         <div className={styles.statBlock} onClick={() => {
                             openModal();
                             handleShowFollowers();
                         }}>
                             <p className={styles.statNumber}>{tempUserData.followersCount}</p>
-                            <p className={styles.statLabel}>подписчики</p>
+                            <p className={styles.statLabel}>{t('followers')}</p>
                         </div>
                         <div className={styles.statBlock} onClick={() => {
                             openModal();
                             handleShowFollowing();
                         }}>
                             <p className={styles.statNumber}>{tempUserData.followingCount}</p>
-                            <p className={styles.statLabel}>подписки</p>
+                            <p className={styles.statLabel}>{t('follows')}</p>
                         </div>
                     </div>
                 </div>
@@ -266,7 +269,7 @@ const Profile = () => {
                         onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}`}
                         sx={{ bgcolor: 'var(--button-color)', fontSize: '12px', borderRadius: '8px', px: 3, marginLeft: 2 }}
                     >
-                        Поделиться профилем
+                        {t('share_profile')}
                     </Button>
                 </div>
                 <div className="w-100" style={{padding: 3}}>
@@ -339,7 +342,7 @@ const Profile = () => {
                                     )
                                 })
                             ) : (
-                                <p className={"p-2"}>Нет пользователей</p>
+                                <p className={"p-2"}>{t('there_are_no_users')}</p>
                             )}
                         </ul>
                     )

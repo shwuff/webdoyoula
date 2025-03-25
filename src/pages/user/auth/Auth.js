@@ -80,7 +80,7 @@ const Auth = () => {
                         page === "enterEmail" ? (
                             <>
                                 <Typography variant="h5" component="h1" align="center" gutterBottom>
-                                    Войдите в аккаунт
+                                    Signing in
                                 </Typography>
 
                                 <TextField
@@ -93,13 +93,13 @@ const Auth = () => {
                                 />
 
                                 <Button variant="contained" color="primary" onClick={handleSendEmailAuthorization} fullWidth>
-                                    Войти
+                                    Sign in
                                 </Button>
                             </>
                         ) : page === "enterConfirmationCode" ? (
                             <>
                                 <Typography variant="h5" component="h1" align="center" gutterBottom>
-                                    Введите код подтверждения
+                                    Confirmation code
                                 </Typography>
 
                                 <TextField
@@ -112,7 +112,7 @@ const Auth = () => {
                                 />
 
                                 <Button variant="contained" color="primary" onClick={handleSendConfirmationCode} fullWidth>
-                                    Подтвердить
+                                    Confirm
                                 </Button>
                             </>
                         ) : null

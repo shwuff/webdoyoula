@@ -99,7 +99,7 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
             <Modal isOpen={isOpen} onClose={() => setOpen(false)} style={{ overflowY: "auto" }} isFirst={false}>
                 <div className={'w-100 d-flex justify-content-between'}>
                     <Typography variant="h6" style={{ marginTop: '16px', padding: 5 }}>
-                        Комментарии
+                        {t('comments')}
                     </Typography>
                     {
                         !userData.isTelegram && (

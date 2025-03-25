@@ -3,15 +3,18 @@ import styles from './css/Settings.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import {useNavigate} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
 
     const navigate = useNavigate();
 
+    const {t} = useTranslation();
+
     return (
         <div className={styles.container}>
             <div className="center-content-block">
-                <h2 className="pageTitle">Настройки</h2>
+                <h2 className="pageTitle">{t('settings')}</h2>
 
                 <div className={styles.block}>
                     <div className={`${styles.item} ${styles.firstItem}`} onClick={() => navigate('/profile/settings/blanks')}>

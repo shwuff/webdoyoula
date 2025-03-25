@@ -18,10 +18,13 @@ import {useAuth} from "../../../context/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
 import {useWebSocket} from "../../../context/WebSocketContext";
+import {useTranslation} from "react-i18next";
+import CreateAvatarModal from "../../../components/modals/CreateAvatarModal";
 
 const Content = () => {
 
     const { userData, token, setUserData } = useAuth();
+    const {t} = useTranslation();
 
     const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
 
@@ -44,7 +47,7 @@ const Content = () => {
     return (
         <Container maxWidth="sm">
             <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-                Настройки контента
+                {t('content_settings')}
             </Typography>
 
             <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 2, boxShadow: 0 }}>
@@ -52,15 +55,15 @@ const Content = () => {
                     <TableBody>
                         {/* Выгрузка в бота */}
                         <TableRow>
-                            <TableCell>Выгрузка в бота</TableCell>
+                            <TableCell>{t('uploading_to_bot')}</TableCell>
                             <TableCell align="right">
                                 <FormControl>
                                     <Select
                                         value={uploadType}
                                         onChange={(e) => setUploadType(e.target.value)}
                                     >
-                                        <MenuItem value="file">Файл</MenuItem>
-                                        <MenuItem value="media">Медиа</MenuItem>
+                                        <MenuItem value="file">{t('file')}</MenuItem>
+                                        <MenuItem value="media">{t('media')}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </TableCell>
@@ -68,7 +71,7 @@ const Content = () => {
 
                         {/* Формат фото */}
                         <TableRow>
-                            <TableCell>Формат фото</TableCell>
+                            <TableCell>{t('photo_aspect_ratio')}</TableCell>
                             <TableCell align="right">
                                 <FormControl>
                                     <Select
@@ -87,7 +90,7 @@ const Content = () => {
 
                         {/* Автовыгрузка */}
                         <TableRow>
-                            <TableCell>Автоматическая публикация в профиль</TableCell>
+                            <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>
                             <TableCell align="right">
                                 <Switch
                                     checked={autoUpload}
@@ -98,6 +101,7 @@ const Content = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <CreateAvatarModal />
         </Container>
     );
 };

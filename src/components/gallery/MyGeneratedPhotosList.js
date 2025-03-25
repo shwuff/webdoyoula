@@ -14,6 +14,8 @@ import LikeHeart from "../buttons/LikeHeart";
 import PhotoPostModal from "../modals/PhotoPostModal";
 import {BiPlay} from "react-icons/bi";
 import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
+import MyModels from "../models/MyModels";
+import {useTranslation} from "react-i18next";
 
 Modal.setAppElement('#app');
 
@@ -95,7 +97,8 @@ const MyGeneratedPhotosList = ({
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
-    const { token, setMyPhotos, myPhotos, myModels } = useAuth();
+    const { token, setMyPhotos, myPhotos, myModels, setMyModels } = useAuth();
+    const {t} = useTranslation();
 
     const photosRef = useRef(myPhotos);
     const isLoadingRef = useRef(false);
@@ -448,13 +451,43 @@ const MyGeneratedPhotosList = ({
         document.getElementById("generatedPhotosList")?.scrollTo({ top: 0, behavior: 'smooth' });
     }, [photosSortModel]);
 
-    const handleChangePhotosSortModel = useCallback((value) => {
+    useEffect(() => {
+        const handleNewAvatar = (msg) => {
+            const avatar = msg.avatar;
+
+            if(profileGallery === false) {
+                handleChangePhotosSortModel(Number(avatar.id), [
+                    {
+                        ...avatar,
+                        id: Number(avatar.id)
+                    },
+                    ...myModels
+                ]);
+
+                setMyModels(prev => ([
+                    {
+                        ...avatar,
+                        id: Number(avatar.id)
+                    },
+                    ...prev
+                ]));
+            }
+        }
+
+        addHandler('handle_create_new_avatar', handleNewAvatar);
+
+        return () => deleteHandler('handle_create_new_avatar');
+    }, [profileGallery]);
+
+    const handleChangePhotosSortModel = useCallback((value, myModels) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        console.log(value);
         setMyPhotos([]);
         photosRef.current = [];
         setPhotosPage(1);
         setPhotosSortModel(value);
         for (let i = 0; i < myModels.length; i++) {
+            console.log(myModels[i]);
             if (myModels[i].id === value) {
                 setSelectedModel(myModels[i]);
                 break;
@@ -474,15 +507,15 @@ const MyGeneratedPhotosList = ({
                 profileGallery === false && (
                     <div className="myButtonsContainer horizontal-list" style={{ top: '-10px' }}>
                         <button
-                            onClick={() => handleChangePhotosSortModel(0)}
+                            onClick={() => handleChangePhotosSortModel(0, myModels)}
                             className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-outline-primary'}`}
                         >
-                            Все
+                            {t('all')}
                         </button>
                         {myModels && myModels.map((model, idx) => (
                             <button
                                 key={model.id}
-                                onClick={() => handleChangePhotosSortModel(model.id)}
+                                onClick={() => handleChangePhotosSortModel(model.id, myModels)}
                                 className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-outline-primary'}`}
                                 style={{ animationDelay: `${idx * 0.05}s` }}
                             >
@@ -512,7 +545,7 @@ const MyGeneratedPhotosList = ({
                                         style={{marginTop: '10px'}}
                                         onClick={handleUploadToBot}
                                     >
-                                        Выгрузить в бота
+                                        {t('upload_to_bot')}
                                     </button>
                                     {/*<button*/}
                                     {/*    className="btn btn-outline-primary no-wrap"*/}
@@ -561,7 +594,7 @@ const MyGeneratedPhotosList = ({
             {
                 selectedModel.status === 'training' && photosSortModel === selectedModel.id && (
                     <p style={{marginTop: 5}}>
-                        Модель <b>{selectedModel.name}</b> обучается! Вам придет уведомление в бота по готовности
+                        {t('model_training', {avatarName: selectedModel.name})}
                     </p>
                 )
             }

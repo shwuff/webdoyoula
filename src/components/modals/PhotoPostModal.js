@@ -12,11 +12,13 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { motion, AnimatePresence } from 'framer-motion';
 import SubscribeButton from "../buttons/SubscribeButton";
+import {useTranslation} from "react-i18next";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false }) => {
 
     const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
     const {token, userData} = useAuth();
+    const {t} = useTranslation();
 
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [closingModal, setClosingModal] = useState(false);
@@ -236,18 +238,18 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                                         <button className={"btn btn-outline-primary w-100"} onClick={() => {
                                                             handleDeleteFromGallery(selectedPhoto.id);
                                                         }}>
-                                                            Скрыть
+                                                            {t('hide')}
                                                         </button>
                                                     ) : (
                                                         <button className={"btn btn-primary w-100"} onClick={() => {
                                                             handlePublishToGallery(selectedPhoto.id);
                                                         }}>
-                                                            Опубликовать
+                                                            {t('to_publish')}
                                                         </button>
                                                     )
                                                 }
                                                 <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/generate-image-avatar/${selectedPhoto.prompt_id}`)}>
-                                                    Повторить
+                                                    {t('repeat')}
                                                 </button>
                                             </>
                                         ) : (
@@ -278,7 +280,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                                             </p>
                                                         </div>
                                                         <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${selectedPhoto.prompt_id}`)}>
-                                                            Повторить
+                                                            {t('repeat')}
                                                         </button>
                                                         {selectedPhoto.count_generated_with_prompt}
                                                     </div>
@@ -288,16 +290,16 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                                         <>
                                                             {
                                                                 !selectedPhoto.hided === true ? (
-                                                                    <button className={"btn btn-outline-primary w-100"} onClick={() => {
+                                                                    <button className={"btn btn-outline-primary w-100"} style={{marginTop: 5}} onClick={() => {
                                                                         handleDeleteFromGallery(selectedPhoto.id);
                                                                     }}>
-                                                                        Скрыть
+                                                                        {t('hide')}
                                                                     </button>
                                                                 ) : (
-                                                                    <button className={"btn btn-primary w-100"} onClick={() => {
+                                                                    <button className={"btn btn-primary w-100"} style={{marginTop: 5}} onClick={() => {
                                                                         handlePublishToGallery(selectedPhoto.id);
                                                                     }}>
-                                                                        Опубликовать
+                                                                        {t('to_publish')}
                                                                     </button>
                                                                 )
                                                             }

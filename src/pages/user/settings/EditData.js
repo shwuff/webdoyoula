@@ -14,10 +14,13 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from './../../../utils/cropImage';
 import {useWebSocket} from "../../../context/WebSocketContext";
+import {useTranslation} from "react-i18next";
 
 const EditData = () => {
     const { userData, token } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
+
+    const {t} = useTranslation();
 
     const [profileImage, setProfileImage] = useState(userData.photo_url);
     const [name, setName] = useState(userData.first_name);
@@ -77,7 +80,7 @@ const EditData = () => {
             onClick={() => setIsOpen(true)}
             sx={{ bgcolor: 'var(--button-color)', fontSize: '12px', borderRadius: '8px', px: 3 }}
         >
-            Редактировать профиль
+            {t('edit_profile')}
         </Button>
 
       <RightModal
@@ -103,7 +106,7 @@ const EditData = () => {
                       variant="outlined"
                       onClick={() => setOpenCropModal(false)}
                   >
-                      Отмена
+                      {t('cancel')}
                   </Button>
                   <Button
                       variant="contained"
@@ -114,7 +117,7 @@ const EditData = () => {
                           handleUploadNewPic(base64)
                       }}
                   >
-                      Сохранить
+                      {t('save')}
                   </Button>
               </Box>
           </RightModal>
@@ -123,8 +126,7 @@ const EditData = () => {
         
 
           <Box sx={{ position: 'relative', mb: 2 }}>
-          
-            {/* Контейнер для аватара с затемнением */}
+
             <Box
               sx={{
                 position: 'relative',
@@ -180,8 +182,8 @@ const EditData = () => {
             <TextField
               size="small"
               fullWidth
-              label="Имя"
-              placeholder="Имя"
+              label={t('name')}
+              placeholder={t('name')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               sx={{ mb: 2 }}
@@ -191,8 +193,8 @@ const EditData = () => {
             <TextField
               size="small"
               fullWidth
-              label="Фамилия"
-              placeholder="Фамилия"
+              label={t('lastname')}
+              placeholder={t('lastname')}
               value={surname}
               onChange={(e) => setSurname(e.target.value)}
               sx={{ mb: 2 }}
@@ -202,8 +204,8 @@ const EditData = () => {
             <TextField
               size="small"
               fullWidth
-              label="Username"
-              placeholder="Ваш username"
+              label={t('username')}
+              placeholder={t('username')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               sx={{ mb: 3 }}
@@ -215,7 +217,7 @@ const EditData = () => {
               fullWidth
               sx={{ bgcolor: '#2196F3', fontSize: '14px', borderRadius: '8px' }}
             >
-              Сохранить изменения
+                {t('save')}
             </Button>
           </form>
         </Box>

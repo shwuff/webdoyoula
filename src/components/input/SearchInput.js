@@ -1,14 +1,18 @@
 import React from "react";
 import { TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import {useTranslation} from "react-i18next";
 
 const SearchInput = ({
                          value,
                          onChange,
                          onFocus,
                          onBlur,
-                         placeholder = "Поиск..."
+                         placeholder = 'Search'
                      }) => {
+
+    const {t} = useTranslation();
+
     return (
         <TextField
             variant="outlined"
@@ -17,7 +21,7 @@ const SearchInput = ({
             onChange={onChange}
             onFocus={onFocus}
             onBlur={onBlur}
-            placeholder={placeholder}
+            placeholder={t('search')}
             sx={{
                 "& .MuiOutlinedInput-root": {
                     borderRadius: "10px",

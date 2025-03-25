@@ -6,6 +6,7 @@ import { useWebSocket } from "../../context/WebSocketContext";
 import { useAuth } from "../../context/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
+import {useTranslation} from "react-i18next";
 
 const TrainAvatarProcess = ({ model, setModel }) => {
     const [photos, setPhotos] = useState([]);
@@ -16,6 +17,8 @@ const TrainAvatarProcess = ({ model, setModel }) => {
 
     const { sendData, addHandler, deleteHandler, isConnected } = useWebSocket();
     const { token } = useAuth();
+
+    const {t} = useTranslation();
 
     const generateUUID = () => {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -228,7 +231,7 @@ const TrainAvatarProcess = ({ model, setModel }) => {
             </Backdrop>
 
             <p style={{marginTop: 5}}>
-                Модель <b>{model.name}</b> не обучена! Загрузите 10 фотографий для обучения модели.
+                {t('avatar_not_training', {avatarName: model.name})}
             </p>
 
             {
@@ -248,7 +251,7 @@ const TrainAvatarProcess = ({ model, setModel }) => {
                             className={"d-block-xl"}
                         >
                             <input {...getInputProps()} />
-                            <p>Перетащите сюда изображения или нажмите, чтобы загрузить фотографии</p>
+                            <p>{t('drag_and_drop_images')}</p>
                         </Paper>
 
                         <input
@@ -264,7 +267,7 @@ const TrainAvatarProcess = ({ model, setModel }) => {
                             style={{ marginTop: 7 }}
                             onClick={() => document.getElementById("fileUpload").click()}
                         >
-                            Загрузить фотографии
+                            {t('select_images')}
                         </button>
                     </>
                 ) : (
@@ -273,7 +276,7 @@ const TrainAvatarProcess = ({ model, setModel }) => {
                         style={{ marginTop: 10, marginBottom: 10 }}
                         onClick={handleStartTrainingModel}
                     >
-                        Начать обучение модели
+                        {t('start_training_avatar')}
                     </button>
                 )
             }
@@ -333,7 +336,7 @@ const TrainAvatarProcess = ({ model, setModel }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} color="primary">
-                        Закрыть
+                        {t('close')}
                     </Button>
                 </DialogActions>
             </Dialog>

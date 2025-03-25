@@ -4,6 +4,7 @@ import { FaHome, FaBookmark, FaPlus, FaUser, FaSearch, FaFolder } from 'react-ic
 import styles from './css/NavbarBottom.module.css';
 import {useAuth} from "../../context/UserContext";
 import Search from "../Search";
+import {useTranslation} from "react-i18next";
 
 const NavbarBottom = () => {
     const location = useLocation();
@@ -12,6 +13,8 @@ const NavbarBottom = () => {
     const [hideMenu, setHideMenu] = useState(false);
 
     const {userData} = useAuth();
+
+    const {t} = useTranslation();
 
     return (
         <div id={"navbarBottom"} className={styles.navbar}>
@@ -30,7 +33,7 @@ const NavbarBottom = () => {
                                 <div className={styles.navIcon}>
                                     <FaHome className={location.pathname === '/' ? styles.activeIcon : ''} />
                                 </div>
-                                <p className={"navbar-content-title"}>Лента</p>
+                                <p className={"navbar-content-title"}>{t('feed')}</p>
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -39,7 +42,7 @@ const NavbarBottom = () => {
                                 <div className={styles.navIcon}>
                                     <FaSearch className={location.pathname === '/search' ? styles.activeIcon : ''} />
                                 </div>
-                                <p className={"navbar-content-title"}>Поиск</p>
+                                <p className={"navbar-content-title"}>{t('search')}</p>
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -48,7 +51,7 @@ const NavbarBottom = () => {
                                 <div className={styles.navIcon}>
                                     <FaPlus className={location.pathname.startsWith('/studio') ? styles.activeIcon : ''} />
                                 </div>
-                                <span className={"navbar-content-title"}>Мои генерации</span>
+                                <span className={"navbar-content-title"}>{t('my_creations')}</span>
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');

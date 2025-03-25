@@ -6,6 +6,7 @@ import {useWebSocket} from "../../../context/WebSocketContext";
 import {useInView} from "react-intersection-observer";
 import {animated, useSpring} from "@react-spring/web";
 import {useNavigate, useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected }) => {
     const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
@@ -57,6 +58,10 @@ const GenerateImageAvatar = () => {
     const [step, setStep] = useState(1);
     const [mediaGroup, setMediaGroup] = useState(0);
     const [aiStyles, setAiStyles] = useState([]);
+
+    const {t} = useTranslation();
+
+    const {userData} = useAuth();
 
     const {promptId} = useParams();
 
@@ -263,7 +268,7 @@ const GenerateImageAvatar = () => {
 
                 {step === 1 && (
                     <div className={styles.stepContent}>
-                        <h2>Выберите используемую модель</h2>
+                        <h2>{t('select_avatar')}</h2>
                         <div className={styles.amountsContainer}>
                             {myModels?.map((model) => (
                                 <>
@@ -295,7 +300,7 @@ const GenerateImageAvatar = () => {
 
                 {step === 2 && (
                     <div className={styles.stepContent}>
-                        <h2>Выберите метод генерации</h2>
+                        <h2>{t('select_the_generation_method')}</h2>
                         <div className={styles.amountsContainer}>
                             <button
                                 className={`${styles.amountBtn} ${generationType === 'prompt' ? styles.active : ''}`}
@@ -304,7 +309,7 @@ const GenerateImageAvatar = () => {
                                     nextStep();
                                 }}
                             >
-                                По запросу
+                                {t('with_prompt')}
                             </button>
                             <button
                                 className={`${styles.amountBtn} ${generationType === 'style' ? styles.active : ''}`}
@@ -313,7 +318,7 @@ const GenerateImageAvatar = () => {
                                     nextStep();
                                 }}
                             >
-                                По стилю
+                                {t('select_style')}
                             </button>
                         </div>
                     </div>
@@ -321,7 +326,7 @@ const GenerateImageAvatar = () => {
 
                 {step === 3 && generationType === 'style' && (
                     <div className={styles.stepContent}>
-                        <h2>Выберите стиль</h2>
+                        <h2>{t('choose_a_style')}</h2>
                         <div className={styles.amountsContainer} style={{
                             overflowY: "scroll",
                             height: `calc(100vh - ${200 + window?.Telegram?.WebApp?.safeAreaInset?.top * 2}px)`
@@ -335,7 +340,7 @@ const GenerateImageAvatar = () => {
                                         nextStep();
                                     }}
                                 >
-                                    {style.name}
+                                    {userData.language_code === 'ru' ? style.name : style.en_name}
                                 </button>
                             ))}
                         </div>
@@ -343,7 +348,7 @@ const GenerateImageAvatar = () => {
                 )}
                 {step === 3 && generationType === 'prompt' && (
                     <div className={styles.stepContent}>
-                        <h2>Введите промт</h2>
+                        <h2>{t('enter_prompt')}</h2>
                         <textarea
                             value={prompt}
                             onChange={(e) => {
@@ -351,7 +356,7 @@ const GenerateImageAvatar = () => {
                             }}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
-                            placeholder="Опишите, что хотите создать..."
+                            placeholder={t('Describe what you want to create...')}
                         />
                         {
                             prompt.length > 0 && (
@@ -363,7 +368,7 @@ const GenerateImageAvatar = () => {
 
                 {step === 4 && (
                     <div className={styles.stepContent}>
-                        <h2>Выберите количество фотографий</h2>
+                        <h2>{t('select_the_quantity')}</h2>
                         <div className={styles.amountsContainer}>
                             {availableQuantities.map((val) => (
                                 <button

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from './css/CreateContent.module.css';
 import {Link, useNavigate} from "react-router-dom";
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
@@ -8,12 +8,17 @@ import {CiSettings} from "react-icons/ci";
 import WebAppModal from "../../components/modal/WebAppModal";
 import RightModal from "../../components/modal/RightModal";
 import PaymentModal from "../../components/modals/PaymentModal";
+import CreateAvatarModal from "../../components/modals/CreateAvatarModal";
+import {useWebSocket} from "../../context/WebSocketContext";
+import {useTranslation} from "react-i18next";
 
 const CreateContent = () => {
 
     const navigate = useNavigate();
 
     const { userData, myModels, myPhotos } = useAuth();
+
+    const {t} = useTranslation();
 
     const [value, setValue] = useState(0);
     const [photosPage, setPhotosPage] = useState(1);
@@ -57,7 +62,7 @@ const CreateContent = () => {
     };
 
     const features = [
-        { title: "Создать картинку", url: "/studio/generate-image-avatar", available: true }
+        { title: t('create_image'), url: "/studio/generate-image-avatar", available: true }
     ];
 
     return (
@@ -65,11 +70,13 @@ const CreateContent = () => {
             <PaymentModal openPaymentModal={openPaymentModal} setOpenPaymentModal={setOpenPaymentModal} isRubles={userData.language_code === 'ru'} />
             <div className="center-content-block">
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
-                    <div className={"p-2-phone"}>
-                        <p>Баланс фотографий: {userData.photos_left}</p>
-                        <p>Баланс моделей: {userData.models_left}</p>
-                        <button className={"btn btn-primary"} style={{marginTop: 4}} onClick={() => setOpenPaymentModal(true)}>
-                            Пополнить баланс
+                    <div className={"p-2-phone d-flex"}>
+                        <div>
+                            <p>{t('photos_left')} {userData.photos_left}</p>
+                            <p>{t('models_left')} {userData.models_left}</p>
+                        </div>
+                        <button className={"btn btn-primary"} style={{marginTop: 4, marginLeft: 8}} onClick={() => setOpenPaymentModal(true)}>
+                            {t('buy_photos')}
                         </button>
                     </div>
                     <Link to={"/settings/content"}>

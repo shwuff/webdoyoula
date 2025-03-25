@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {useWebSocket} from "../../../context/WebSocketContext";
 import {useAuth} from "../../../context/UserContext";
 import {add} from "react-modal/lib/helpers/classList";
+import {useTranslation} from "react-i18next";
 
 const Blanks = () => {
 
     const {token} = useAuth();
+    const {t} = useTranslation();
     const {sendData, addHandler, deleteHandler} = useWebSocket();
 
     const [blanks, setBlanks] = useState([]);
@@ -35,7 +37,7 @@ const Blanks = () => {
     return (
         <div className={"container"}>
             <div className="center-content-block">
-                <h2 className="pageTitle">Настройки</h2>
+                <h2 className="pageTitle">{t('settings')}</h2>
                 {
                     blanks.posts !== undefined && blanks.posts.map((post, index) => {
                         return (
