@@ -17,6 +17,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Snackbar, Alert, CircularProgress as MUICircularProgress } from "@mui/material";
 import Auth from "./pages/user/auth/Auth";
+import {useTranslation} from "react-i18next";
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -29,11 +30,13 @@ const App = () => {
 
     window.Telegram.WebApp.setBottomBarColor(themeParams.secondary_bg_color);
 
-    const { login, setUserData, setMyModels, token } = useAuth();
+    const { login, setUserData, setMyModels, token, userData } = useAuth();
     const { addHandler, deleteHandler, isConnected, sendData } = useWebSocket();
 
     const [notification, setNotification] = useState(null);
     const [progress, setProgress] = useState(100);
+
+    const {t, i18n} = useTranslation();
 
     const [loading, setLoading] = useState(true);
 
@@ -199,6 +202,18 @@ const App = () => {
     const handleCloseNotification = () => {
         setNotification(null);
     };
+
+    useEffect(() => {
+
+        if(userData !== null) {
+            if(userData.language_code === 'ru') {
+                i18n.changeLanguage('ru');
+            } else {
+                i18n.changeLanguage('en');
+            }
+        }
+
+    }, [userData]);
 
     // useEffect(() => {
     //     const SettingsButton = window?.Telegram?.WebApp?.SettingsButton;

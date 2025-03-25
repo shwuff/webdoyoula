@@ -9,7 +9,7 @@ import Modal from "../../components/modal/Modal";
 import SubscribeButton from "../../components/buttons/SubscribeButton";
 import CloseButton from "../../components/buttons/CloseButton";
 import EditData from './settings/EditData';
-import {Button} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
 const Profile = () => {
@@ -109,10 +109,10 @@ const Profile = () => {
     // }, []);
 
     useEffect(() => {
-        if (userId && userData) {
+        if (userId && userData && tempUserData === null) {
             sendData({ action: 'getProfile', data: { jwt: token, userId } });
         }
-    }, [userId, userData, sendData, token]);
+    }, [userId, userData, sendData, token, tempUserData]);
 
     useEffect(() => {
         const handleGetPosts = (msg) => {
@@ -238,40 +238,49 @@ const Profile = () => {
                     <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
                     <p className={styles.profileUsername}>@{tempUserData.username}</p>
                     <p className={styles.profileDescription}>{tempUserData.bio}</p>
+                </div>
+                <Box sx={{ display: 'flex', gap: 1, padding: "4px" }}>
                     {
                         userData.id === tempUserData.id ? (
-                            <EditData />
+                            <Box sx={{ width: '50%', maxWidth: 300 }}>
+                                <EditData />
+                            </Box>
                         ) : (
-                            <SubscribeButton
-                                sub={tempUserData.sub}
-                                setSub={(sub) => {
-                                    setTempUserData((prev) => {
-                                        return {
-                                            ...prev,
-                                            sub: sub
-                                        }
-                                    });
-                                }}
-                                userId={tempUserData.id}
-                                setFollowersCount={(followersCount) => {
-                                    setTempUserData((prev) => {
-                                        return {
-                                            ...prev,
-                                            followersCount: followersCount
-                                        }
-                                    });
-                                }}
-                            />
+                            <Box sx={{ width: '50%', maxWidth: 300 }}>
+                                <SubscribeButton
+                                    style={{width: "100%" }}
+                                    sub={tempUserData.sub}
+                                    setSub={(sub) => {
+                                        setTempUserData((prev) => {
+                                            return {
+                                                ...prev,
+                                                sub: sub
+                                            }
+                                        });
+                                    }}
+                                    userId={tempUserData.id}
+                                    setFollowersCount={(followersCount) => {
+                                        setTempUserData((prev) => {
+                                            return {
+                                                ...prev,
+                                                followersCount: followersCount
+                                            }
+                                        });
+                                    }}
+                                />
+                            </Box>
                         )
                     }
-                    <Button
-                        variant="contained"
-                        onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}`}
-                        sx={{ bgcolor: 'var(--button-color)', fontSize: '12px', borderRadius: '8px', px: 3, marginLeft: 2 }}
-                    >
-                        {t('share_profile')}
-                    </Button>
-                </div>
+                    <Box sx={{ width: '50%', maxWidth: 300 }}>
+                        <Button
+                            variant="contained"
+                            onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}`}
+                            sx={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", maxWidth: 300, borderRadius: '8px' }}
+                        >
+                            {t('share_profile')}
+                        </Button>
+                    </Box>
+                </Box>
                 <div className="w-100" style={{padding: 3}}>
                     {/*<ViewPosts*/}
                     {/*//     posts={posts}*/}

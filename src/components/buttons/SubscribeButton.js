@@ -4,7 +4,7 @@ import {useWebSocket} from "../../context/WebSocketContext";
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
-const SubscribeButton = ({ sub, setSub, userId, setFollowersCount = (count) => {} }) => {
+const SubscribeButton = ({ sub, setSub, userId, style = {}, setFollowersCount = (count) => {} }) => {
 
     const { token } = useAuth();
     const {addHandler, deleteHandler, sendData} = useWebSocket();
@@ -29,7 +29,7 @@ const SubscribeButton = ({ sub, setSub, userId, setFollowersCount = (count) => {
 
     return (
         <Button variant={sub ? "contained" : "outlined"}
-                sx={{ bgcolor: sub ? 'var(--button-color)' : 'var(--bg-color)', fontSize: '12px', borderRadius: "8px" }}
+                sx={{ bgcolor: sub ? 'var(--button-color)' : 'var(--bg-color)', fontSize: '8px', borderRadius: "8px", ...style }}
                 onClick={handleSub}>
             {sub ? t('unfollow') : t('follow')}
         </Button>

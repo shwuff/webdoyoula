@@ -5,20 +5,23 @@ import { useAuth } from "../../context/UserContext";
 import { useWebSocket } from "../../context/WebSocketContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import {useTranslation} from "react-i18next";
 
 const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }) => {
     const { token, userData } = useAuth();
     const { sendData } = useWebSocket();
+
+    const {t} = useTranslation();
 
     const [selectedOption, setSelectedOption] = useState(null);
     const [currencyType, setCurrencyType] = useState(isRubles ? 'rub' : 'stars');
     const [paymentStep, setPaymentStep] = useState(1);
 
     const paymentOptions = [
-        { id: 1, label: "100 фотографий", rub: 899, stars: 749 },
-        { id: 2, label: "300 фотографий", rub: 1499, stars: 1299 },
-        { id: 3, label: "500 фотографий", rub: 2549, stars: 2199 },
-        { id: 4, label: "1000 фотографий", rub: 4999, stars: 3999 },
+        { id: 1, label: "100 " + t('photos'), rub: 899, stars: 749 },
+        { id: 2, label: "300 " + t('photos'), rub: 1499, stars: 1299 },
+        { id: 3, label: "500 " + t('photos'), rub: 2549, stars: 2199 },
+        { id: 4, label: "1000 " + t('photos'), rub: 4999, stars: 3999 },
     ];
 
     const handleCurrencyChange = (event, newCurrency) => {
@@ -29,7 +32,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
 
     const modelOption = {
         id: 5,
-        label: "Купить модель",
+        label: t('buy_avatar'),
         rub: 399,
         stars: 249
     };
@@ -83,7 +86,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                             exit={{ x: 100, opacity: 0 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <h2>Пополнение баланса</h2>
+                            <h2>{t("Buy photos")}</h2>
                             <div className="payment-plans">
                                 {isRubles && (
                                     <div className="payment-plan-buttons">
@@ -95,7 +98,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                                             sx={{ mb: 2 }}
                                         >
                                             <ToggleButton value="rub">Рубли</ToggleButton>
-                                            <ToggleButton value="stars">Звёзды</ToggleButton>
+                                            <ToggleButton value="stars">Stars</ToggleButton>
                                         </ToggleButtonGroup>
                                     </div>
                                 )}

@@ -78,7 +78,7 @@ const EditData = () => {
         <Button
             variant="contained"
             onClick={() => setIsOpen(true)}
-            sx={{ bgcolor: 'var(--button-color)', fontSize: '12px', borderRadius: '8px', px: 3 }}
+            sx={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px', px: 3 }}
         >
             {t('edit_profile')}
         </Button>
