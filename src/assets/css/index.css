@@ -17,6 +17,10 @@ body, html {
     color: var(--text-color);
 }
 
+.MuiInputBase-root {
+    border-radius: 12px !important;
+}
+
 a, div, button {
     -webkit-tap-highlight-color: transparent;
 }
