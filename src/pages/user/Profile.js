@@ -109,10 +109,10 @@ const Profile = () => {
     // }, []);
 
     useEffect(() => {
-        if (userId && userData && tempUserData === null) {
+        if (userId && userData) {
             sendData({ action: 'getProfile', data: { jwt: token, userId } });
         }
-    }, [userId, userData, sendData, token, tempUserData]);
+    }, [userId]);
 
     useEffect(() => {
         const handleGetPosts = (msg) => {
@@ -236,17 +236,21 @@ const Profile = () => {
                 </div>
                 <div className={styles.profileUserInfo}>
                     <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
-                    <p className={styles.profileUsername}>@{tempUserData.username}</p>
+                    {
+                        tempUserData?.username?.length > 0 && (
+                            <p className={styles.profileUsername}>@{tempUserData.username}</p>
+                        )
+                    }
                     <p className={styles.profileDescription}>{tempUserData.bio}</p>
                 </div>
                 <Box sx={{ display: 'flex', gap: 1, padding: "4px" }}>
                     {
                         userData.id === tempUserData.id ? (
-                            <Box sx={{ width: '50%', maxWidth: 300 }}>
+                            <Box sx={{ width: '50%' }}>
                                 <EditData />
                             </Box>
                         ) : (
-                            <Box sx={{ width: '50%', maxWidth: 300 }}>
+                            <Box sx={{ width: '50%' }}>
                                 <SubscribeButton
                                     style={{width: "100%" }}
                                     sub={tempUserData.sub}
@@ -271,11 +275,11 @@ const Profile = () => {
                             </Box>
                         )
                     }
-                    <Box sx={{ width: '50%', maxWidth: 300 }}>
+                    <Box sx={{ width: '50%' }}>
                         <Button
                             variant="contained"
                             onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}`}
-                            sx={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", maxWidth: 300, borderRadius: '8px' }}
+                            sx={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px' }}
                         >
                             {t('share_profile')}
                         </Button>
@@ -338,10 +342,14 @@ const Profile = () => {
                                                     className={styles.profileName}>
                                                     {user.subscriber?.first_name || user.subscribedTo?.first_name} {user.subscriber?.last_name || user.subscribedTo?.last_name}
                                                 </span>
-                                                <span
-                                                    className={styles.profileUsername}>
-                                                    @{user.subscriber?.username || user.subscribedTo?.username}
-                                                </span>
+                                                {
+                                                    user.subscriber?.username?.length > 0 || user.subscribedTo?.username?.length > 0 && (
+                                                        <span
+                                                            className={styles.profileUsername}>
+                                                            @{user.subscriber?.username || user.subscribedTo?.username}
+                                                        </span>
+                                                    )
+                                                }
                                             </div>
 
                                             {/*<button className={'btn-outline-primary'} >*/}

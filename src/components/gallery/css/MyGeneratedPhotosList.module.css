@@ -65,6 +65,7 @@
     animation: zoomIn 0.3s ease-out;
     transition: opacity 0.3s ease-in-out;
     outline: 0;
+    overflow-y: auto;
 }
 
 @media(min-width: 1200px) {
@@ -121,8 +122,9 @@
 }
 
 .modalImage {
-    max-width: 100%;
+    width: 100%;
     max-height: 100%;
+    object-fit: cover;
 }
 
 .closeButton {
@@ -245,7 +247,10 @@
 
 .imageBlock {
     /*height: calc(100vh - 200px);*/
-    max-height: calc(100vh - 200px);;
+    max-height: calc(100vh - 200px);
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .webAppModal {

@@ -110,7 +110,7 @@ const CreateContent = () => {
                 {/*    </button>*/}
                 {/*</div>*/}
 
-                <div className={styles.tabContent}>
+                <div className={styles.tabContent} id={"scrollBlock"}>
                     {value === 0 && (
                         <MyGeneratedPhotosList
                             resetLastPageRef={resetLastPageRef}

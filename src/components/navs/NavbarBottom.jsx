@@ -62,7 +62,14 @@ const NavbarBottom = () => {
                                 </div>
                                 <div className={styles.profileAvatar}>
                                     <img src={userData.photo_url} alt=""/>
-                                    <p className={"navbar-content-title"}>{userData.first_name} {userData.last_name}</p>
+                                    <div>
+                                        <p className={"navbar-content-title"}>{userData.first_name} {userData.last_name}</p>
+                                        {
+                                            userData?.username?.length > 0 && (
+                                                <p className={"navbar-content-subtitle text-muted"}>@{userData.username}</p>
+                                            )
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </>

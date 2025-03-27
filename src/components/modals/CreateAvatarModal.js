@@ -24,12 +24,13 @@ const CreateAvatarModal = () => {
                 jwt: token,
                 avatarName: avatarName
             }
-        })
+        });
+        navigate('/studio/create');
     }
 
     return (
         <div>
-            <button className={"btn btn-primary"} style={{marginTop: 4}} onClick={() => setOpen(true)}>
+            <button className={"btn btn-primary w-100"} style={{marginTop: 4}} onClick={() => setOpen(true)}>
                 {t('create_avatar')}
             </button>
             <RightModal

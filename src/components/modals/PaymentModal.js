@@ -48,7 +48,6 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
     };
 
     const handleConfirmPurchase = (currency) => {
-        console.log(selectedOption)
         if (!selectedOption) return;
         sendData({
             action: "purchase_generates",

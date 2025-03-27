@@ -63,12 +63,12 @@
 @media(min-width: 1200px) {
 
     .statLabel {
-        font-size: 22px;
+        font-size: 18px;
         color: gray;
     }
 
     .statNumber {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
     }
 }
@@ -126,6 +126,7 @@
 }
 
 .statBlock {
+    cursor: pointer;
     display: block;
 }
 
@@ -159,7 +160,8 @@
     color: #6d6d72;
 
 }
-pageTitle {
+
+.pageTitle {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 15px;
@@ -186,17 +188,16 @@ pageTitle {
     margin-bottom: 15px;
 }
 
-/* Список пользователей */
 .userList {
     list-style: none;
     padding: 5px;
-    height: 100%;
     overflow-y: auto;
     width: 100%;
 }
 
 .userItem {
     display: flex;
+    cursor: pointer;
     align-items: center;
     gap: 10px;
     padding: 10px;

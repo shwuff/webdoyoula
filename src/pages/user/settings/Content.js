@@ -50,6 +50,8 @@ const Content = () => {
                 {t('content_settings')}
             </Typography>
 
+            <CreateAvatarModal />
+
             <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 2, boxShadow: 0 }}>
                 <Table>
                     <TableBody>
@@ -101,7 +103,6 @@ const Content = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <CreateAvatarModal />
         </Container>
     );
 };

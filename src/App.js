@@ -25,10 +25,10 @@ const Bookmark = () => {
 
 const App = () => {
 
-    const themeParams = window.Telegram.WebApp.themeParams;
+    const themeParams = window?.Telegram?.WebApp?.themeParams;
     const navigate = useNavigate();
 
-    window.Telegram.WebApp.setBottomBarColor(themeParams.secondary_bg_color);
+    window.Telegram?.WebApp?.setBottomBarColor(themeParams.secondary_bg_color);
 
     const { login, setUserData, setMyModels, token, userData } = useAuth();
     const { addHandler, deleteHandler, isConnected, sendData } = useWebSocket();
@@ -74,7 +74,8 @@ const App = () => {
         document.documentElement.style.setProperty('--hint-color', '#2196F3');
         document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
         document.documentElement.style.setProperty('--secondary-text-color', '#888888');
-
+        document.documentElement.style.setProperty('--content-height', `calc(100vh - ${window?.Telegram?.WebApp?.safeAreaInset?.top + 40}px)`);
+        document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}px`);
 
         if (token && isConnected) {
             sendData({
@@ -156,8 +157,8 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        if (window.Telegram.WebApp.initDataUnsafe.start_param !== undefined) {
-            const params = window.Telegram.WebApp.initDataUnsafe.start_param.split('--');
+        if (window?.Telegram?.WebApp?.initDataUnsafe?.start_param !== undefined) {
+            const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('--');
 
             params.some(param => {
                 const match = param.match(/userId(\w+)/);
@@ -176,7 +177,7 @@ const App = () => {
             return;
         }
 
-        const totalDuration = 5000;
+        const totalDuration = notification.time || 5000;
         let startTime = null;
 
         function animate(timestamp) {
@@ -246,15 +247,13 @@ const App = () => {
             {
                 window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && (
                     <div style={{width: "100%", height: window.Telegram.WebApp?.safeAreaInset?.top
-                            ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
-                            : '0', background: "var(--bg-color)", display: "fixed", position: "absolute", zIndex: 500}}>
+                                 ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
+                                 : '0', background: "var(--bg-color)", display: "block", position: "fixed", zIndex: 500}}>
 
                     </div>
                 )
             }
-            <div style={{paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
-                    ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
-                    : '0'}}>
+            <div>
                 <Routes>
                     <Route path="/" element={<FeedPage />} />
                     {/*<Route path="/profile/auth" element={<Auth />} />*/}
@@ -275,22 +274,21 @@ const App = () => {
                 open={Boolean(notification)}
                 onClose={handleCloseNotification}
                 autoHideDuration={5000}
-                sx={{marginBottom: "50px"}}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{marginBottom: "50px", zIndex: "10000"}}
+                anchorOrigin={{ vertical: notification?.position ? notification?.position : "bottom", horizontal: 'center' }}
             >
                 <Alert
                     onClose={handleCloseNotification}
                     severity={notification?.ok ? "success" : "error"}
                     // icon={
-                    //     // <CircularProgress
-                    //     //     variant="determinate"
-                    //     //     value={progress}
-                    //     //     size={24}
-                    //     //     thickness={5}
-                    //     // />
+                    //     <CircularProgress
+                    //         variant="determinate"
+                    //         value={progress}
+                    //         size={24}
+                    //     />
                     // }
                 >
-                    {notification?.message}
+                    {t(notification?.message)}
                 </Alert>
             </Snackbar>
         </div>

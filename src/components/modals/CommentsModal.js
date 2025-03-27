@@ -95,7 +95,7 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
 
     return (
         <div>
-            <button className="actionButton">
+            <button className="actionButton d-flex align-items-center">
                 <img src={CommentIcon} className="comment"  onClick={() => setOpen(true)} alt={"Comment icon"} style={{width: 24, height: 24}} />
             </button>
             <Modal isOpen={isOpen} onClose={() => setOpen(false)} style={{ overflowY: "auto" }} isFirst={false}>

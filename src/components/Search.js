@@ -122,7 +122,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                                           {user.first_name} {user.last_name}
                                         </span>
                                         <br />
-                                        <span style={{ color: "gray" }}>{user.username}</span>
+                                        {user.username?.length > 0 ? <span style={{ color: "gray" }}>@{user.username}</span> : "" }
                                     </div>
                                 </div>
                             </li>

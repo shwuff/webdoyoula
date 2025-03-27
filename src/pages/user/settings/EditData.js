@@ -59,7 +59,6 @@ const EditData = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log({ profileImage, name, username });
 
         sendData({
             action: "update_personal_data",
@@ -183,7 +182,6 @@ const EditData = () => {
               size="small"
               fullWidth
               label={t('name')}
-              placeholder={t('name')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               sx={{ mb: 2 }}
@@ -194,7 +192,6 @@ const EditData = () => {
               size="small"
               fullWidth
               label={t('lastname')}
-              placeholder={t('lastname')}
               value={surname}
               onChange={(e) => setSurname(e.target.value)}
               sx={{ mb: 2 }}
@@ -205,7 +202,6 @@ const EditData = () => {
               size="small"
               fullWidth
               label={t('username')}
-              placeholder={t('username')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               sx={{ mb: 3 }}

@@ -15,7 +15,7 @@
     color: #666;
     text-decoration: none;
     padding: 10px;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -25,7 +25,7 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 /*.navItem:hover .navIcon {*/
@@ -73,6 +73,7 @@
 
     .navItem.active * {
         color: var(--bg-color, #fff) !important;
+        background: inherit;
     }
 
     .profileIcon {

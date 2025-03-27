@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import config from "../config";
+import { useImageContext } from './ImageContext';
 
 const WebSocketContext = createContext();
 
@@ -11,6 +12,7 @@ export const WebSocketProvider = ({ children }) => {
     const wsRef = useRef(null);
     const handlersRef = useRef({});
     const [isConnected, setIsConnected] = useState(false);
+    const { addImage, getImage, hasImage, updateImage } = useImageContext();
 
     useEffect(() => {
         const connectWebSocket = () => {
@@ -44,7 +46,7 @@ export const WebSocketProvider = ({ children }) => {
 
                             const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.fileType === 'video/mp4' ? "video/mp4" : "image/webp" });
 
-                            images.push({
+                            const imageData = {
                                 id: photo.id,
                                 status: photo.status,
                                 hided: photo.hided,
@@ -62,9 +64,21 @@ export const WebSocketProvider = ({ children }) => {
                                 prompt_id: photo.prompt_id,
                                 count_views: photo.count_views,
                                 count_generated_with_prompt: photo.count_generated_with_prompt,
-                                size: photo.size
-                            });
+                                size: photo.size,
+                                low: photo.low
+                            };
+
                             offset += photo.size;
+
+                            if(metaData.action === 'generated_photos_append' && !hasImage(photo.id)) {
+                                addImage(photo.id, imageData);
+                            }
+
+                            if(metaData.action === 'photo_modal_studio') {
+                                updateImage(photo.id, imageData);
+                            }
+
+                            images.push(imageData);
                         }
                     }
 
@@ -109,9 +123,9 @@ export const WebSocketProvider = ({ children }) => {
 
     useEffect(() => {
         if (isConnected) {
-            let tg = window.Telegram.WebApp;
-            const hash = tg.initDataUnsafe.hash;
-            const initData = tg.initData;
+            let tg = window?.Telegram?.WebApp;
+            const hash = tg?.initDataUnsafe?.hash;
+            const initData = tg?.initData;
             sendData({ action: "authorization", data: { hash, initData } });
         }
     }, [isConnected]);
@@ -130,8 +144,28 @@ export const WebSocketProvider = ({ children }) => {
             return;
         }
 
-        try {
-            // 1) Собираем метаданные о файлах
+         if (data.action === 'get_photo') {
+             const photoId = data.data?.photoId;
+
+             if (hasImage(photoId)) {
+                 const image = getImage(photoId);
+
+                 if (handlersRef.current['photo_modal_studio']) {
+                     if(image.low === false) {
+                         handlersRef.current['photo_modal_studio']({
+                             media: [image]
+                         });
+                         return;
+                     } else {
+                         handlersRef.current['photo_modal_studio']({
+                             media: [image]
+                         });
+                     }
+                 }
+             }
+         }
+
+         try {
             const fileMetas = [];
             const fileBuffers = [];
 

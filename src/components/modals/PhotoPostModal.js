@@ -13,6 +13,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { motion, AnimatePresence } from 'framer-motion';
 import SubscribeButton from "../buttons/SubscribeButton";
 import {useTranslation} from "react-i18next";
+import {useImageContext} from "../../context/ImageContext";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false }) => {
 
@@ -24,6 +25,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
     const [closingModal, setClosingModal] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(null);
 
+    const { updateImage, currentImageContext, setCurrentImageContext } = useImageContext();
+
     const navigate = useNavigate();
 
     const BackButton = window.Telegram.WebApp.BackButton;
@@ -31,8 +34,9 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
     const closeModal = useCallback(() => {
         setIsModalOpen(false);
         setSelectedPhoto(null);
+        setCurrentImageContext(0);
         BackButton.hide();
-    }, []);
+    }, [setCurrentImageContext]);
 
     const handleLike = (imageId, userId) => {
         sendData({
@@ -69,12 +73,15 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                     }
                     : prevPhoto
             );
+
+            updateImage(msg.imageId, {liked: msg.liked, likes_count: msg.likesCount});
+
             window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         };
 
         addHandler('handle_update_like', handleLikes);
         return () => deleteHandler('handle_update_like');
-    }, [userData, selectedPhoto]);
+    }, [userData, selectedPhoto, updateImage]);
 
     useEffect(() => {
 
@@ -94,7 +101,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
 
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
-            if (!msg.media || msg.media.length < 1) return;
+
+            if (!msg.media || msg.media.length < 1 || currentImageContext !== msg.media[0].id) return;
             setSelectedPhoto(msg.media[0]);
             BackButton.show();
             setIsModalOpen(true);
@@ -103,7 +111,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
 
         addHandler('photo_modal_studio', handlePhotoGeneratedModal);
         return () => deleteHandler('photo_modal_studio');
-    }, [addHandler, deleteHandler, BackButton]);
+    }, [addHandler, deleteHandler, BackButton, currentImageContext]);
 
     useEffect(() => {
         const handleMessage = async (msg) => {
@@ -155,9 +163,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                         onClick={(e) => e.stopPropagation()}
                     >
                         {selectedPhoto && (
-                            <div style={{ overflowY: "auto", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
-                                    ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
-                                    : '0' }}>
+                            <div style={{ overflowY: "auto", paddingTop: "var(--safeAreaInset-top)" }}>
                                 {
                                     profileGallery && (
                                         <div className="p-2 d-flex align-items-center justify-content-between">
@@ -258,24 +264,24 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                                     <div className={"actionBar d-flex align-items-center"}>
                                                         <div className={"d-flex align-items-center"}>
                                                             <button
-                                                                className="actionButton"
+                                                                className="actionButton d-flex align-items-center"
                                                                 onClick={() => handleLike(selectedPhoto.id, userData.id)}
                                                             >
                                                                 <LikeHeart liked={selectedPhoto.liked} />
                                                             </button>
-                                                            <p style={{marginLeft: "5px", marginTop: "5px"}}>
+                                                            <p style={{marginLeft: "5px"}}>
                                                                 {selectedPhoto.likes_count}
                                                             </p>
                                                         </div>
                                                         <div className={"d-flex align-items-center"}>
                                                             <CommentsModal photoGallery={selectedPhoto} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />
-                                                            <p style={{marginLeft: "8px", marginTop: "5px"}}>
+                                                            <p style={{marginLeft: "8px"}}>
                                                                 {selectedPhoto.comments_count}
                                                             </p>
                                                         </div>
                                                         <div className={"d-flex align-items-center"} style={{marginLeft: 3}}>
-                                                            <VisibilityIcon sx={{width: 24, height: 24, marginTop: 0.5}} />
-                                                            <p style={{marginLeft: "8px", marginTop: "5px"}}>
+                                                            <VisibilityIcon sx={{width: 24, height: 24}} />
+                                                            <p style={{marginLeft: "8px"}}>
                                                                 {selectedPhoto.count_views}
                                                             </p>
                                                         </div>

@@ -85,6 +85,10 @@ a, div, button {
     .p-2-phone {
         padding: 0;
     }
+
+    .MuiButtonBase-root {
+        font-size: 12px !important;
+    }
 }
 
 .w-100 {
@@ -201,7 +205,8 @@ a, div, button {
     width: 100%;
     max-width: 600px;
     margin:auto;
-    padding: 3px
+    padding: 3px;
+    max-height: var(--content-height);
 }
 
 .center-content-block-search {
@@ -454,10 +459,15 @@ a, div, button {
     display: none;
 }
 
+.navbar-content-subtitle {
+    display: none;
+}
+
 .globalBlock {
-    height: calc(100vh - 85px);
+    height: var(--content-height);
     overflow-y: scroll;
     padding: 5px;
+    padding-top: var(--safeAreaInset-top);
 }
 
 .modalContent {
@@ -493,6 +503,7 @@ a, div, button {
         justify-content: center;
         align-items: start;
         background: var(--bg-color);
+        padding-top: var(--safeAreaInset-top);
     }
 
     .navbar-content {
@@ -517,6 +528,13 @@ a, div, button {
     .navbar-content-title {
         display: block;
         margin-left: 10px;
+        font-size: 14px;
+    }
+
+    .navbar-content-subtitle {
+        display: block;
+        margin-left: 10px;
+        font-size: 12px;
     }
 
     .navbar-content {
@@ -534,6 +552,7 @@ a, div, button {
         align-items: start;
         background: var(--bg-color);
         border-right: 1px solid rgb(0,0,0,.1);
+        padding-top: calc(var(--safeAreaInset-top) * 2);
     }
 
     .center-content-block {

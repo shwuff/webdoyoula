@@ -35,9 +35,7 @@ const Modal = ({ isOpen, onClose, children, style, isFirst = true }) => {
                 >
                     <motion.div
                         style={{
-                            paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
-                                ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
-                                : '0'
+                            paddingTop: "var(--safeAreaInset-top)"
                         }}
                         className={styles.modalContent}
                         initial={{ scale: 0.8, opacity: 0 }}

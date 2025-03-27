@@ -16,6 +16,7 @@ import {BiPlay} from "react-icons/bi";
 import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
 import MyModels from "../models/MyModels";
 import {useTranslation} from "react-i18next";
+import {useImageContext} from "../../context/ImageContext";
 
 Modal.setAppElement('#app');
 
@@ -98,6 +99,7 @@ const MyGeneratedPhotosList = ({
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
     const { token, setMyPhotos, myPhotos, myModels, setMyModels } = useAuth();
+    const { setCurrentImageContext } = useImageContext();
     const {t} = useTranslation();
 
     const photosRef = useRef(myPhotos);
@@ -115,8 +117,10 @@ const MyGeneratedPhotosList = ({
 
     const BackButton = window.Telegram.WebApp.BackButton;
 
-    const openModal = useCallback((photoId) => {
-        // setOpenBackdropLoader(true);
+    const openModal = useCallback(async (photoId) => {
+
+        await setCurrentImageContext(photoId);
+
         sendData({
             action: "get_photo",
             data: {
@@ -126,7 +130,8 @@ const MyGeneratedPhotosList = ({
                 userIdLoaded: userIdLoaded
             }
         });
-    }, [sendData, token]);
+
+    }, [sendData, token, setCurrentImageContext]);
 
     // const openModalP = (post) => {
     //     if (!post) return;
@@ -283,7 +288,7 @@ const MyGeneratedPhotosList = ({
         if (idx > 0) {
             openModal(myPhotos[idx - 1].id);
         }
-    }, [myPhotos]);
+    }, [myPhotos, sendData]);
 
     // Click backButton Telegram
     useEffect(() => {
@@ -322,7 +327,7 @@ const MyGeneratedPhotosList = ({
             action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
             data: { jwt: token, photosPage, photosSortModel, userIdLoaded, requestId: requestId }
         });
-    }, [sendData, token, photosPage, photosSortModel, userIdLoaded, isLoadingRef.current, from, isConnected, requestId]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, isConnected, requestId]);
 
     //start generating image
     useEffect(() => {
@@ -481,13 +486,11 @@ const MyGeneratedPhotosList = ({
 
     const handleChangePhotosSortModel = useCallback((value, myModels) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        console.log(value);
         setMyPhotos([]);
         photosRef.current = [];
         setPhotosPage(1);
         setPhotosSortModel(value);
         for (let i = 0; i < myModels.length; i++) {
-            console.log(myModels[i]);
             if (myModels[i].id === value) {
                 setSelectedModel(myModels[i]);
                 break;
@@ -505,7 +508,7 @@ const MyGeneratedPhotosList = ({
         <div>
             {
                 profileGallery === false && (
-                    <div className="myButtonsContainer horizontal-list" style={{ top: '-10px' }}>
+                    <div className="myButtonsContainer horizontal-list">
                         <button
                             onClick={() => handleChangePhotosSortModel(0, myModels)}
                             className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-outline-primary'}`}

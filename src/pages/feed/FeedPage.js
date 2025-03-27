@@ -93,7 +93,7 @@ const FeedPage = () => {
         if (idx > 0) {
             openModal(sortedItems[idx - 1].id, selectedPhoto.author.id);
         }
-    }, [sortedItems]);
+    }, [sortedItems, sendData]);
 
     const openModal = useCallback((photoId, userId) => {
         setOpenBackdropLoader(true);
@@ -108,7 +108,6 @@ const FeedPage = () => {
         });
     }, [sendData, token]);
 
-    // WebSocket: подписка на событие "load_photos"
     useEffect(() => {
         addHandler("load_photos", handleLoadPhotos);
         return () => {
@@ -116,11 +115,9 @@ const FeedPage = () => {
         };
     }, [addHandler, deleteHandler, handleLoadPhotos]);
 
-    // Используем IntersectionObserver, чтобы вызывать fetchMoreData при достижении "sentinel" внизу
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                // Если элемент в зоне видимости
                 if (entries[0].isIntersecting) {
                     fetchMoreData();
                 }
