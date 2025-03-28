@@ -76,6 +76,7 @@ const App = () => {
         document.documentElement.style.setProperty('--secondary-text-color', '#888888');
         document.documentElement.style.setProperty('--content-height', `calc(100vh - ${window?.Telegram?.WebApp?.safeAreaInset?.top + 40}px)`);
         document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}px`);
+        document.documentElement.style.setProperty('--safeAreaInset-top-value', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}`);
 
         if (token && isConnected) {
             sendData({
@@ -94,6 +95,9 @@ const App = () => {
             if (!window.Telegram.WebApp.isFullscreen && window.Telegram.WebApp.requestFullscreen) {
                 window.Telegram.WebApp.requestFullscreen();
             }
+        }
+        if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.disableVerticalSwipes) {
+            window.Telegram.WebApp.disableVerticalSwipes();
         }
     }, []);
 

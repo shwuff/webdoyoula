@@ -3,7 +3,6 @@ import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import {Avatar, Box, Typography} from "@mui/material";
 import LikeHeart from "../buttons/LikeHeart";
 import CommentsModal from "./CommentsModal";
-import Modal from "../modal/Modal";
 import {useWebSocket} from "../../context/WebSocketContext";
 import {useAuth} from "../../context/UserContext";
 import {useNavigate} from "react-router-dom";
@@ -13,9 +12,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { motion, AnimatePresence } from 'framer-motion';
 import SubscribeButton from "../buttons/SubscribeButton";
 import {useTranslation} from "react-i18next";
-import {useImageContext} from "../../context/ImageContext";
+import {useDispatch, useSelector} from "react-redux";
+import { setCurrentImageSelected, updateImage } from "../../redux/actions/imageActions";
 
-const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false }) => {
+const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false }) => {
 
     const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
     const {token, userData} = useAuth();
@@ -23,20 +23,19 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
 
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [closingModal, setClosingModal] = useState(false);
-    const [selectedPhoto, setSelectedPhoto] = useState(null);
-
-    const { updateImage, currentImageContext, setCurrentImageContext } = useImageContext();
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const imageSelector = useSelector((state) => state.image.images);
 
     const BackButton = window.Telegram.WebApp.BackButton;
 
     const closeModal = useCallback(() => {
         setIsModalOpen(false);
-        setSelectedPhoto(null);
-        setCurrentImageContext(0);
+        setSelectedPhoto(0);
+        setCurrentImageSelected(0);
         BackButton.hide();
-    }, [setCurrentImageContext]);
+    }, [setCurrentImageSelected]);
 
     const handleLike = (imageId, userId) => {
         sendData({
@@ -61,20 +60,11 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
 
     useEffect(() => {
         const handleLikes = (msg) => {
-            if (!selectedPhoto || selectedPhoto.id !== msg.imageId) {
+            if (!selectedPhoto || selectedPhoto !== msg.imageId) {
                 return;
             }
-            setSelectedPhoto((prevPhoto) =>
-                prevPhoto && prevPhoto.id === msg.imageId
-                    ? {
-                        ...prevPhoto,
-                        liked: msg.liked,
-                        likes_count: msg.likesCount
-                    }
-                    : prevPhoto
-            );
 
-            updateImage(msg.imageId, {liked: msg.liked, likes_count: msg.likesCount});
+            dispatch(updateImage(msg.imageId, {liked: msg.liked, likes_count: msg.likesCount}));
 
             window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         };
@@ -101,25 +91,21 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
 
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
-
-            if (!msg.media || msg.media.length < 1 || currentImageContext !== msg.media[0].id) return;
-            setSelectedPhoto(msg.media[0]);
+            if (!msg.media || msg.media.length < 1) return;
             BackButton.show();
             setIsModalOpen(true);
             setOpenBackdropLoader(false);
+            dispatch(updateImage(msg.media[0].id, {blob_url: msg.media[0].blob_url}));
         };
 
         addHandler('photo_modal_studio', handlePhotoGeneratedModal);
         return () => deleteHandler('photo_modal_studio');
-    }, [addHandler, deleteHandler, BackButton, currentImageContext]);
+    }, [addHandler, deleteHandler, BackButton, selectedPhoto]);
 
     useEffect(() => {
         const handleMessage = async (msg) => {
-            if(selectedPhoto !== null && selectedPhoto.id === msg.photoId) {
-                setSelectedPhoto((prev) => ({
-                    ...prev,
-                    hided: msg.hided
-                }));
+            if(selectedPhoto !== null && selectedPhoto === msg.photoId) {
+                dispatch(updateImage(msg.photoId, {hided: msg.hided}));
             }
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         };
@@ -131,9 +117,9 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === "ArrowLeft") {
-                prevPhoto(selectedPhoto);
+                prevPhoto(imageSelector[selectedPhoto]);
             } else if (event.key === "ArrowRight") {
-                nextPhoto(selectedPhoto);
+                nextPhoto(imageSelector[selectedPhoto]);
             }
         };
 
@@ -162,43 +148,43 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                         transition={{ duration: 0.2 }}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {selectedPhoto && (
+                        {imageSelector[selectedPhoto] && (
                             <div style={{ overflowY: "auto", paddingTop: "var(--safeAreaInset-top)" }}>
                                 {
                                     profileGallery && (
                                         <div className="p-2 d-flex align-items-center justify-content-between">
-                                            <Box display="flex" alignItems="center" gap={1} onClick={() => navigate(`/profile/${selectedPhoto.author.id}`)}>
+                                            <Box display="flex" alignItems="center" gap={1} onClick={() => navigate(`/profile/${imageSelector[selectedPhoto].author.id}`)}>
                                                 <Avatar
-                                                    src={selectedPhoto.author.photo_url}
-                                                    alt={`${selectedPhoto.author.first_name} ${selectedPhoto.author.last_name}`}
+                                                    src={imageSelector[selectedPhoto].author.photo_url}
+                                                    alt={`${imageSelector[selectedPhoto].author.first_name} ${imageSelector[selectedPhoto].author.last_name}`}
                                                     sx={{ width: 40, height: 40 }}
                                                 />
 
                                                 <Box>
                                                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                                        {selectedPhoto.author.first_name} {selectedPhoto.author.last_name}
+                                                        {imageSelector[selectedPhoto].author.first_name} {imageSelector[selectedPhoto].author.last_name}
                                                     </Typography>
                                                     <Typography variant="body2" className={"text-muted"}>
-                                                        @{selectedPhoto.author.username}
+                                                        @{imageSelector[selectedPhoto].author.username}
                                                     </Typography>
                                                 </Box>
                                             </Box>
                                             {
-                                                Number(selectedPhoto.author.id) !== Number(userData.id) && (
+                                                Number(imageSelector[selectedPhoto].author.id) !== Number(userData.id) && (
                                                     <SubscribeButton
-                                                        sub={selectedPhoto.author.sub}
+                                                        sub={imageSelector[selectedPhoto].author.sub}
                                                         setSub={(sub) => {
-                                                            setSelectedPhoto((prev) => {
+                                                            imageSelector[selectedPhoto]((prev) => {
                                                                 return {
                                                                     ...prev,
                                                                     author: {
-                                                                        ...selectedPhoto.author,
+                                                                        ...imageSelector[selectedPhoto].author,
                                                                         sub: sub
                                                                     }
                                                                 }
                                                             });
                                                         }}
-                                                        userId={selectedPhoto.author.id}
+                                                        userId={imageSelector[selectedPhoto].author.id}
                                                     />
                                                 )
                                             }
@@ -207,29 +193,29 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                 }
                                 <div className={styles.imageBlock} style={{ maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                     ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}>
-                                    <div className={styles.leftNav} onClick={() => prevPhoto(selectedPhoto)}>
+                                    <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
                                         <button
                                             className={styles.navButton}
                                             style={{ left: 10 }}
-                                            onClick={() => prevPhoto(selectedPhoto)}
+                                            onClick={() => prevPhoto(imageSelector[selectedPhoto])}
                                         >
                                             <ArrowBackIosNewIcon />
                                         </button>
                                     </div>
 
                                     <img
-                                        src={selectedPhoto.blob_url}
-                                        alt={`photo-${selectedPhoto.id}`}
+                                        src={imageSelector[selectedPhoto].blob_url}
+                                        alt={`photo-${imageSelector[selectedPhoto].id}`}
                                         className={styles.modalImage}
                                         style={{maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                                 ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`}}
                                     />
 
-                                    <div className={styles.rightNav} onClick={() => nextPhoto(selectedPhoto)}>
+                                    <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
                                         <button
                                             className={styles.navButton}
                                             style={{ right: 10 }}
-                                            onClick={() => nextPhoto(selectedPhoto)}
+                                            onClick={() => nextPhoto(imageSelector[selectedPhoto])}
                                         >
                                             <ArrowForwardIosIcon />
                                         </button>
@@ -240,21 +226,21 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                         profileGallery === false ? (
                                             <>
                                                 {
-                                                    !selectedPhoto.hided === true ? (
+                                                    !imageSelector[selectedPhoto].hided === true ? (
                                                         <button className={"btn btn-outline-primary w-100"} onClick={() => {
-                                                            handleDeleteFromGallery(selectedPhoto.id);
+                                                            handleDeleteFromGallery(imageSelector[selectedPhoto].id);
                                                         }}>
                                                             {t('hide')}
                                                         </button>
                                                     ) : (
                                                         <button className={"btn btn-primary w-100"} onClick={() => {
-                                                            handlePublishToGallery(selectedPhoto.id);
+                                                            handlePublishToGallery(imageSelector[selectedPhoto].id);
                                                         }}>
                                                             {t('to_publish')}
                                                         </button>
                                                     )
                                                 }
-                                                <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/generate-image-avatar/${selectedPhoto.prompt_id}`)}>
+                                                <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                     {t('repeat')}
                                                 </button>
                                             </>
@@ -265,45 +251,45 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, ne
                                                         <div className={"d-flex align-items-center"}>
                                                             <button
                                                                 className="actionButton d-flex align-items-center"
-                                                                onClick={() => handleLike(selectedPhoto.id, userData.id)}
+                                                                onClick={() => handleLike(imageSelector[selectedPhoto].id, userData.id)}
                                                             >
-                                                                <LikeHeart liked={selectedPhoto.liked} />
+                                                                <LikeHeart liked={imageSelector[selectedPhoto].liked} />
                                                             </button>
                                                             <p style={{marginLeft: "5px"}}>
-                                                                {selectedPhoto.likes_count}
+                                                                {imageSelector[selectedPhoto].likes_count}
                                                             </p>
                                                         </div>
                                                         <div className={"d-flex align-items-center"}>
-                                                            <CommentsModal photoGallery={selectedPhoto} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />
+                                                            <CommentsModal photoGallery={imageSelector[selectedPhoto]} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />
                                                             <p style={{marginLeft: "8px"}}>
-                                                                {selectedPhoto.comments_count}
+                                                                {imageSelector[selectedPhoto].comments_count}
                                                             </p>
                                                         </div>
                                                         <div className={"d-flex align-items-center"} style={{marginLeft: 3}}>
                                                             <VisibilityIcon sx={{width: 24, height: 24}} />
                                                             <p style={{marginLeft: "8px"}}>
-                                                                {selectedPhoto.count_views}
+                                                                {imageSelector[selectedPhoto].count_views}
                                                             </p>
                                                         </div>
-                                                        <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${selectedPhoto.prompt_id}`)}>
+                                                        <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
                                                         </button>
-                                                        {selectedPhoto.count_generated_with_prompt}
+                                                        {imageSelector[selectedPhoto].count_generated_with_prompt}
                                                     </div>
                                                 </div>
                                                 {
-                                                    Number(selectedPhoto.author.id) === userData.id && (
+                                                    Number(imageSelector[selectedPhoto].author.id) === userData.id && (
                                                         <>
                                                             {
-                                                                !selectedPhoto.hided === true ? (
+                                                                !imageSelector[selectedPhoto].hided === true ? (
                                                                     <button className={"btn btn-outline-primary w-100"} style={{marginTop: 5}} onClick={() => {
-                                                                        handleDeleteFromGallery(selectedPhoto.id);
+                                                                        handleDeleteFromGallery(imageSelector[selectedPhoto].id);
                                                                     }}>
                                                                         {t('hide')}
                                                                     </button>
                                                                 ) : (
                                                                     <button className={"btn btn-primary w-100"} style={{marginTop: 5}} onClick={() => {
-                                                                        handlePublishToGallery(selectedPhoto.id);
+                                                                        handlePublishToGallery(imageSelector[selectedPhoto].id);
                                                                     }}>
                                                                         {t('to_publish')}
                                                                     </button>

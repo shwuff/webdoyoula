@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const ImageContext = createContext();
 
@@ -10,46 +10,33 @@ export const ImageProvider = ({ children }) => {
     const [images, setImages] = useState({});
     const [currentImageContext, setCurrentImageContext] = useState(0);
 
-    console.log(images);
+    const addImage = useCallback((id, imageData) => {
+        setImages((prevImages) => ({
+            ...prevImages,
+            [id]: imageData,
+        }));
+    }, []);
 
-    const addImage = (id, imageData) => {
-        setImages((prevImages) => {
-            return {
-                ...prevImages,
-                [id]: imageData,
-            };
-        });
-    };
-
-    const getImage = (id) => {
+    const getImage = useCallback((id) => {
         return images[id];
-    };
+    }, [images]); // зависимость от images, так как мы обращаемся к состоянию
 
-    const hasImage = (id) => {
+    const hasImage = useCallback((id) => {
         return id in images;
-    };
+    }, [images]); // зависимость от images
 
-    const updateImage = (id, newImageData) => {
-
-        setImages((prevImages) => {
-            if (id in prevImages) {
-                return {
-                    ...prevImages,
-                    [id]: {
-                        ...prevImages[id],
-                        ...newImageData,
-                    },
-                };
-            } else {
-                return {
-                    ...prevImages,
-                    [id]: newImageData,
-                };
+    const updateImage = useCallback((id, newImageData) => {
+        setImages((prevImages) => ({
+            ...prevImages,
+            [id]: {
+                ...prevImages[id],
+                ...newImageData
             }
-        });
-    };
+        }));
+    }, []);
 
     useEffect(() => {
+        console.log(images);
     }, [images]);
 
     return (

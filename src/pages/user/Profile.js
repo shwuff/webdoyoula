@@ -343,12 +343,12 @@ const Profile = () => {
                                                     {user.subscriber?.first_name || user.subscribedTo?.first_name} {user.subscriber?.last_name || user.subscribedTo?.last_name}
                                                 </span>
                                                 {
-                                                    user.subscriber?.username?.length > 0 || user.subscribedTo?.username?.length > 0 && (
+                                                    user.subscriber?.username?.length > 0 || user.subscribedTo?.username?.length > 0 ? (
                                                         <span
                                                             className={styles.profileUsername}>
                                                             @{user.subscriber?.username || user.subscribedTo?.username}
                                                         </span>
-                                                    )
+                                                    ) : null
                                                 }
                                             </div>
 

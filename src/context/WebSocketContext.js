@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import config from "../config";
-import { useImageContext } from './ImageContext';
+import { useDispatch, useSelector } from 'react-redux';
+import {addImage, setCurrentImageSelected, updateImage} from '../redux/actions/imageActions';
 
 const WebSocketContext = createContext();
 
@@ -12,7 +13,9 @@ export const WebSocketProvider = ({ children }) => {
     const wsRef = useRef(null);
     const handlersRef = useRef({});
     const [isConnected, setIsConnected] = useState(false);
-    const { addImage, getImage, hasImage, updateImage } = useImageContext();
+
+    const dispatch = useDispatch();
+    const imagesSelector = useSelector((state) => state.image.images);
 
     useEffect(() => {
         const connectWebSocket = () => {
@@ -70,12 +73,12 @@ export const WebSocketProvider = ({ children }) => {
 
                             offset += photo.size;
 
-                            if(metaData.action === 'generated_photos_append' && !hasImage(photo.id)) {
-                                addImage(photo.id, imageData);
+                            if(metaData.action === 'generated_photos_append' && !(photo.id in imagesSelector)) {
+                                dispatch(addImage(photo.id, imageData));
                             }
 
                             if(metaData.action === 'photo_modal_studio') {
-                                updateImage(photo.id, imageData);
+                                dispatch(updateImage(photo.id, imageData));
                             }
 
                             images.push(imageData);
@@ -119,16 +122,7 @@ export const WebSocketProvider = ({ children }) => {
                 wsRef.current.close();
             }
         };
-    }, []);
-
-    useEffect(() => {
-        if (isConnected) {
-            let tg = window?.Telegram?.WebApp;
-            const hash = tg?.initDataUnsafe?.hash;
-            const initData = tg?.initData;
-            sendData({ action: "authorization", data: { hash, initData } });
-        }
-    }, [isConnected]);
+    }, [dispatch]);
 
     const addHandler = (action, handler) => {
         handlersRef.current[action] = handler;
@@ -138,34 +132,34 @@ export const WebSocketProvider = ({ children }) => {
         delete handlersRef.current[action];
     };
 
-     const sendData = async (data, files = []) => {
+    const sendData = useCallback(async (data, files = []) => {
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
             console.error('[WS] WebSocket is not open, unable to send data');
             return;
         }
 
-         if (data.action === 'get_photo') {
-             const photoId = data.data?.photoId;
+        if (data.action === 'get_photo') {
+            const photoId = data.data?.photoId;
 
-             if (hasImage(photoId)) {
-                 const image = getImage(photoId);
+            if (photoId in imagesSelector) {
+                const image = imagesSelector[photoId];
 
-                 if (handlersRef.current['photo_modal_studio']) {
-                     if(image.low === false) {
-                         handlersRef.current['photo_modal_studio']({
-                             media: [image]
-                         });
-                         return;
-                     } else {
-                         handlersRef.current['photo_modal_studio']({
-                             media: [image]
-                         });
-                     }
-                 }
-             }
-         }
+                if (handlersRef.current['photo_modal_studio']) {
+                    if (image.low === false) {
+                        handlersRef.current['photo_modal_studio']({
+                            media: [image]
+                        });
+                        return;
+                    } else {
+                        handlersRef.current['photo_modal_studio']({
+                            media: [image]
+                        });
+                    }
+                }
+            }
+        }
 
-         try {
+        try {
             const fileMetas = [];
             const fileBuffers = [];
 
@@ -202,9 +196,16 @@ export const WebSocketProvider = ({ children }) => {
         } catch (error) {
             console.error('[WS] ❌ Error with send binary message:', error);
         }
-    };
+    }, [dispatch, imagesSelector]);
 
-
+    useEffect(() => {
+        if (isConnected) {
+            let tg = window?.Telegram?.WebApp;
+            const hash = tg?.initDataUnsafe?.hash;
+            const initData = tg?.initData;
+            sendData({ action: "authorization", data: { hash, initData } });
+        }
+    }, [isConnected, sendData]);
 
     return (
         <WebSocketContext.Provider value={{ addHandler, deleteHandler, sendData, isConnected }}>

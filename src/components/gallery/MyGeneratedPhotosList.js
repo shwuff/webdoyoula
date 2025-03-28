@@ -4,19 +4,16 @@ import Modal from 'react-modal';
 import { useWebSocket } from "../../context/WebSocketContext";
 import { useAuth } from "../../context/UserContext";
 import { useSpring, animated } from '@react-spring/web';
-import { FaHeart, FaRegHeart, FaComment, FaPaperPlane, FaBookmark, FaRetweet } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
-import { FaCheck, FaWindowClose } from 'react-icons/fa';
-import CommentsModal from "../modals/CommentsModal";
+import { FaCheck } from 'react-icons/fa';
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
-import LikeHeart from "../buttons/LikeHeart";
 import PhotoPostModal from "../modals/PhotoPostModal";
 import {BiPlay} from "react-icons/bi";
 import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
-import MyModels from "../models/MyModels";
 import {useTranslation} from "react-i18next";
-import {useImageContext} from "../../context/ImageContext";
+import { useDispatch } from 'react-redux';
+import { setCurrentImageSelected, updateImage } from '../../redux/actions/imageActions';
 
 Modal.setAppElement('#app');
 
@@ -86,7 +83,7 @@ const MyGeneratedPhotosList = ({
     userIdLoaded = 0
 }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedPhoto, setSelectedPhoto] = useState(null);
+    const [selectedPhoto, setSelectedPhoto] = useState(0);
     const [closingModal, setClosingModal] = useState(false);
     const [photosSortModel, setPhotosSortModel] = useState(0);
     const [selectedModel, setSelectedModel] = useState([]);
@@ -99,8 +96,9 @@ const MyGeneratedPhotosList = ({
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
     const { token, setMyPhotos, myPhotos, myModels, setMyModels } = useAuth();
-    const { setCurrentImageContext } = useImageContext();
     const {t} = useTranslation();
+
+    const dispatch = useDispatch();
 
     const photosRef = useRef(myPhotos);
     const isLoadingRef = useRef(false);
@@ -119,7 +117,8 @@ const MyGeneratedPhotosList = ({
 
     const openModal = useCallback(async (photoId) => {
 
-        await setCurrentImageContext(photoId);
+        dispatch(setCurrentImageSelected(photoId));
+        setSelectedPhoto(photoId);
 
         sendData({
             action: "get_photo",
@@ -131,7 +130,7 @@ const MyGeneratedPhotosList = ({
             }
         });
 
-    }, [sendData, token, setCurrentImageContext]);
+    }, [sendData, token]);
 
     // const openModalP = (post) => {
     //     if (!post) return;
@@ -149,7 +148,7 @@ const MyGeneratedPhotosList = ({
         setTimeout(() => {
             setIsModalOpen(false);
             setClosingModal(false);
-            setSelectedPhoto(null);
+            setSelectedPhoto(0);
         }, 300);
         BackButton.hide();
     }, [BackButton]);
@@ -358,11 +357,12 @@ const MyGeneratedPhotosList = ({
                 return photo;
             });
             if(selectedPhoto !== null && selectedPhoto.id === msg.photoId) {
-                setSelectedPhoto((prev) => ({
-                    ...prev,
-                    hided: msg.hided
-                }));
+                // setSelectedPhoto((prev) => ({
+                //     ...prev,
+                //     hided: msg.hided
+                // }));
             }
+            dispatch(updateImage(msg.photoId, {hided: msg.hided}));
             setMyPhotos([...photosRef.current]);
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         };
@@ -610,6 +610,8 @@ const MyGeneratedPhotosList = ({
                 nextPhoto={handleNextPhoto}
                 prevPhoto={handlePrevPhoto}
                 userIdLoaded={userIdLoaded}
+                selectedPhoto={selectedPhoto}
+                setSelectedPhoto={setSelectedPhoto}
             />
 
         </div>

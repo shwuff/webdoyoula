@@ -68,7 +68,9 @@ const EditData = () => {
                 first_name: name,
                 last_name: surname
             }
-        })
+        });
+
+        setIsOpen(false);
 
       };
 
