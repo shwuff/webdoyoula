@@ -295,6 +295,7 @@ const MyGeneratedPhotosList = ({
         if(searchQuery.length > 1) {
             photosRef.current = [];
             setMyPhotos(photosRef.current);
+            setPhotosPage(1);
         }
     }, [searchQuery, setMyPhotos]);
 
@@ -318,6 +319,7 @@ const MyGeneratedPhotosList = ({
     useEffect(() => {
         photosRef.current = [];
         setMyPhotos([]);
+        setPhotosPage(1);
     }, [userIdLoaded]);
 
     //close loading
@@ -508,7 +510,7 @@ const MyGeneratedPhotosList = ({
         isLoadingRef.current = false;
     }, [setMyPhotos, setPhotosPage, resetLastPageRef, resetFetchingRef]);
 
-    const memoizedPhotos = useMemo(() => myPhotos, [myPhotos]);
+    const memoizedPhotos = useMemo(() => myPhotos, [photosRef.current]);
     const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
 
     return (
