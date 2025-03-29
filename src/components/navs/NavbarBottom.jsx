@@ -5,6 +5,9 @@ import styles from './css/NavbarBottom.module.css';
 import {useAuth} from "../../context/UserContext";
 import Search from "../Search";
 import {useTranslation} from "react-i18next";
+import HomeIcon from "../../assets/svg/HomeIcon";
+import PlusIcon from "../../assets/svg/PlusIcon";
+import SearchIcon from "../../assets/svg/SearchIcon";
 
 const NavbarBottom = () => {
     const location = useLocation();
@@ -19,9 +22,9 @@ const NavbarBottom = () => {
     return (
         <div id={"navbarBottom"} className={styles.navbar}>
             <div className={"navbar-content"}>
-                <div className={styles.searchContainer}>
-                    <Search from={'navbar'} setHideMenu={setHideMenu} />
-                </div>
+                {/*<div className={styles.searchContainer}>*/}
+                {/*    <Search from={'navbar'} setHideMenu={setHideMenu} />*/}
+                {/*</div>*/}
 
                 {
                     !hideMenu && (
@@ -31,16 +34,16 @@ const NavbarBottom = () => {
                                 navigate("/");
                             }} className={`${styles.navItem} ${location.pathname === '/' ? styles.active : ''}`}>
                                 <div className={styles.navIcon}>
-                                    <FaHome className={location.pathname === '/' ? styles.activeIcon : ''} />
+                                    <HomeIcon className={location.pathname === '/' ? styles.activeIcon : ''} active={location.pathname === '/'} />
                                 </div>
                                 <p className={"navbar-content-title"}>{t('feed')}</p>
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
                                 navigate("/search");
-                            }} className={`${styles.navItem} ${styles.searchLink} ${location.pathname === '/search' ? styles.active : ''}`}>
+                            }} className={`${styles.navItem} ${location.pathname === '/search' ? styles.active : ''}`}>
                                 <div className={styles.navIcon}>
-                                    <FaSearch className={location.pathname === '/search' ? styles.activeIcon : ''} />
+                                    <SearchIcon className={location.pathname === '/search' ? styles.activeIcon : ''} active={location.pathname === '/search'} />
                                 </div>
                                 <p className={"navbar-content-title"}>{t('search')}</p>
                             </div>
@@ -49,7 +52,7 @@ const NavbarBottom = () => {
                                 navigate("/studio/create");
                             }} className={`${styles.navItem} ${location.pathname.startsWith('/studio') ? styles.active : ''}`}>
                                 <div className={styles.navIcon}>
-                                    <FaPlus className={location.pathname.startsWith('/studio') ? styles.activeIcon : ''} />
+                                    <PlusIcon className={location.pathname.startsWith('/studio') ? styles.activeIcon : ''} active={location.pathname.startsWith('/studio')} />
                                 </div>
                                 <span className={"navbar-content-title"}>{t('my_creations')}</span>
                             </div>
@@ -58,7 +61,7 @@ const NavbarBottom = () => {
                                 navigate(`/profile/${userData.id}`);
                             }} className={`${styles.navItem} ${location.pathname.startsWith('/profile/') ? styles.active : ''}`}>
                                 <div className={`${styles.navIcon} ${styles.profileIcon}`}>
-                                    <FaUser className={location.pathname.startsWith('/profile/') ? styles.activeIcon : ''} />
+                                    <img src={userData.photo_url} alt=""/>
                                 </div>
                                 <div className={styles.profileAvatar}>
                                     <img src={userData.photo_url} alt=""/>

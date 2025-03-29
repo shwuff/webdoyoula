@@ -80,8 +80,10 @@ const MyGeneratedPhotosList = ({
     resetFetchingRef,
     from,
     postId,
-    userIdLoaded = 0
+    userIdLoaded = 0,
+    searchQuery = ''
 }) => {
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(0);
     const [closingModal, setClosingModal] = useState(false);
@@ -260,7 +262,7 @@ const MyGeneratedPhotosList = ({
             setPhotosPage(nextPg);
             sendData({
                 action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
-                data: { jwt: token, photosPage: nextPg, photosSortModel, userIdLoaded, requestId: requestId }
+                data: { jwt: token, photosPage: nextPg, photosSortModel, userIdLoaded, requestId: requestId, ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}) }
             });
         }
     },
@@ -288,6 +290,13 @@ const MyGeneratedPhotosList = ({
             openModal(myPhotos[idx - 1].id);
         }
     }, [myPhotos, sendData]);
+
+    useEffect(() => {
+        if(searchQuery.length > 1) {
+            photosRef.current = [];
+            setMyPhotos(photosRef.current);
+        }
+    }, [searchQuery, setMyPhotos]);
 
     // Click backButton Telegram
     useEffect(() => {
@@ -318,15 +327,13 @@ const MyGeneratedPhotosList = ({
         if(token === null) return;
         isLoadingRef.current = true;
 
-        // const requestIdToken = crypto.randomUUID()
-        //
-        // setRequestId(crypto.randomUUID());
+        console.log('send request');
 
         sendData({
             action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
-            data: { jwt: token, photosPage, photosSortModel, userIdLoaded, requestId: requestId }
+            data: { jwt: token, photosPage, photosSortModel, userIdLoaded, requestId: requestId, ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}) }
         });
-    }, [token, photosPage, photosSortModel, userIdLoaded, from, isConnected, requestId]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, isConnected, requestId, searchQuery]);
 
     //start generating image
     useEffect(() => {

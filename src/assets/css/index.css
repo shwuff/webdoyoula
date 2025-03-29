@@ -496,7 +496,7 @@ a, div, button {
     }
 
     #navbarBottom {
-        width: 100px;
+        width: 70px;
         height: 100vh;
         left: 0;
         display: flex;
@@ -504,6 +504,7 @@ a, div, button {
         align-items: start;
         background: var(--bg-color);
         padding-top: var(--safeAreaInset-top);
+        border-right: 1px solid rgb(0,0,0,.1);
     }
 
     .navbar-content {
@@ -552,7 +553,6 @@ a, div, button {
         justify-content: center;
         align-items: start;
         background: var(--bg-color);
-        border-right: 1px solid rgb(0,0,0,.1);
     }
 
     .center-content-block {

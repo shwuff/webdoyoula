@@ -122,7 +122,7 @@ export const WebSocketProvider = ({ children }) => {
                 wsRef.current.close();
             }
         };
-    }, [dispatch]);
+    }, []);
 
     const addHandler = (action, handler) => {
         handlersRef.current[action] = handler;
@@ -203,9 +203,11 @@ export const WebSocketProvider = ({ children }) => {
             let tg = window?.Telegram?.WebApp;
             const hash = tg?.initDataUnsafe?.hash;
             const initData = tg?.initData;
-            sendData({ action: "authorization", data: { hash, initData } });
+            if(initData) {
+                sendData({ action: "authorization", data: { hash, initData } });
+            }
         }
-    }, [isConnected, sendData]);
+    }, [isConnected]);
 
     return (
         <WebSocketContext.Provider value={{ addHandler, deleteHandler, sendData, isConnected }}>

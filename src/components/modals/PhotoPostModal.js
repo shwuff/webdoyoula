@@ -275,6 +275,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                             {t('repeat')}
                                                         </button>
                                                         {imageSelector[selectedPhoto].count_generated_with_prompt}
+                                                        {imageSelector[selectedPhoto].prompt_id}
                                                     </div>
                                                 </div>
                                                 {

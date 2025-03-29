@@ -19,6 +19,7 @@
     border-radius: 10px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .navIcon {
@@ -52,28 +53,29 @@
     display: none;
 }
 
+.profileIcon img {
+    width: 24px;
+    border-radius: 50%;
+}
+
 @media(min-width: 1200px) {
 
     .navItem {
         width: 100%;
         margin-top: 5px;
+        justify-content: start;
+    }
+
+    .navItem:hover {
+        background: rgb(0,0,0,.05);
     }
 
     .searchLink {
         display: none;
     }
 
-    .navItem:hover {
-        background: rgb(0,0,0,.1);
-    }
-
-    .navItem.active {
-        background: var(--button-color, #2196F3);
-    }
-
     .navItem.active * {
-        color: var(--bg-color, #fff) !important;
-        background: inherit;
+        font-weight: 800;
     }
 
     .profileIcon {
@@ -105,12 +107,6 @@
         display: block;
     }
 
-}
-
-@media(max-width: 1200px) {
-    .activeIcon {
-        fill: var(--button-color, #2196F3);
-    }
 }
 
 /*.navItem:hover .navText {*/
