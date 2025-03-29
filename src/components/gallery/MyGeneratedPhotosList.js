@@ -48,7 +48,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </div>
             )}
             
-            {imageSelector[photo.id].hided === false && profileGallery === false && (
+            {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
                 <div className={styles.publishedBadge}>
                      <div className={styles.doubleCheck}>
                          <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
@@ -63,7 +63,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                         className={`${styles.selectCircle} ${isSelected ? styles.selected : ''}`}
                         onClick={handleCircleClick}
                     >
-                        {isSelected && <FaCheck className={styles.checkIcon}/>}
+                        {isSelected && <FaCheck className={styles.checkIconSelected}/>}
                     </div>
                 )
             }
