@@ -213,24 +213,41 @@ const Profile = () => {
                             className={styles.profileAvatar}
                         />
                     </div>
-                    <div className={styles.profileStats}>
-                        <div className={styles.statBlock}>
-                            <p className={styles.statNumber}>{tempUserData.count_photos_gallery}</p>
-                            <p className={styles.statLabel}>{t('posts')}</p>
+                    <div className={styles.blockStats}>
+                        <div className={styles.profileStats}>
+                            <div className={styles.statBlock}>
+                                <p className={styles.statNumber}>{tempUserData.count_photos_gallery}</p>
+                                <p className={styles.statLabel}>{t('posts')}</p>
+                            </div>
+                            <div className={styles.statBlock} onClick={() => {
+                                openModal();
+                                handleShowFollowers();
+                            }}>
+                                <p className={styles.statNumber}>{tempUserData.followersCount}</p>
+                                <p className={styles.statLabel}>{t('followers')}</p>
+                            </div>
+                            <div className={styles.statBlock} onClick={() => {
+                                openModal();
+                                handleShowFollowing();
+                            }}>
+                                <p className={styles.statNumber}>{tempUserData.followingCount}</p>
+                                <p className={styles.statLabel}>{t('follows')}</p>
+                            </div>
+                        
                         </div>
-                        <div className={styles.statBlock} onClick={() => {
-                            openModal();
-                            handleShowFollowers();
-                        }}>
-                            <p className={styles.statNumber}>{tempUserData.followersCount}</p>
-                            <p className={styles.statLabel}>{t('followers')}</p>
-                        </div>
-                        <div className={styles.statBlock} onClick={() => {
-                            openModal();
-                            handleShowFollowing();
-                        }}>
-                            <p className={styles.statNumber}>{tempUserData.followingCount}</p>
-                            <p className={styles.statLabel}>{t('follows')}</p>
+                        <div className={styles.profileStats2}>
+                            <div className={styles.statBlock2}>
+                                <p className={styles.statNumber}>0</p>
+                                <p className={styles.statLabel}>{t('лайки')}</p>
+                            </div>
+                            <div className={styles.statBlock2}>
+                                <p className={styles.statNumber}>0</p>
+                                <p className={styles.statLabel}>{t('повторы')}</p>
+                            </div>
+                            <div className={styles.statBlock2}>
+                                <p className={styles.statNumber}>0</p>
+                                <p className={styles.statLabel}>{t('просмотры')}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
