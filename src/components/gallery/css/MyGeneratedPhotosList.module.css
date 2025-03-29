@@ -300,3 +300,38 @@
     width: 100%;
     padding: 5px;
 }
+
+.publishedBadge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border-radius: 50%;
+    border: 1px solid white;
+    width: 32px;
+    height: 32px;
+}
+
+.doubleCheck {
+    display: flex;
+    flex-direction: row;
+}
+
+.checkIcon {
+    color: var(--primary-color); 
+    font-size: 18px;
+    margin-left: 0px;
+}
+
+.checkIcon2 {
+    fill:white; 
+    font-size: 18px;
+    margin-left: -12px;
+}
+.publishedText {
+    color: white;
+    font-size: 12px;
+}

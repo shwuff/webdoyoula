@@ -44,6 +44,16 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                     </svg>
                 </div>
             )}
+            
+            {photo.hided === false && profileGallery === false && (
+                <div className={styles.publishedBadge}>
+                     <div className={styles.doubleCheck}>
+                        <FaCheck className={styles.checkIcon} />
+                        <FaCheck className={styles.checkIcon2} />
+                     </div>
+                    
+                </div>
+            )}
 
             {
                 photo.status !== 'processing' && profileGallery === false && (
@@ -513,6 +523,16 @@ const MyGeneratedPhotosList = ({
     const memoizedPhotos = useMemo(() => myPhotos, [photosRef.current]);
     const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
 
+    const handlePublishToGallery = () => {
+        for (let i=0; i < selectedImages.length; i++){
+            
+            sendData({
+                action: "publish_to_gallery",
+                data: { jwt: token, photoId: selectedImages[i] }
+            });
+        }
+    };
+
     return (
         <div>
             {
@@ -558,6 +578,14 @@ const MyGeneratedPhotosList = ({
                                         onClick={handleUploadToBot}
                                     >
                                         {t('upload_to_bot')}
+                                    </button>
+
+                                    <button
+                                        className="btn btn-outline-primary no-wrap"
+                                        style={{marginTop: '10px'}}
+                                        onClick={handlePublishToGallery}
+                                    >
+                                        {t('to_publish')}
                                     </button>
                                     {/*<button*/}
                                     {/*    className="btn btn-outline-primary no-wrap"*/}
