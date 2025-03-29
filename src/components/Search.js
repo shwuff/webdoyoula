@@ -6,6 +6,10 @@ import SearchInput from "./input/SearchInput";
 import SettingsHamburger from "./modals/SettingsHamburger";
 import {useTranslation} from "react-i18next";
 import SearchPage from "../pages/search/SearchPage";
+import {FaRegWindowClose, FaWindowClose} from "react-icons/fa";
+import {FaFolderClosed} from "react-icons/fa6";
+import {CloseSharp} from "@mui/icons-material";
+import CloseButton from "./buttons/CloseButton";
 
 const users = ["Komissar1", "Komi", "Alex", "JohnDoe", "Komrad", "Kevin", "Markus"];
 
@@ -62,6 +66,18 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
         };
     }, []);
 
+    const deleteUserFromHistory = (userId) => {
+        sendData({
+            action: "delete_user_from_history",
+            data: {
+                jwt: token,
+                userId
+            }
+        });
+
+        setSearchResults(searchResults.filter(user => user.id !== userId));
+    }
+
     const handleSearch = (query) => {
         setSearchQuery(query);
         if (query.trim() !== "") {
@@ -113,27 +129,27 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                 {
                     searchQuery.length < 1 ? (
                         <>
-                            {searchQuery.length < 1 && searchResults.length > 0 && shouldShowResults && (
-                                <div className="w-100 d-flex justify-content-end">
-                                    <p
-                                        onClick={() => {
-                                            sendData({
-                                                action: "clear_user_search_history",
-                                                data: { jwt: token }
-                                            });
-                                            setSearchResults([]);
-                                        }}
-                                        className={"text-muted"}
-                                        style={{ cursor: "pointer" }}
-                                    >
-                                        {t('clear_search_history')}
-                                    </p>
-                                </div>
-                            )}
+                            {/*{searchQuery.length < 1 && searchResults.length > 0 && shouldShowResults && (*/}
+                            {/*    <div className="w-100 d-flex justify-content-end">*/}
+                            {/*        <p*/}
+                            {/*            onClick={() => {*/}
+                            {/*                sendData({*/}
+                            {/*                    action: "clear_user_search_history",*/}
+                            {/*                    data: { jwt: token }*/}
+                            {/*                });*/}
+                            {/*                setSearchResults([]);*/}
+                            {/*            }}*/}
+                            {/*            className={"text-muted"}*/}
+                            {/*            style={{ cursor: "pointer" }}*/}
+                            {/*        >*/}
+                            {/*            {t('clear_search_history')}*/}
+                            {/*        </p>*/}
+                            {/*    </div>*/}
+                            {/*)}*/}
                             {searchResults.length > 0 && shouldShowResults && (
                                 <ul className="search-results">
                                     {searchResults.map((user, index) => (
-                                        <li key={index}>
+                                        <li key={index} className={"d-flex justify-content-between align-items-center"}>
                                             <div
                                                 onMouseDown={(e) => e.preventDefault()}
                                                 onClick={() => {
@@ -147,12 +163,15 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                                             >
                                                 <img src={user.photo_url} alt="" />
                                                 <div className="search-elements">
-                                        <span>
-                                          {user.first_name} {user.last_name}
-                                        </span>
+                                                    <span>
+                                                      {user.first_name} {user.last_name}
+                                                    </span>
                                                     <br />
                                                     {user.username?.length > 0 ? <span style={{ color: "gray" }}>@{user.username}</span> : "" }
                                                 </div>
+                                            </div>
+                                            <div onClick={() => deleteUserFromHistory(user.id)}>
+                                                <CloseButton />
                                             </div>
                                         </li>
                                     ))}

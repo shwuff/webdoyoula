@@ -14,6 +14,8 @@ import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
 import {useTranslation} from "react-i18next";
 import { useDispatch } from 'react-redux';
 import { setCurrentImageSelected, updateImage } from '../../redux/actions/imageActions';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import {useSelector} from "react-redux";
 
 Modal.setAppElement('#app');
 
@@ -32,6 +34,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         toggleSelectPhoto(photo.id);
     };
 
+    const imageSelector = useSelector((state) => state.image.images);
 
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
@@ -45,11 +48,10 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </div>
             )}
             
-            {photo.hided === false && profileGallery === false && (
+            {imageSelector[photo.id].hided === false && profileGallery === false && (
                 <div className={styles.publishedBadge}>
                      <div className={styles.doubleCheck}>
-                        <FaCheck className={styles.checkIcon} />
-                        <FaCheck className={styles.checkIcon2} />
+                         <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
                      </div>
                     
                 </div>
@@ -530,7 +532,15 @@ const MyGeneratedPhotosList = ({
                 action: "publish_to_gallery",
                 data: { jwt: token, photoId: selectedImages[i] }
             });
+
+            photosRef.current.forEach((photo) => {
+                if (photo.id === selectedImages[i]) {
+                    photo.hided = false;
+                }
+            });
         }
+
+        setSelectedImages([]);
     };
 
     return (

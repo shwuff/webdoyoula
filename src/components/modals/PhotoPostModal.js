@@ -174,15 +174,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     <SubscribeButton
                                                         sub={imageSelector[selectedPhoto].author.sub}
                                                         setSub={(sub) => {
-                                                            imageSelector[selectedPhoto]((prev) => {
-                                                                return {
-                                                                    ...prev,
-                                                                    author: {
-                                                                        ...imageSelector[selectedPhoto].author,
-                                                                        sub: sub
-                                                                    }
-                                                                }
-                                                            });
+                                                            dispatch(updateImage(imageSelector[selectedPhoto].id, { author: {...imageSelector[selectedPhoto].author, sub: sub} }))
                                                         }}
                                                         userId={imageSelector[selectedPhoto].author.id}
                                                     />
@@ -275,7 +267,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                             {t('repeat')}
                                                         </button>
                                                         {imageSelector[selectedPhoto].count_generated_with_prompt}
-                                                        {imageSelector[selectedPhoto].prompt_id}
                                                     </div>
                                                 </div>
                                                 {

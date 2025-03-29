@@ -4,15 +4,17 @@ import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Tabs, Tab, Box } from '@mui/material';
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
+import {useTranslation} from "react-i18next";
 
-const ShowUsersResult = ({ searchResults, sendData, token }) => {
+const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsersPage = () => {} }) => {
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     return (
         <>
             {searchResults.length > 0 && (
                 <ul className="search-results">
-                    {searchResults.map((user, index) => (
+                    {searchResults.slice(0, max).map((user, index) => (
                         <li key={index}>
                             <div
                                 onMouseDown={(e) => e.preventDefault()}
@@ -36,8 +38,22 @@ const ShowUsersResult = ({ searchResults, sendData, token }) => {
                             </div>
                         </li>
                     ))}
+                    {
+                        max === 5 && searchResults.length > 0 && (
+                            <div style={{marginBottom: "10px"}} className={"d-flex justify-content-end"}>
+                                <span onClick={showUsersPage} className={"text-muted c-pointer"}>Посмотреть все результаты</span>
+                            </div>
+                        )
+                    }
                 </ul>
             )}
+            {
+                searchResults.length < 1 && max !== 5 && (
+                    <div className="d-flex justify-content-center w-100">
+                        <p className={"text-muted"}>{t("results_not_found")}</p>
+                    </div>
+                )
+            }
         </>
     );
 };
@@ -63,6 +79,8 @@ const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPh
     const { token } = useAuth();
     const [value, setValue] = useState(0);
 
+    const {t} = useTranslation();
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -77,13 +95,20 @@ const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPh
 
     return (
         <div>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', marginBottom: "7px" }}>
                 <Tabs value={value} onChange={handleChange} aria-label="tabs for users and images">
-                    <Tab label="Все" />
-                    <Tab label="Пользователи" />
-                    <Tab label="Фотографии" />
+                    <Tab label={t('all')} sx={{fontSize: 12}} />
+                    <Tab label={t('users')} sx={{fontSize: 12}} />
+                    <Tab label={t('images')} sx={{fontSize: 12}} />
                 </Tabs>
             </Box>
+
+            {value === 0 && (
+                <>
+                    <ShowUsersResult searchResults={userResults} sendData={sendData} token={token} max={5} showUsersPage={() => setValue(1)} />
+                    <ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />
+                </>
+            )}
 
             {value === 1 && <ShowUsersResult searchResults={userResults} sendData={sendData} token={token} />}
 

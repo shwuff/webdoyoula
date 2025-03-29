@@ -579,3 +579,7 @@ a, div, button {
 .MuiInputBase-input:active .MuiOutlinedInput-root {
     border: 1px solid #2196F3;
 }
+
+.c-pointer {
+    cursor: pointer;
+}
