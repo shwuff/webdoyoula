@@ -45,65 +45,67 @@ const Content = () => {
     }, [uploadType, photoFormat, autoUpload, token]);
 
     return (
-        <Container maxWidth="sm">
-            <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-                {t('content_settings')}
-            </Typography>
+        <div className={"globalBlock"}>
+            <div className={"center-content-block"}>
+                <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+                    {t('content_settings')}
+                </Typography>
 
-            <CreateAvatarModal />
+                <CreateAvatarModal />
 
-            <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 2, boxShadow: 0 }}>
-                <Table>
-                    <TableBody>
-                        {/* Выгрузка в бота */}
-                        <TableRow>
-                            <TableCell>{t('uploading_to_bot')}</TableCell>
-                            <TableCell align="right">
-                                <FormControl>
-                                    <Select
-                                        value={uploadType}
-                                        onChange={(e) => setUploadType(e.target.value)}
-                                    >
-                                        <MenuItem value="file">{t('file')}</MenuItem>
-                                        <MenuItem value="media">{t('media')}</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </TableCell>
-                        </TableRow>
+                <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 2, boxShadow: 0 }}>
+                    <Table>
+                        <TableBody>
+                            {/* Выгрузка в бота */}
+                            <TableRow>
+                                <TableCell>{t('uploading_to_bot')}</TableCell>
+                                <TableCell align="right">
+                                    <FormControl>
+                                        <Select
+                                            value={uploadType}
+                                            onChange={(e) => setUploadType(e.target.value)}
+                                        >
+                                            <MenuItem value="file">{t('file')}</MenuItem>
+                                            <MenuItem value="media">{t('media')}</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
 
-                        {/* Формат фото */}
-                        <TableRow>
-                            <TableCell>{t('photo_aspect_ratio')}</TableCell>
-                            <TableCell align="right">
-                                <FormControl>
-                                    <Select
-                                        value={photoFormat}
-                                        onChange={(e) => setPhotoFormat(e.target.value)}
-                                    >
-                                        <MenuItem value="1:1">1:1</MenuItem>
-                                        <MenuItem value="3:4">3:4</MenuItem>
-                                        <MenuItem value="9:16">9:16</MenuItem>
-                                        <MenuItem value="16:9">16:9</MenuItem>
-                                        <MenuItem value="4:5">4:5</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </TableCell>
-                        </TableRow>
+                            {/* Формат фото */}
+                            <TableRow>
+                                <TableCell>{t('photo_aspect_ratio')}</TableCell>
+                                <TableCell align="right">
+                                    <FormControl>
+                                        <Select
+                                            value={photoFormat}
+                                            onChange={(e) => setPhotoFormat(e.target.value)}
+                                        >
+                                            <MenuItem value="1:1">1:1</MenuItem>
+                                            <MenuItem value="3:4">3:4</MenuItem>
+                                            <MenuItem value="9:16">9:16</MenuItem>
+                                            <MenuItem value="16:9">16:9</MenuItem>
+                                            <MenuItem value="4:5">4:5</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
 
-                        {/* Автовыгрузка */}
-                        <TableRow>
-                            <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>
-                            <TableCell align="right">
-                                <Switch
-                                    checked={autoUpload}
-                                    onChange={() => setAutoUpload(!autoUpload)}
-                                />
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Container>
+                            {/* Автовыгрузка */}
+                            <TableRow>
+                                <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>
+                                <TableCell align="right">
+                                    <Switch
+                                        checked={autoUpload}
+                                        onChange={() => setAutoUpload(!autoUpload)}
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+        </div>
     );
 };
 
