@@ -109,12 +109,12 @@ const MyGeneratedPhotosList = ({
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
-    const { token, setMyPhotos, myPhotos, myModels, setMyModels } = useAuth();
+    const { token, myModels, setMyModels } = useAuth();
     const {t} = useTranslation();
 
     const dispatch = useDispatch();
 
-    const photosRef = useRef(myPhotos);
+    const photosRef = useRef([]);
     const isLoadingRef = useRef(false);
 
     const generateUUID = () => {
@@ -263,12 +263,12 @@ const MyGeneratedPhotosList = ({
 
         if (!selectedPhoto) return;
 
-        const idx = myPhotos.findIndex((p) => p.id === selectedPhoto.id);
+        const idx = photosRef.current.findIndex((p) => p.id === selectedPhoto.id);
 
         if (idx === -1) return;
 
-        if (idx < myPhotos.length - 1) {
-            openModal(myPhotos[idx + 1].id);
+        if (idx < photosRef.current.length - 1) {
+            openModal(photosRef.current[idx + 1].id);
         } else {
             const nextPg = photosPage + 1;
             setPhotosPage(nextPg);
@@ -280,7 +280,6 @@ const MyGeneratedPhotosList = ({
     },
         [
             from,
-            myPhotos,
             photosPage,
             photosSortModel,
             setSelectedPhoto,
@@ -295,21 +294,20 @@ const MyGeneratedPhotosList = ({
     const handlePrevPhoto = useCallback((selectedPhoto) => {
         if (!selectedPhoto) return;
 
-        const idx = myPhotos.findIndex((p) => p.id === selectedPhoto.id);
+        const idx = photosRef.current.findIndex((p) => p.id === selectedPhoto.id);
         if (idx === -1) return;
 
         if (idx > 0) {
-            openModal(myPhotos[idx - 1].id);
+            openModal(photosRef.current[idx - 1].id);
         }
-    }, [myPhotos, sendData]);
+    }, [sendData]);
 
     useEffect(() => {
         if(searchQuery.length > 1) {
             photosRef.current = [];
-            setMyPhotos(photosRef.current);
             setPhotosPage(1);
         }
-    }, [searchQuery, setMyPhotos]);
+    }, [searchQuery]);
 
     // Click backButton Telegram
     useEffect(() => {
@@ -330,7 +328,6 @@ const MyGeneratedPhotosList = ({
     //clean photos ref
     useEffect(() => {
         photosRef.current = [];
-        setMyPhotos([]);
         setPhotosPage(1);
     }, [userIdLoaded]);
 
@@ -359,14 +356,13 @@ const MyGeneratedPhotosList = ({
                 if (photosSortModel === 0 || photosSortModel === modelId) {
                     photosRef.current = [...photosRef.current, ...photos];
                     photosRef.current = sortAndUniquePhotos(photosRef.current);
-                    setMyPhotos([...photosRef.current]);
                 }
             };
 
             addHandler('start_generating_images', handleStartGeneratingImages);
             return () => deleteHandler('start_generating_images');
         }
-    }, [photosSortModel, addHandler, deleteHandler, setMyPhotos, userIdLoaded]);
+    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded]);
 
     // update photo hided status
     useEffect(() => {
@@ -384,13 +380,12 @@ const MyGeneratedPhotosList = ({
                 // }));
             }
             dispatch(updateImage(msg.photoId, {hided: msg.hided}));
-            setMyPhotos([...photosRef.current]);
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         };
 
         addHandler('update_photo_hided', handleMessage);
         return () => deleteHandler('update_photo_hided');
-    }, [photosSortModel, addHandler, deleteHandler, setMyPhotos, selectedPhoto]);
+    }, [photosSortModel, addHandler, deleteHandler, selectedPhoto]);
 
     //new photos notify
     useEffect(() => {
@@ -401,7 +396,7 @@ const MyGeneratedPhotosList = ({
                 const { modelId, media, mediaGroupId } = msg;
 
                 if (photosSortModel === 0 || photosSortModel === modelId) {
-                    setMyPhotos((prev) => {
+                    photosRef.current((prev) => {
                         let updatedPhotos;
                         if (mediaGroupId) {
                             const filteredPrev = prev.filter(
@@ -426,7 +421,7 @@ const MyGeneratedPhotosList = ({
             return () => deleteHandler('new_photos');
         }
 
-    }, [photosSortModel, addHandler, deleteHandler, setMyPhotos, userIdLoaded]);
+    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded]);
 
     //generated photos append
     useEffect(() => {
@@ -443,7 +438,6 @@ const MyGeneratedPhotosList = ({
                 } else {
                     photosRef.current = uniquePhotos(photosRef.current);
                 }
-                setMyPhotos([...photosRef.current]);
             }
             resetFetchingRef();
             isLoadingRef.current = false;
@@ -451,7 +445,7 @@ const MyGeneratedPhotosList = ({
 
         addHandler('generated_photos_append', handleAppend);
         return () => deleteHandler('generated_photos_append');
-    }, [addHandler, deleteHandler, setMyPhotos, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId]);
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId]);
 
     //generated photos
     useEffect(() => {
@@ -463,14 +457,13 @@ const MyGeneratedPhotosList = ({
             }
             photosRef.current = [...photosRef.current, ...msg.photos];
             photosRef.current = sortAndUniquePhotos(photosRef.current);
-            setMyPhotos([...photosRef.current]);
             isLoadingRef.current = false;
             resetFetchingRef();
         };
 
         addHandler('generated_photos', handleGeneratedPhotos);
         return () => deleteHandler('generated_photos');
-    }, [addHandler, deleteHandler, setMyPhotos, resetFetchingRef, photosSortModel]);
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel]);
 
     //scroll to top after filter avatar
     useEffect(() => {
@@ -507,7 +500,6 @@ const MyGeneratedPhotosList = ({
 
     const handleChangePhotosSortModel = useCallback((value, myModels) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        setMyPhotos([]);
         photosRef.current = [];
         setPhotosPage(1);
         setPhotosSortModel(value);
@@ -520,9 +512,9 @@ const MyGeneratedPhotosList = ({
         resetLastPageRef();
         resetFetchingRef();
         isLoadingRef.current = false;
-    }, [setMyPhotos, setPhotosPage, resetLastPageRef, resetFetchingRef]);
+    }, [setPhotosPage, resetLastPageRef, resetFetchingRef]);
 
-    const memoizedPhotos = useMemo(() => myPhotos, [photosRef.current]);
+    const memoizedPhotos = useMemo(() => photosRef.current, [photosRef.current]);
     const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
 
     const handlePublishToGallery = () => {

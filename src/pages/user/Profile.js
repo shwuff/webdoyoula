@@ -237,16 +237,16 @@ const Profile = () => {
                         </div>
                         <div className={styles.profileStats2}>
                             <div className={styles.statBlock2}>
-                                <p className={styles.statNumber}>0</p>
-                                <p className={styles.statLabel}>{t('лайки')}</p>
+                                <p className={styles.statNumber}>{tempUserData.count_likes}</p>
+                                <p className={styles.statLabel}>{t('likes')}</p>
                             </div>
                             <div className={styles.statBlock2}>
-                                <p className={styles.statNumber}>0</p>
-                                <p className={styles.statLabel}>{t('повторы')}</p>
+                                <p className={styles.statNumber}>{tempUserData.count_repeats}</p>
+                                <p className={styles.statLabel}>{t('repeats')}</p>
                             </div>
                             <div className={styles.statBlock2}>
-                                <p className={styles.statNumber}>0</p>
-                                <p className={styles.statLabel}>{t('просмотры')}</p>
+                                <p className={styles.statNumber}>{tempUserData.count_views}</p>
+                                <p className={styles.statLabel}>{t('views')}</p>
                             </div>
                         </div>
                     </div>

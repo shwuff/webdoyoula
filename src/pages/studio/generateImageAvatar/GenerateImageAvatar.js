@@ -294,6 +294,25 @@ const GenerateImageAvatar = () => {
                                     }
                                 </>
                             ))}
+                            {
+                                myModels.length < 1 && (
+                                    <button
+                                        className={`${styles.amountBtn} ${selectedModel === 63 ? styles.active : ''}`}
+                                        onClick={() => {
+                                            setSelectedModel(63);
+                                            if(promptId !== undefined) {
+                                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                                                setStep(4);
+                                                setGenerationType('prompt');
+                                            } else {
+                                                nextStep();
+                                            }
+                                        }}
+                                    >
+                                        Paul Du Rove
+                                    </button>
+                                )
+                            }
                         </div>
                     </div>
                 )}

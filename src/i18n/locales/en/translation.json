@@ -56,5 +56,8 @@
   "buy_avatar": "Buy avatar",
   "results_not_found": "Results not found",
   "users": "Users",
-  "images": "Images"
+  "images": "Images",
+  "likes": "likes",
+  "repeats": "repeats",
+  "views": "views"
 }
