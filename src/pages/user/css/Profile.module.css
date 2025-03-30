@@ -29,12 +29,36 @@
     aspect-ratio: 1/1;
 }
 
+.blockStats {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    gap: 10px;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    
+}
+
+
 .profileStats {
     display: flex;
     justify-content: space-around;
     flex-grow: 1;
     text-align: center;
     height: 100%;
+    
+}
+
+.profileStats2 {
+    display: flex;
+    justify-content: space-around;
+    flex-grow: 1;
+    text-align: center;
+    height: 100%;
+    margin-top: 10px;
+
 }
 
 .statNumber {
@@ -46,6 +70,7 @@
     font-size: 14px;
     color: gray;
 }
+
 
 @media(max-width: 800px) {
 
@@ -128,8 +153,14 @@
 .statBlock {
     cursor: pointer;
     display: block;
+    width: 100%;
 }
 
+.statBlock2 {
+    cursor: pointer;
+    display: block;
+    width:100%;
+}
 .editBlock {
     width: 100%;
     background: var(--bg-color, #fff);
