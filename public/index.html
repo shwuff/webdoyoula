@@ -18,4 +18,21 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="app"></div>
   </body>
+
+  <script
+          async
+          src="https://tganalytics.xyz/index.js"
+          onload="initAnalytics()"
+          type="text/javascript"
+  ></script>
+
+  <script>
+    function initAnalytics() {
+      window.telegramAnalytics.init({
+        token: 'eyJhcHBfbmFtZSI6IkRveW91bGEiLCJhcHBfdXJsIjoiaHR0cHM6Ly90Lm1lL0RveW91bGFib3QvIiwiYXBwX2RvbWFpbiI6Imh0dHBzOi8vd2ViLmRveW91bGEuY29tLyJ9!XJxDDwTpOHXNJQTistrCeHcU+7VMcoERarKOjS05cbs=',
+        appName: 'Doyoula',
+      });
+    }
+  </script>
+
 </html>

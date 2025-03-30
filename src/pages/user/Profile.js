@@ -213,6 +213,15 @@ const Profile = () => {
                             className={styles.profileAvatar}
                         />
                     </div>
+                    <div className={styles.profileUserInfo}>
+                        <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
+                        {
+                            tempUserData?.username?.length > 0 && (
+                                <p className={styles.profileUsername}>@{tempUserData.username}</p>
+                            )
+                        }
+                        <p className={styles.profileDescription}>{tempUserData.bio}</p>
+                    </div>
                     <div className={styles.blockStats}>
                         <div className={styles.profileStats}>
                             <div className={styles.statBlock}>
@@ -235,7 +244,7 @@ const Profile = () => {
                             </div>
                         
                         </div>
-                        <div className={styles.profileStats2}>
+                        <div className={styles.profileStats} style={{marginTop: "10px"}}>
                             <div className={styles.statBlock2}>
                                 <p className={styles.statNumber}>{tempUserData.count_likes}</p>
                                 <p className={styles.statLabel}>{t('likes')}</p>
@@ -250,15 +259,6 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className={styles.profileUserInfo}>
-                    <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
-                    {
-                        tempUserData?.username?.length > 0 && (
-                            <p className={styles.profileUsername}>@{tempUserData.username}</p>
-                        )
-                    }
-                    <p className={styles.profileDescription}>{tempUserData.bio}</p>
                 </div>
                 <Box sx={{ display: 'flex', gap: 1, padding: "4px" }}>
                     {

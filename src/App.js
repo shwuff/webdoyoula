@@ -167,7 +167,7 @@ const App = () => {
             params.some(param => {
                 const match = param.match(/userId(\w+)/);
                 if (match) {
-                    navigate(`/profile/${match[1]}`)
+                    navigate(`/profile/${match[1]}`);
                     return true;
                 }
                 return false;
@@ -284,6 +284,9 @@ const App = () => {
                 <Alert
                     onClose={handleCloseNotification}
                     severity={notification?.ok ? "success" : "error"}
+                    sx={{
+                        marginTop: "var(--safeAreaInset-top)"
+                    }}
                     // icon={
                     //     <CircularProgress
                     //         variant="determinate"

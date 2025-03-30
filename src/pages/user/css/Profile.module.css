@@ -7,14 +7,13 @@
 }
 
 .profileHeader {
-    display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 5px;
 }
 
 .profileAvatarWrapper {
-    width: 20%;
+    width: 100%;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -27,6 +26,7 @@
     border-radius: 50%;
     border: 3px solid white;
     aspect-ratio: 1/1;
+    max-width: 100px;
 }
 
 .blockStats {
@@ -41,24 +41,12 @@
     
 }
 
-
 .profileStats {
     display: flex;
     justify-content: space-around;
     flex-grow: 1;
     text-align: center;
     height: 100%;
-    
-}
-
-.profileStats2 {
-    display: flex;
-    justify-content: space-around;
-    flex-grow: 1;
-    text-align: center;
-    height: 100%;
-    margin-top: 10px;
-
 }
 
 .statNumber {
@@ -99,10 +87,17 @@
 }
 
 .profileUserInfo {
+    width: 100%;
     padding: 5px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .profileName {
+    width: min-content;
     font-size: 18px;
     font-weight: bold;
 }

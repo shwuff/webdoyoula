@@ -204,7 +204,22 @@ export const WebSocketProvider = ({ children }) => {
             const hash = tg?.initDataUnsafe?.hash;
             const initData = tg?.initData;
             if(initData) {
-                sendData({ action: "authorization", data: { hash, initData } });
+
+                let promoUser = 0;
+
+                if (window?.Telegram?.WebApp?.initDataUnsafe?.start_param !== undefined) {
+                    const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('--');
+                    params.some(param => {
+                        const match = param.match(/userId(\w+)/);
+                        if (match) {
+                            promoUser = match[1];
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+
+                sendData({ action: "authorization", data: { hash, initData, promoUser } });
             }
         }
     }, [isConnected]);
