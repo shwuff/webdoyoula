@@ -282,21 +282,21 @@
     border-left: 1px solid rgb(0,0,0,.1);
 }
 
-@media(min-width: 1200px) {
+@media(min-width: 1201px) {
     .rightModalContent {
         width: calc(100% - 1200px);
-        max-width: 300px;
-        min-width: 300px;
+        max-width: 400px;
+        min-width: 400px;
         right: 0;
     }
 }
 
-@media(min-width: 1520px) {
+@media(min-width: 1650px) {
     .rightModalContent {
         width: calc(100% - 1200px);
-        max-width: 300px;
-        min-width: 300px;
-        left: 1220px;
+        max-width: 400px;
+        min-width: 400px;
+        left: 1250px;
         border-right: 1px solid rgb(0,0,0,.1);
     }
 }
