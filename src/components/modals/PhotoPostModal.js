@@ -14,6 +14,11 @@ import SubscribeButton from "../buttons/SubscribeButton";
 import {useTranslation} from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
 import { setCurrentImageSelected, updateImage } from "../../redux/actions/imageActions";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTelegram } from '@fortawesome/free-brands-svg-icons';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+import telegramStar from "../../assets/icons/telegramStar.png";
+
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false }) => {
 
@@ -202,6 +207,19 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                         style={{maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                                 ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`}}
                                     />
+                                    {Number(userData.id) === Number(imageSelector[selectedPhoto].promptAuthor) && (
+                                        <img
+                                            src={telegramStar}
+                                            alt="Telegram Star"
+                                            style={{
+                                                position: 'absolute',
+                                                left: '8px',
+                                                bottom: '8px',
+                                                width: '40px',
+                                                height: '40px',
+                                            }}
+                                        />
+                                    )}
 
                                     <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
                                         <button
@@ -234,7 +252,9 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                 }
                                                 <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                     {t('repeat')}
+                                                      
                                                 </button>
+                                                                                           
                                             </>
                                         ) : (
                                             <>
@@ -265,6 +285,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                         </div>
                                                         <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
+                                                             
                                                         </button>
                                                         {imageSelector[selectedPhoto].count_generated_with_prompt}
                                                     </div>

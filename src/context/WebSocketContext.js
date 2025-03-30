@@ -68,7 +68,8 @@ export const WebSocketProvider = ({ children }) => {
                                 count_views: photo.count_views,
                                 count_generated_with_prompt: photo.count_generated_with_prompt,
                                 size: photo.size,
-                                low: photo.low
+                                low: photo.low,
+                                promptAuthor: photo.promptAuthor
                             };
 
                             offset += photo.size;
