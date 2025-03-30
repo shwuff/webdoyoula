@@ -178,7 +178,7 @@ const FeedPage = () => {
 
     return (
         <div className={"globalBlock"} onScroll={handleScroll}>
-            <div className={"center-content-block"}>
+            <div className={"center-content-block"} style={{marginTop: "7px"}}>
                 <MyGeneratedPhotosList
                     profileGallery={true}
                     resetLastPageRef={resetLastPageRef}

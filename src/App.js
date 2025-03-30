@@ -249,7 +249,7 @@ const App = () => {
     return (
         <div className="App" style={{background: "var(--bg-color)", width: "100vw", height: "100vh"}}>
             {
-                window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && (
+                window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && !window.location.pathname.startsWith("/profile/") && (
                     <div style={{width: "100%", height: window.Telegram.WebApp?.safeAreaInset?.top
                                  ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
                                  : '0', background: "var(--bg-color)", display: "block", position: "fixed", zIndex: 500}}>

@@ -11,6 +11,10 @@ import CloseButton from "../../components/buttons/CloseButton";
 import EditData from './settings/EditData';
 import {Box, Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import TelegramStar from './../../assets/icons/profileIcons/telegram-star.png';
+import zzzIcon from './../../assets/icons/profileIcons/zzz.png';
+import palmIcon from './../../assets/icons/profileIcons/palm.png';
+import hiIcon from './../../assets/icons/profileIcons/hi.png';
 
 const Profile = () => {
     const { userData, token, setUserData } = useAuth();
@@ -202,25 +206,66 @@ const Profile = () => {
         );
     }
 
+    const starCoordinates = [
+        { x: -40, y: 40, opacity: 0.9, size: 25 }, // 1
+        { x: -10, y: -5, opacity: 1, size: 30 }, // 2
+        { x: 50, y: -40, opacity: 0.9, size: 25 }, // 3
+        { x: 100, y: -5, opacity: 1, size: 30 }, // 4
+        { x: 140, y: 40, opacity: 0.9, size: 25 }, // 5
+        { x: 100, y: 80, opacity: 1, size: 30 }, // 6
+        { x: 50, y: 115, opacity: 0.9, size: 25 }, // 7
+        { x: -10, y: 80, opacity: 0.9, size: 30 }, // 8
+        { x: -80, y: 40, opacity: 0.4, size: 20 }, // 1
+        { x: -50, y: -5, opacity: 0.5, size: 23 }, // 2
+        { x: 10, y: -30, opacity: 0.5, size: 23 }, // 3
+        { x: 90, y: -30, opacity: 0.5, size: 23 }, // 4
+        { x: 150, y: -5, opacity: 0.5, size: 23 }, // 5
+        { x: 180, y: 40, opacity: 0.5, size: 23 }, // 6
+        { x: 150, y: 80, opacity: 0.5, size: 23 }, // 7
+        { x: 90, y: 115, opacity: 0.5, size: 23 }, // 8
+        { x: 10, y: 115, opacity: 0.5, size: 23 }, // 9
+        { x: -50, y: 80, opacity: 0.5, size: 23 }, // 10
+    ];
+
     return (
-        <div className={"globalBlock"} onScroll={handleScroll}>
+        <div className={"globalProfileBlock"} onScroll={handleScroll}>
             <div className={"center-content-block"}>
                 <div className={styles.profileHeader}>
-                    <div className={styles.profileAvatarWrapper}>
-                        <img
-                            src={tempUserData.photo_url}
-                            alt={tempUserData.first_name}
-                            className={styles.profileAvatar}
-                        />
-                    </div>
-                    <div className={styles.profileUserInfo}>
-                        <h2 className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
-                        {
-                            tempUserData?.username?.length > 0 && (
-                                <p className={styles.profileUsername}>@{tempUserData.username}</p>
-                            )
-                        }
-                        <p className={styles.profileDescription}>{tempUserData.bio}</p>
+                    <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
+                                 ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: tempUserData.profile_color.second_color_full}}>
+                        <div className={styles.miniProfileIconWrapper}>
+                            <img
+                                src={tempUserData.photo_url}
+                                alt={tempUserData.first_name}
+                                className={styles.profileAvatar}
+                                style={{ boxShadow: `0px 0px 200px 20px ${tempUserData.profile_color.first_color}` }}
+                            />
+                            <div className={styles.starWrapper}>
+                                {[...Array(18)].map((_, index) => (
+                                    <img
+                                        key={index}
+                                        src={tempUserData.mini_icon_name === 'star' ? TelegramStar : tempUserData.mini_icon_name === 'zzz' ? zzzIcon : tempUserData.mini_icon_name === 'hi' ? hiIcon : tempUserData.mini_icon_name === 'palm' ? palmIcon : TelegramStar}
+                                        className={styles.miniProfileIcon}
+                                        style={{
+                                            left: `${starCoordinates[index].x}px`,
+                                            top: `${starCoordinates[index].y}px`,
+                                            opacity: starCoordinates[index].opacity,
+                                            width: `${starCoordinates[index].size}px`,
+                                            height: `${starCoordinates[index].size}px`,
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className={styles.profileUserInfo}>
+                            <h2 style={{ color: "white", zIndex: 5 }} className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
+                            {
+                                tempUserData?.username?.length > 0 && (
+                                    <p style={{ color: "white", zIndex: 5 }} className={styles.profileUsername}>@{tempUserData.username}</p>
+                                )
+                            }
+                            {/*<p style={{ color: "white" }} className={styles.profileDescription}>{tempUserData.bio}</p>*/}
+                        </div>
                     </div>
                     <div className={styles.blockStats}>
                         <div className={styles.profileStats}>

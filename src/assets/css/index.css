@@ -205,7 +205,6 @@ a, div, button {
     width: 100%;
     max-width: 600px;
     margin:auto;
-    padding: 3px;
     max-height: var(--content-height);
 }
 
@@ -466,8 +465,12 @@ a, div, button {
 .globalBlock {
     height: var(--content-height);
     overflow-y: scroll;
-    padding: 5px;
     padding-top: var(--safeAreaInset-top);
+}
+
+.globalProfileBlock {
+    height: var(--content-height);
+    overflow-y: scroll;
 }
 
 .modalContent {
