@@ -60,5 +60,6 @@
   "likes": "likes",
   "repeats": "repeats",
   "views": "views",
-  "limit_balance": "You have run out of balance. To create images, please top up your balance"
+  "limit_balance": "You have run out of balance. To create images, please top up your balance",
+  "Awaiting your images for few seconds": "Awaiting your images for few seconds"
 }

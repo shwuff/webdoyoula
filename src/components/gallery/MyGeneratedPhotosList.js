@@ -47,13 +47,13 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                     </svg>
                 </div>
             )}
-            
+
             {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
                 <div className={styles.publishedBadge}>
                      <div className={styles.doubleCheck}>
                          <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
                      </div>
-                    
+
                 </div>
             )}
 
@@ -104,6 +104,7 @@ const MyGeneratedPhotosList = ({
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
 
     const [selectedImages, setSelectedImages] = useState([]);
+    const [photosList, setPhotosList] = useState([]);
 
     const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
@@ -263,12 +264,12 @@ const MyGeneratedPhotosList = ({
 
         if (!selectedPhoto) return;
 
-        const idx = photosRef.current.findIndex((p) => p.id === selectedPhoto.id);
+        const idx = photosList.findIndex((p) => p.id === selectedPhoto.id);
 
         if (idx === -1) return;
 
-        if (idx < photosRef.current.length - 1) {
-            openModal(photosRef.current[idx + 1].id);
+        if (idx < photosList.length - 1) {
+            openModal(photosList[idx + 1].id);
         } else {
             const nextPg = photosPage + 1;
             setPhotosPage(nextPg);
@@ -280,6 +281,7 @@ const MyGeneratedPhotosList = ({
     },
         [
             from,
+            photosList,
             photosPage,
             photosSortModel,
             setSelectedPhoto,
@@ -294,20 +296,29 @@ const MyGeneratedPhotosList = ({
     const handlePrevPhoto = useCallback((selectedPhoto) => {
         if (!selectedPhoto) return;
 
-        const idx = photosRef.current.findIndex((p) => p.id === selectedPhoto.id);
+        const idx = photosList.findIndex((p) => p.id === selectedPhoto.id);
         if (idx === -1) return;
 
         if (idx > 0) {
-            openModal(photosRef.current[idx - 1].id);
+            openModal(photosList[idx - 1].id);
         }
-    }, [sendData]);
+    }, [sendData, photosList]);
 
     useEffect(() => {
         if(searchQuery.length > 1) {
-            photosRef.current = [];
+            setPhotosList([]);
             setPhotosPage(1);
         }
-    }, [searchQuery]);
+    }, [searchQuery, setPhotosPage]);
+
+    //clean photos ref
+    useEffect(() => {
+        setPhotosList([]);
+        setPhotosPage(1);
+        resetLastPageRef();
+        resetFetchingRef();
+        isLoadingRef.current = false;
+    }, [userIdLoaded, setPhotosList]);
 
     // Click backButton Telegram
     useEffect(() => {
@@ -325,20 +336,12 @@ const MyGeneratedPhotosList = ({
         return () => BackButton.offClick(handleBackButtonClicked);
     }, [BackButton, isCommentModalOpen]);
 
-    //clean photos ref
-    useEffect(() => {
-        photosRef.current = [];
-        setPhotosPage(1);
-    }, [userIdLoaded]);
-
     //close loading
     useEffect(() => {
         if (isLoadingRef.current) return;
         if(!isConnected) return;
         if(token === null) return;
         isLoadingRef.current = true;
-
-        console.log('send request');
 
         sendData({
             action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
@@ -354,20 +357,19 @@ const MyGeneratedPhotosList = ({
                 const { modelId, photos } = msg;
 
                 if (photosSortModel === 0 || photosSortModel === modelId) {
-                    photosRef.current = [...photosRef.current, ...photos];
-                    photosRef.current = sortAndUniquePhotos(photosRef.current);
+                    setPhotosList((prev) => sortAndUniquePhotos([...prev, ...photos]));
                 }
             };
 
             addHandler('start_generating_images', handleStartGeneratingImages);
             return () => deleteHandler('start_generating_images');
         }
-    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded]);
+    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded, photosList, setPhotosList]);
 
     // update photo hided status
     useEffect(() => {
         const handleMessage = async (msg) => {
-            photosRef.current = photosRef.current.map(photo => {
+            setPhotosList(photo => {
                 if (photo.id === msg.photoId) {
                     return { ...photo, hided: msg.hided };
                 }
@@ -378,6 +380,13 @@ const MyGeneratedPhotosList = ({
                 //     ...prev,
                 //     hided: msg.hided
                 // }));
+                setPhotosList((prev) =>
+                    prev.map((photo) =>
+                        selectedImages.includes(photo.id)
+                            ? { ...photo, hided: false }
+                            : photo
+                    )
+                );
             }
             dispatch(updateImage(msg.photoId, {hided: msg.hided}));
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -385,7 +394,7 @@ const MyGeneratedPhotosList = ({
 
         addHandler('update_photo_hided', handleMessage);
         return () => deleteHandler('update_photo_hided');
-    }, [photosSortModel, addHandler, deleteHandler, selectedPhoto]);
+    }, [photosSortModel, addHandler, deleteHandler, selectedPhoto, setPhotosList]);
 
     //new photos notify
     useEffect(() => {
@@ -396,7 +405,23 @@ const MyGeneratedPhotosList = ({
                 const { modelId, media, mediaGroupId } = msg;
 
                 if (photosSortModel === 0 || photosSortModel === modelId) {
-                    photosRef.current((prev) => {
+                    // let updatedPhotos;
+                    // if (mediaGroupId) {
+                    //     const filteredPrev = photosList.filter(
+                    //         (photo) => photo.media_generated_group_id !== mediaGroupId
+                    //     );
+                    //     const newGroupPhotos = media.map((p) => ({
+                    //         ...p,
+                    //         media_generated_group_id: mediaGroupId,
+                    //         status: "completed"
+                    //     }));
+                    //     updatedPhotos = [...newGroupPhotos, ...filteredPrev];
+                    // } else {
+                    //     updatedPhotos = [...msg.media, ...photosList];
+                    // }
+                    //
+                    // updatedPhotos = sortAndUniquePhotos(updatedPhotos);
+                    setPhotosList((prev) => {
                         let updatedPhotos;
                         if (mediaGroupId) {
                             const filteredPrev = prev.filter(
@@ -411,9 +436,10 @@ const MyGeneratedPhotosList = ({
                         } else {
                             updatedPhotos = [...msg.media, ...prev];
                         }
+
                         updatedPhotos = sortAndUniquePhotos(updatedPhotos);
                         return updatedPhotos;
-                    });
+                    })
                 }
             };
 
@@ -421,22 +447,17 @@ const MyGeneratedPhotosList = ({
             return () => deleteHandler('new_photos');
         }
 
-    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded]);
+    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded, setPhotosList]);
 
     //generated photos append
     useEffect(() => {
         const handleAppend = async (msg) => {
 
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.photosSortModel || msg.photosSortModel === undefined) && (userIdLoaded === msg.userIdLoaded || from === 'feedPage') && requestId === msg.requestId) {
-                if (!photosRef.current) {
-                    photosRef.current = [];
-                }
-
-                photosRef.current = [...photosRef.current, ...msg.media];
                 if(userIdLoaded < 1 && from !== 'feedPage') {
-                    photosRef.current = sortAndUniquePhotos(photosRef.current);
+                    setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
                 } else {
-                    photosRef.current = uniquePhotos(photosRef.current);
+                    setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
                 }
             }
             resetFetchingRef();
@@ -445,7 +466,7 @@ const MyGeneratedPhotosList = ({
 
         addHandler('generated_photos_append', handleAppend);
         return () => deleteHandler('generated_photos_append');
-    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId]);
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId, setPhotosList]);
 
     //generated photos
     useEffect(() => {
@@ -455,15 +476,14 @@ const MyGeneratedPhotosList = ({
                 resetFetchingRef();
                 return;
             }
-            photosRef.current = [...photosRef.current, ...msg.photos];
-            photosRef.current = sortAndUniquePhotos(photosRef.current);
+            setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.photos]))
             isLoadingRef.current = false;
             resetFetchingRef();
         };
 
         addHandler('generated_photos', handleGeneratedPhotos);
         return () => deleteHandler('generated_photos');
-    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel]);
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, setPhotosList]);
 
     //scroll to top after filter avatar
     useEffect(() => {
@@ -500,7 +520,7 @@ const MyGeneratedPhotosList = ({
 
     const handleChangePhotosSortModel = useCallback((value, myModels) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        photosRef.current = [];
+        setPhotosList([]);
         setPhotosPage(1);
         setPhotosSortModel(value);
         for (let i = 0; i < myModels.length; i++) {
@@ -512,9 +532,9 @@ const MyGeneratedPhotosList = ({
         resetLastPageRef();
         resetFetchingRef();
         isLoadingRef.current = false;
-    }, [setPhotosPage, resetLastPageRef, resetFetchingRef]);
+    }, [setPhotosPage, resetLastPageRef, resetFetchingRef, setPhotosList]);
 
-    const memoizedPhotos = useMemo(() => photosRef.current, [photosRef.current]);
+    const memoizedPhotos = useMemo(() => photosList, [photosList]);
     const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
 
     const handlePublishToGallery = () => {
@@ -525,11 +545,18 @@ const MyGeneratedPhotosList = ({
                 data: { jwt: token, photoId: selectedImages[i] }
             });
 
-            photosRef.current.forEach((photo) => {
-                if (photo.id === selectedImages[i]) {
-                    photo.hided = false;
-                }
-            });
+            // photosRef.current.forEach((photo) => {
+            //     if (photo.id === selectedImages[i]) {
+            //         photo.hided = false;
+            //     }
+            // });
+            setPhotosList((prev) =>
+                prev.map((photo) =>
+                    selectedImages.includes(photo.id)
+                        ? { ...photo, hided: false }
+                        : photo
+                )
+            );
         }
 
         setSelectedImages([]);

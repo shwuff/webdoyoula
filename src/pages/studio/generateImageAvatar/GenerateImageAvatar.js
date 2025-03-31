@@ -269,6 +269,11 @@ const GenerateImageAvatar = () => {
                 {step === 1 && (
                     <div className={styles.stepContent}>
                         <h2>{t('select_avatar')}</h2>
+                        {
+                            myModels.length < 1 && (
+                                <p>Test for free</p>
+                            )
+                        }
                         <div className={styles.amountsContainer}>
                             {myModels?.map((model) => (
                                 <>

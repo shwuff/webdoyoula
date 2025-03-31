@@ -114,6 +114,7 @@ const Profile = () => {
 
     useEffect(() => {
         if (userId && userData) {
+            setPhotosPage(1);
             sendData({ action: 'getProfile', data: { jwt: token, userId } });
         }
     }, [userId]);
@@ -196,6 +197,66 @@ const Profile = () => {
         isFetchingRef.current = false;
     };
 
+    const initialMiniProfileIconsCoordinates = [
+        { x: -40, y: 40, opacity: 0.9, size: 25 },
+        { x: -10, y: -5, opacity: 1, size: 30 },
+        { x: 50, y: -40, opacity: 0.9, size: 25 },
+        { x: 100, y: -5, opacity: 1, size: 30 },
+        { x: 140, y: 40, opacity: 0.9, size: 25 },
+        { x: 100, y: 80, opacity: 1, size: 30 },
+        { x: 50, y: 115, opacity: 0.9, size: 25 },
+        { x: -10, y: 80, opacity: 0.9, size: 30 },
+        { x: -80, y: 40, opacity: 0.4, size: 20 },
+        { x: -50, y: -5, opacity: 0.5, size: 23 },
+        { x: 10, y: -30, opacity: 0.5, size: 23 },
+        { x: 90, y: -30, opacity: 0.5, size: 23 },
+        { x: 150, y: -5, opacity: 0.5, size: 23 },
+        { x: 180, y: 40, opacity: 0.5, size: 23 },
+        { x: 150, y: 80, opacity: 0.5, size: 23 },
+        { x: 90, y: 115, opacity: 0.5, size: 23 },
+        { x: 10, y: 115, opacity: 0.5, size: 23 },
+        { x: -50, y: 80, opacity: 0.5, size: 23 },
+    ];
+
+    const [miniIconsCoordinates, setMiniIconsCoordinates] = useState(initialMiniProfileIconsCoordinates);
+
+    const handleScrollMiniIcon = (e) => {
+        const scrollY = e.target.scrollTop;
+
+        setMiniIconsCoordinates((prev) =>
+            prev.map((icon, i) => {
+                const startX = initialMiniProfileIconsCoordinates[i].x;
+                const startY = initialMiniProfileIconsCoordinates[i].y;
+                const startSize = initialMiniProfileIconsCoordinates[i].size;
+
+                const progress = Math.min(1, scrollY / 150);
+
+                const sizeProgress = Math.max(0.5, 1 - progress * 0.5);
+
+                return {
+                    ...icon,
+                    x: startX + (50 - startX) * progress,
+                    y: startY + (50 - startY) * progress,
+                    size: startSize * sizeProgress,
+                    opacity: icon.opacity,
+                };
+            })
+        );
+    };
+
+    useEffect(() => {
+        const contentBlock = document.querySelector('.globalProfileBlock');
+        if (contentBlock) {
+            contentBlock.addEventListener('scroll', handleScrollMiniIcon);
+        }
+
+        return () => {
+            if (contentBlock) {
+                contentBlock.removeEventListener('scroll', handleScrollMiniIcon);
+            }
+        };
+    }, []);
+
     if (!tempUserData) {
         return (
             <div className={"globalBlock"}>
@@ -206,29 +267,11 @@ const Profile = () => {
         );
     }
 
-    const starCoordinates = [
-        { x: -40, y: 40, opacity: 0.9, size: 25 }, // 1
-        { x: -10, y: -5, opacity: 1, size: 30 }, // 2
-        { x: 50, y: -40, opacity: 0.9, size: 25 }, // 3
-        { x: 100, y: -5, opacity: 1, size: 30 }, // 4
-        { x: 140, y: 40, opacity: 0.9, size: 25 }, // 5
-        { x: 100, y: 80, opacity: 1, size: 30 }, // 6
-        { x: 50, y: 115, opacity: 0.9, size: 25 }, // 7
-        { x: -10, y: 80, opacity: 0.9, size: 30 }, // 8
-        { x: -80, y: 40, opacity: 0.4, size: 20 }, // 1
-        { x: -50, y: -5, opacity: 0.5, size: 23 }, // 2
-        { x: 10, y: -30, opacity: 0.5, size: 23 }, // 3
-        { x: 90, y: -30, opacity: 0.5, size: 23 }, // 4
-        { x: 150, y: -5, opacity: 0.5, size: 23 }, // 5
-        { x: 180, y: 40, opacity: 0.5, size: 23 }, // 6
-        { x: 150, y: 80, opacity: 0.5, size: 23 }, // 7
-        { x: 90, y: 115, opacity: 0.5, size: 23 }, // 8
-        { x: 10, y: 115, opacity: 0.5, size: 23 }, // 9
-        { x: -50, y: 80, opacity: 0.5, size: 23 }, // 10
-    ];
-
     return (
-        <div className={"globalProfileBlock"} onScroll={handleScroll}>
+        <div className={"globalProfileBlock"} onScroll={(e) => {
+            handleScroll(e);
+            handleScrollMiniIcon(e);
+        }}>
             <div className={"center-content-block"}>
                 <div className={styles.profileHeader}>
                     <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
@@ -247,11 +290,11 @@ const Profile = () => {
                                         src={tempUserData.mini_icon_name === 'star' ? TelegramStar : tempUserData.mini_icon_name === 'zzz' ? zzzIcon : tempUserData.mini_icon_name === 'hi' ? hiIcon : tempUserData.mini_icon_name === 'palm' ? palmIcon : TelegramStar}
                                         className={styles.miniProfileIcon}
                                         style={{
-                                            left: `${starCoordinates[index].x}px`,
-                                            top: `${starCoordinates[index].y}px`,
-                                            opacity: starCoordinates[index].opacity,
-                                            width: `${starCoordinates[index].size}px`,
-                                            height: `${starCoordinates[index].size}px`,
+                                            left: `${miniIconsCoordinates[index].x}px`,
+                                            top: `${miniIconsCoordinates[index].y}px`,
+                                            opacity: miniIconsCoordinates[index].opacity,
+                                            width: `${miniIconsCoordinates[index].size}px`,
+                                            height: `${miniIconsCoordinates[index].size}px`,
                                         }}
                                     />
                                 ))}
@@ -356,6 +399,7 @@ const Profile = () => {
                     {/*// />*/}
 
                     <MyGeneratedPhotosList
+                        key={tempUserData?.id}
                         profileGallery={true}
                         resetLastPageRef={resetLastPageRef}
                         resetFetchingRef={resetFetchingRef}
