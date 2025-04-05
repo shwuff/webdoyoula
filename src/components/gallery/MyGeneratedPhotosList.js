@@ -93,7 +93,10 @@ const MyGeneratedPhotosList = ({
     from,
     postId,
     userIdLoaded = 0,
-    searchQuery = ''
+    searchQuery = '',
+    filter = '',
+    dateRange = '',
+    feed = 'feed'
 }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -134,6 +137,9 @@ const MyGeneratedPhotosList = ({
 
         dispatch(setCurrentImageSelected(photoId));
         setSelectedPhoto(photoId);
+        BackButton.show();
+
+        setIsModalOpen(true);
 
         sendData({
             action: "get_photo",
@@ -145,7 +151,7 @@ const MyGeneratedPhotosList = ({
             }
         });
 
-    }, [sendData, token]);
+    }, [sendData, token, setSelectedPhoto]);
 
     // const openModalP = (post) => {
     //     if (!post) return;
@@ -166,7 +172,7 @@ const MyGeneratedPhotosList = ({
             setSelectedPhoto(0);
         }, 300);
         BackButton.hide();
-    }, [BackButton]);
+    }, [BackButton, setSelectedPhoto]);
 
     const toggleSelectPhoto = useCallback((photoId) => {
         setSelectedImages((prev) => {
@@ -273,14 +279,26 @@ const MyGeneratedPhotosList = ({
         } else {
             const nextPg = photosPage + 1;
             setPhotosPage(nextPg);
+            const requestUUID = generateUUID();
+            setRequestId(requestUUID);
             sendData({
                 action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
-                data: { jwt: token, photosPage: nextPg, photosSortModel, userIdLoaded, requestId: requestId, ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}) }
+                data: {
+                    jwt: token,
+                    photosPage: nextPg,
+                    photosSortModel,
+                    userIdLoaded,
+                    requestId: requestUUID,
+                    ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}),
+                    ...(filter.length > 1 && from === 'feedPage' ? { filter: filter, dateRange: dateRange } : {}),
+                    ...(from === 'feedPage' ? {feed} : {})
+                }
             });
         }
     },
         [
             from,
+            feed,
             photosList,
             photosPage,
             photosSortModel,
@@ -289,7 +307,9 @@ const MyGeneratedPhotosList = ({
             sendData,
             token,
             userIdLoaded,
-            requestId
+            requestId,
+            filter,
+            dateRange
         ]
     );
 
@@ -310,6 +330,11 @@ const MyGeneratedPhotosList = ({
             setPhotosPage(1);
         }
     }, [searchQuery, setPhotosPage]);
+
+    useEffect(() => {
+        setPhotosList([]);
+        setPhotosPage(1);
+    }, [filter, dateRange, feed]);
 
     //clean photos ref
     useEffect(() => {
@@ -343,11 +368,23 @@ const MyGeneratedPhotosList = ({
         if(token === null) return;
         isLoadingRef.current = true;
 
+        const requestUUID = generateUUID();
+        setRequestId(requestUUID);
+
         sendData({
             action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
-            data: { jwt: token, photosPage, photosSortModel, userIdLoaded, requestId: requestId, ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}) }
+            data: {
+                jwt: token,
+                photosPage,
+                photosSortModel,
+                userIdLoaded,
+                requestId: requestUUID,
+                ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}),
+                ...(filter.length > 1 && from === 'feedPage' ? { filter: filter, dateRange: dateRange } : {}),
+                ...(from === 'feedPage' ? {feed} : {})
+            }
         });
-    }, [token, photosPage, photosSortModel, userIdLoaded, from, isConnected, requestId, searchQuery]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, isConnected, requestId, searchQuery, filter, dateRange, feed]);
 
     //start generating image
     useEffect(() => {

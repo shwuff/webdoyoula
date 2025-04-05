@@ -383,7 +383,7 @@ const Profile = () => {
                     <Box sx={{ width: '50%' }}>
                         <Button
                             variant="contained"
-                            onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}`}
+                            onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}AAAfrom${userId}`}
                             sx={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px' }}
                         >
                             {t('share_profile')}

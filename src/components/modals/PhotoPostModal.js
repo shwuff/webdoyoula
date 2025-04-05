@@ -14,13 +14,9 @@ import SubscribeButton from "../buttons/SubscribeButton";
 import {useTranslation} from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
 import { setCurrentImageSelected, updateImage } from "../../redux/actions/imageActions";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTelegram } from '@fortawesome/free-brands-svg-icons';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
 import telegramStar from "../../assets/icons/telegramStar.png";
 
-
-const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false }) => {
+const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
     const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
     const {token, userData} = useAuth();
@@ -97,9 +93,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
             if (!msg.media || msg.media.length < 1) return;
-            BackButton.show();
-            setIsModalOpen(true);
-            setOpenBackdropLoader(false);
             dispatch(updateImage(msg.media[0].id, {blob_url: msg.media[0].blob_url}));
         };
 
@@ -170,7 +163,13 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                         {imageSelector[selectedPhoto].author.first_name} {imageSelector[selectedPhoto].author.last_name}
                                                     </Typography>
                                                     <Typography variant="body2" className={"text-muted"}>
-                                                        @{imageSelector[selectedPhoto].author.username}
+                                                        {
+                                                            imageSelector[selectedPhoto].author.username && (
+                                                                <>
+                                                                    @{imageSelector[selectedPhoto].author.username}
+                                                                </>
+                                                            )
+                                                        }
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -190,15 +189,19 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                 }
                                 <div className={styles.imageBlock} style={{ maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                     ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}>
-                                    <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
-                                        <button
-                                            className={styles.navButton}
-                                            style={{ left: 10 }}
-                                            onClick={() => prevPhoto(imageSelector[selectedPhoto])}
-                                        >
-                                            <ArrowBackIosNewIcon />
-                                        </button>
-                                    </div>
+                                    {
+                                        from !== 'notification' && (
+                                            <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
+                                                <button
+                                                    className={styles.navButton}
+                                                    style={{ left: 10 }}
+                                                    onClick={() => prevPhoto(imageSelector[selectedPhoto])}
+                                                >
+                                                    <ArrowBackIosNewIcon />
+                                                </button>
+                                            </div>
+                                        )
+                                    }
 
                                     <img
                                         src={imageSelector[selectedPhoto].blob_url}
@@ -221,15 +224,19 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                         />
                                     )}
 
-                                    <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
-                                        <button
-                                            className={styles.navButton}
-                                            style={{ right: 10 }}
-                                            onClick={() => nextPhoto(imageSelector[selectedPhoto])}
-                                        >
-                                            <ArrowForwardIosIcon />
-                                        </button>
-                                    </div>
+                                    {
+                                        from !== 'notification' && (
+                                            <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
+                                                <button
+                                                    className={styles.navButton}
+                                                    style={{ right: 10 }}
+                                                    onClick={() => nextPhoto(imageSelector[selectedPhoto])}
+                                                >
+                                                    <ArrowForwardIosIcon />
+                                                </button>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                                 <div className="p-2">
                                     {
@@ -285,7 +292,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                         </div>
                                                         <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
-                                                             
                                                         </button>
                                                         {imageSelector[selectedPhoto].count_generated_with_prompt}
                                                     </div>

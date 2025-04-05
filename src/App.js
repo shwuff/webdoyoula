@@ -18,6 +18,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Snackbar, Alert, CircularProgress as MUICircularProgress } from "@mui/material";
 import Auth from "./pages/user/auth/Auth";
 import {useTranslation} from "react-i18next";
+import Rating from "./pages/rating/Rating";
+import NotificationsPage from './pages/notifications/NotificationsPage';
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -75,7 +77,7 @@ const App = () => {
         document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
         document.documentElement.style.setProperty('--secondary-text-color', '#888888');
         document.documentElement.style.setProperty('--content-height', `calc(100vh - ${window?.Telegram?.WebApp?.safeAreaInset?.top + 40}px)`);
-        document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}px`);
+        document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top ? window?.Telegram?.WebApp?.safeAreaInset?.top * 2 : 5}px`);
         document.documentElement.style.setProperty('--safeAreaInset-top-value', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}`);
 
         if (token && isConnected) {
@@ -103,13 +105,22 @@ const App = () => {
 
     useEffect(() => {
         const handleNotification = (msg) => {
-            setNotification(msg);
+            // setNotification(msg);
+            if(msg.type === 'like' || msg.type === 'comment' || msg.type === 'subscribe') {
+                setUserData((prev) => ({
+                    ...prev,
+                    has_new_notify: 1
+                }));
+                console.log(msg.type);
+            } else {
+                setNotification(msg);
+            }
         }
 
         addHandler('notification', handleNotification);
 
         return () => deleteHandler('notification');
-    }, []);
+    }, [setUserData]);
 
     useEffect(() => {
         const handleUpdatePhotosLeft = (msg) => {
@@ -162,7 +173,7 @@ const App = () => {
 
     useEffect(() => {
         if (window?.Telegram?.WebApp?.initDataUnsafe?.start_param !== undefined) {
-            const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('--');
+            const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('AAA');
 
             params.some(param => {
                 const match = param.match(/userId(\w+)/);
@@ -249,7 +260,7 @@ const App = () => {
     return (
         <div className="App" style={{background: "var(--bg-color)", width: "100vw", height: "100vh"}}>
             {
-                window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && !window.location.pathname.startsWith("/profile/") && (
+                window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && !window.location.pathname.startsWith("/profile/") && !window.location.pathname.startsWith("/rating") && (
                     <div style={{width: "100%", height: window.Telegram.WebApp?.safeAreaInset?.top
                                  ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
                                  : '0', background: "var(--bg-color)", display: "block", position: "fixed", zIndex: 500}}>
@@ -271,6 +282,8 @@ const App = () => {
                     <Route path="/studio/generate-image-avatar" element={<GenerateImageAvatar />} />
                     <Route path="/studio/generate-image-avatar/:promptId" element={<GenerateImageAvatar />} />
                     <Route path="/post/edit/:postId" element={<EditPost />} />
+                    <Route path="/rating" element={<Rating />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
                 </Routes>
             </div>
             <NavbarBottom />
@@ -278,7 +291,26 @@ const App = () => {
                 open={Boolean(notification)}
                 onClose={handleCloseNotification}
                 autoHideDuration={5000}
-                sx={{marginBottom: "50px", zIndex: "10000"}}
+                sx={{
+                    marginBottom: "50px",
+                    zIndex: "10000",
+                    width: "100%",
+                    '& .MuiPaper-root': {
+                        width: "100%",
+                        maxWidth: "600px",
+                        backgroundColor: 'rgba(30, 30, 30, 0.1)',
+                        backdropFilter: 'blur(100px)',
+                        color: '#fff',
+                        borderRadius: '12px',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+                    }
+                }}
+                onClick={() => {
+                    if(notification?.location) {
+                        navigate(notification?.location);
+                        setNotification(null);
+                    }
+                }}
                 anchorOrigin={{ vertical: notification?.position ? notification?.position : "bottom", horizontal: 'center' }}
             >
                 <Alert
@@ -296,6 +328,11 @@ const App = () => {
                     // }
                 >
                     {t(notification?.message)}
+                    {
+                        notification?.from && (
+                            <> {notification.from.first_name} {notification.from.last_name}</>
+                        )
+                    }
                 </Alert>
             </Snackbar>
         </div>

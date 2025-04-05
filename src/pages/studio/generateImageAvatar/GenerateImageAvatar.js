@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from 'react';
+import React, {memo, useEffect, useRef, useState} from 'react';
 import styles from './css/GenerateImageAvatar.module.css';
 import {FaRobot, FaCog, FaHourglassHalf, FaCheckCircle, FaSortNumericUp, FaUser, FaCheck} from 'react-icons/fa';
 import {useAuth} from "../../../context/UserContext";
@@ -81,6 +81,8 @@ const GenerateImageAvatar = () => {
 
     const { myModels, token } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
+
+    const textareaRef = useRef(null);
 
     const stepIcons = promptId !== undefined ? [FaUser, FaSortNumericUp] : [FaUser, FaRobot, FaCog, FaSortNumericUp];
 
@@ -243,6 +245,14 @@ const GenerateImageAvatar = () => {
         setMediaGroup(0);
     }
 
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto'; // Сбросим высоту перед пересчетом
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Установим новую высоту
+        }
+    }, [prompt]);
+
+
     return (
         <div className={styles.container}>
             <div className={styles.progressBar}>
@@ -374,12 +384,15 @@ const GenerateImageAvatar = () => {
                     <div className={styles.stepContent}>
                         <h2>{t('enter_prompt')}</h2>
                         <textarea
+                            ref={textareaRef}
                             value={prompt}
                             onChange={(e) => {
                                 setPrompt(e.target.value);
                             }}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
+                            className={"promptInput"}
+                            rows={1}
                             placeholder={t('Describe what you want to create...')}
                         />
                         {

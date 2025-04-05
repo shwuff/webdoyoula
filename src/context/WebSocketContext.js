@@ -74,7 +74,7 @@ export const WebSocketProvider = ({ children }) => {
 
                             offset += photo.size;
 
-                            if(metaData.action === 'generated_photos_append' && !(photo.id in imagesSelector)) {
+                            if(!(photo.id in imagesSelector)) {
                                 dispatch(addImage(photo.id, imageData));
                             }
 
@@ -209,9 +209,9 @@ export const WebSocketProvider = ({ children }) => {
                 let promoUser = 0;
 
                 if (window?.Telegram?.WebApp?.initDataUnsafe?.start_param !== undefined) {
-                    const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('--');
+                    const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('AAA');
                     params.some(param => {
-                        const match = param.match(/userId(\w+)/);
+                        const match = param.match(/from(\w+)/);
                         if (match) {
                             promoUser = match[1];
                             return true;

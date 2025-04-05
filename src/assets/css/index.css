@@ -446,7 +446,7 @@ a, div, button {
 }
 
 .navbar-content {
-    width: 70%;
+    width: 80%;
     max-width: 600px;
     display: flex;
     justify-content: space-around;
@@ -466,6 +466,8 @@ a, div, button {
     height: var(--content-height);
     overflow-y: scroll;
     padding-top: var(--safeAreaInset-top);
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .globalProfileBlock {
@@ -580,9 +582,33 @@ a, div, button {
 }
 
 .MuiInputBase-input:active .MuiOutlinedInput-root {
-    border: 1px solid #2196F3;
+    border: 1px solid var(--primary-color);
 }
 
 .c-pointer {
     cursor: pointer;
+}
+
+.promptInput {
+    min-height: 20px;
+    padding: 10px;
+    max-height: 250px;
+    resize: none;
+    overflow-y: auto;
+    width: 100%;
+    border-radius: 12px;
+}
+
+.promptInput:focus {
+    border: 1px solid var(--primary-color);
+}
+
+.new-notify-bounce {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: red;
+    position: absolute;
+    right: 0;
+    top: 0;
 }

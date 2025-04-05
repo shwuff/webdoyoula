@@ -62,5 +62,20 @@
   "repeats": "повторов",
   "views": "просмотров",
   "limit_balance": "У Вас закончился баланс. Чтобы создавать фотографии, пополните баланс",
-  "Awaiting your images for few seconds": "Изображения будут готовы в течение 15-20 секунд"
+  "Awaiting your images for few seconds": "Изображения будут готовы в течение 15-20 секунд",
+  "rating": "Рейтинг",
+  "feed_type": "Тип ленты",
+  "subscribes": "Подписки",
+  "sort_by": "Сортировать по",
+  "sort_by_repeats": "Повторы",
+  "publish_date": "Дата публикации",
+  "type_interval": "Промежуток",
+  "last_7_days": "Последние 7 дней",
+  "last_30_days": "Последние 30 дней",
+  "all_time": "За все время",
+  "refs": "Рефы",
+  "notifications": "Уведомления",
+  "new_like": "Вам поставил лайк ",
+  "new_subscribe": "На вас подписался ",
+  "new_comment": "Комментарий оставил "
 }

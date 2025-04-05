@@ -12,6 +12,15 @@ export const AuthProvider = ({ children }) => {
     const [myModels, setMyModels] = useState(null);
     const [myPhotos, setMyPhotos] = useState(null);
 
+    const updateUserData = (newData) => {
+        setUserData((prev) => (
+            {
+                ...prev,
+                newData
+            }
+        ))
+    }
+
     const login = (newToken) => {
         setToken(newToken);
     };
@@ -21,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, login, logout, setUserData, userData, myModels, setMyModels, setMyPhotos, myPhotos }}>
+        <AuthContext.Provider value={{ token, login, logout, setUserData, userData, myModels, setMyModels, setMyPhotos, myPhotos, updateUserData }}>
             {children}
         </AuthContext.Provider>
     );

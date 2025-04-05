@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 import { FaHome, FaBookmark, FaPlus, FaUser, FaSearch, FaFolder } from 'react-icons/fa';
 import styles from './css/NavbarBottom.module.css';
@@ -8,6 +8,8 @@ import {useTranslation} from "react-i18next";
 import HomeIcon from "../../assets/svg/HomeIcon";
 import PlusIcon from "../../assets/svg/PlusIcon";
 import SearchIcon from "../../assets/svg/SearchIcon";
+import RatingIcon from "../../assets/svg/RatingIcon";
+import NotificationIcon from "../../assets/svg/NotificationIcon";
 
 const NavbarBottom = () => {
     const location = useLocation();
@@ -55,6 +57,29 @@ const NavbarBottom = () => {
                                     <PlusIcon className={location.pathname.startsWith('/studio') ? styles.activeIcon : ''} active={location.pathname.startsWith('/studio')} />
                                 </div>
                                 <span className={"navbar-content-title"}>{t('my_creations')}</span>
+                            </div>
+                            <div onClick={() => {
+                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                                navigate("/rating");
+                            }} className={`${styles.navItem} ${location.pathname.startsWith('/rating') ? styles.active : ''}`}>
+                                <div className={styles.navIcon}>
+                                    <RatingIcon className={location.pathname.startsWith('/rating') ? styles.activeIcon : ''} active={location.pathname.startsWith('/rating')} />
+                                </div>
+                                <span className={"navbar-content-title"}>{t('rating')}</span>
+                            </div>
+                            <div onClick={() => {
+                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                                navigate("/notifications");
+                            }} className={`${styles.navItem} ${location.pathname.startsWith('/notifications') ? styles.active : ''}`}>
+                                <div className={styles.navIcon}>
+                                    {
+                                        userData.has_new_notify !== 0 && (
+                                            <div className='new-notify-bounce'></div>
+                                        )
+                                    }
+                                    <NotificationIcon className={location.pathname.startsWith('/notifications') ? styles.activeIcon : ''} active={location.pathname.startsWith('/notifications')} />
+                                </div>
+                                <span className={"navbar-content-title"}>{t('notifications')}</span>
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
