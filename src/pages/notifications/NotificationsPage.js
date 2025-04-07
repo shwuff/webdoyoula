@@ -36,9 +36,11 @@ const NotificationsPage = () => {
                 ? msg.notifications
                 : Object.values(msg.notifications);
 
+            console.log(msg.notifications);
             const sortedNotifications = sortNotificationsByTime(notificationsArray);
             const grouped = groupNotificationsByDate(sortedNotifications);
             setNotifications(grouped);
+            console.log(grouped)
             setUserData((prev) => (
                 {
                     ...prev,

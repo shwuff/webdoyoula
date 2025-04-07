@@ -90,6 +90,7 @@ const GenerateImageAvatar = () => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         setStep(prev => Math.min(prev + 1, 6));
     };
+    
     const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
     const fillWidth = promptId === undefined ? ((step - 1) / (stepIcons.length - 1)) * 100 : step === 1 ? 0 : (3 / 3) * 100;
