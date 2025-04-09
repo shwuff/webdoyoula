@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setCurrentImageSelected, updateImage } from '../../redux/actions/imageActions';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {useSelector} from "react-redux";
+import telegramStar from "../../assets/icons/telegramStar.png";
 
 Modal.setAppElement('#app');
 
@@ -34,6 +35,9 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         toggleSelectPhoto(photo.id);
     };
 
+    const { token, myModels, setMyModels, userData } = useAuth();
+
+
     const imageSelector = useSelector((state) => state.image.images);
 
     return (
@@ -50,9 +54,24 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
             {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
                 <div className={styles.publishedBadge}>
+
+                    {Number(userData.id) === Number(imageSelector[photo.id]?.promptAuthor) && (
+                        <img
+                            src={telegramStar}
+                            alt="Telegram Star"
+                            style={{
+                            
+                                width: '35px',
+                                height: '35px',
+                            }}
+                        />
+                    )}
+
                      <div className={styles.doubleCheck}>
                          <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
                      </div>
+
+                     
 
                 </div>
             )}

@@ -308,17 +308,16 @@
 
 .publishedBadge {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 5px;
+    left: 0;
+    right: 8px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    padding: 5px 10px;
-    border-radius: 50%;
-    /*border: 1px solid white;*/
-    width: 32px;
-    height: 32px;
+    padding: 0 8px;
+    height: 40px;
 }
+
 
 .doubleCheck {
     display: flex;
@@ -342,3 +341,15 @@
     fill: white;
     color: white;
   }
+
+  .telegramStarWrapper {
+    position: absolute;
+    bottom: 8px;
+    margin-right: 8px; 
+}
+
+.telegramStarImage {
+    width: 40px;
+    height: 40px;
+}
+
