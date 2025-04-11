@@ -383,7 +383,7 @@ const MyGeneratedPhotosList = ({
             setPhotosList([]);
             setPhotosPage(1);
         }
-    }, [searchQuery, setPhotosPage]);
+    }, [searchQuery]);
 
     useEffect(() => {
         setPhotosList([]);
@@ -547,15 +547,19 @@ const MyGeneratedPhotosList = ({
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
                 } else {
-                    if(filter === 'repeats' && dateRange === 'last_1_day') {
+                    if(filter === 'repeats1' && dateRange === 'last_1_day1') {
                         setPhotosList((prev) => sortAndUniquePhotosWithRepeats([...prev, ...msg.media]));
                     } else {
                         setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
                     }
                 }
+
+                if(msg.media[0].order == 29 || !filter) {
+                    resetFetchingRef();
+                    isLoadingRef.current = false;
+                }
+
             }
-            resetFetchingRef();
-            isLoadingRef.current = false;
         };
 
         addHandler('generated_photos_append', handleAppend);

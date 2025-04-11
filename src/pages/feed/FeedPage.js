@@ -36,7 +36,6 @@ const FeedPage = () => {
 
             if (bottom && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-                // console.log(`📸 Следующая страница: ${nextPage}`);
 
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
@@ -53,10 +52,6 @@ const FeedPage = () => {
         isFetchingRef.current = false;
     };
 
-    useEffect(() => {
-        setPhotosPage(1);
-    }, [dateRange, filter, feed]);
-
     return (
         <div className={"globalBlock"} onScroll={handleScroll}>
             <div className={"center-content-block"} style={{marginTop: "7px"}}>
@@ -68,6 +63,7 @@ const FeedPage = () => {
                     feed={feed}
                     setFeed={setFeed}
                     style={{ marginBottom: "10px" }}
+                    setPhotosPage={setPhotosPage}
                 />
                 <MyGeneratedPhotosList
                     profileGallery={true}

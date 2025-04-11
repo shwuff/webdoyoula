@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import SearchIcon from "../../assets/svg/SearchIcon";
 import { useNavigate } from "react-router-dom";
 
-const FeedFilters = ({ filter, setFilter, dateRange, setDateRange, feed, setFeed, style }) => {
+const FeedFilters = ({ filter, setFilter, dateRange, setDateRange, feed, setFeed, style, setPhotosPage }) => {
 
     const {t} = useTranslation();
     const navigate = useNavigate();
@@ -16,14 +16,17 @@ const FeedFilters = ({ filter, setFilter, dateRange, setDateRange, feed, setFeed
         if (event.target.value === "date") {
             setDateRange("all_time");
         }
+        setPhotosPage(1);
     };
 
     const handleFeedChange = (event) => {
         setFeed(event.target.value);
+        setPhotosPage(1);
     };
 
     const handleDateRangeChange = (event) => {
         setDateRange(event.target.value);
+        setPhotosPage(1);
     };
 
     return (

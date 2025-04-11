@@ -45,6 +45,8 @@ export const WebSocketProvider = ({ children }) => {
                     let offset = 4 + jsonLength;
 
                     if (metaData.media && metaData.media.length > 0) {
+                        let i = 0;
+
                         for (let photo of metaData.media) {
 
                             const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.fileType === 'video/mp4' ? "video/mp4" : "image/webp" });
@@ -70,7 +72,8 @@ export const WebSocketProvider = ({ children }) => {
                                 count_generated_with_prompt_today: photo.count_generated_with_prompt_today,
                                 size: photo.size,
                                 low: photo.low,
-                                promptAuthor: photo.promptAuthor
+                                promptAuthor: photo.promptAuthor,
+                                order: photo.order
                             };
 
                             offset += photo.size;
@@ -84,6 +87,8 @@ export const WebSocketProvider = ({ children }) => {
                             }
 
                             images.push(imageData);
+
+                            i++;
                         }
                     }
 
