@@ -77,5 +77,6 @@
   "notifications": "Notification",
   "new_like": "New like from ",
   "new_subscribe": "New subscribe from ",
-  "new_comment": "New comment from "
+  "new_comment": "New comment from ",
+  "last_1_day": "Last 1 Day"
 }

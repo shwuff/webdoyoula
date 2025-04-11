@@ -5,17 +5,30 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, Tab, Box } from '@mui/material';
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import {useTranslation} from "react-i18next";
+import CloseButton from '../../components/buttons/CloseButton';
 
-const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsersPage = () => {} }) => {
+const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsersPage = () => {}, searchQuery, setUserResults }) => {
     const navigate = useNavigate();
     const {t} = useTranslation();
+
+    const deleteUserFromHistory = (userId) => {
+        sendData({
+            action: "delete_user_from_history",
+            data: {
+                jwt: token,
+                userId
+            }
+        });
+
+        setUserResults(searchResults.filter(user => user.id !== userId));
+    }
 
     return (
         <>
             {searchResults.length > 0 && (
                 <ul className="search-results">
                     {searchResults.slice(0, max).map((user, index) => (
-                        <li key={index}>
+                        <li key={index} className="d-flex justify-content-between align-items-center">
                             <div
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => {
@@ -36,6 +49,13 @@ const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsers
                                     {user.username?.length > 0 ? <span style={{ color: "gray" }}>@{user.username}</span> : "" }
                                 </div>
                             </div>
+                            {
+                                searchQuery.length < 1 && (
+                                    <div onClick={() => deleteUserFromHistory(user.id)}>
+                                        <CloseButton />
+                                    </div>
+                                )
+                            }
                         </li>
                     ))}
                     {
@@ -69,12 +89,14 @@ const ShowImagesResult = ({ photosPage, setPhotosPage, resetFetchingRef, resetLa
                 setPhotosPage={setPhotosPage}
                 from={"feedPage"}
                 searchQuery={searchQuery}
+                filter={"repeats"}
+                dateRange={"last_7_days"}
             />
         </div>
     );
 };
 
-const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPhotosPage, searchQuery }) => {
+const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPhotosPage, searchQuery, setUserResults }) => {
     const { sendData } = useWebSocket();
     const { token } = useAuth();
     const [value, setValue] = useState(0);
@@ -105,12 +127,12 @@ const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPh
 
             {value === 0 && (
                 <>
-                    <ShowUsersResult searchResults={userResults} sendData={sendData} token={token} max={5} showUsersPage={() => setValue(1)} />
+                    <ShowUsersResult searchResults={userResults} setUserResults={setUserResults} sendData={sendData} token={token} max={5} showUsersPage={() => setValue(1)} searchQuery={searchQuery} />
                     <ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />
                 </>
             )}
 
-            {value === 1 && <ShowUsersResult searchResults={userResults} sendData={sendData} token={token} />}
+            {value === 1 && <ShowUsersResult setUserResults={setUserResults} searchResults={userResults} sendData={sendData} token={token} searchQuery={searchQuery} />}
 
             {value === 2 && <ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />}
         </div>

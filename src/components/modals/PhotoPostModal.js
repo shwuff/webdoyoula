@@ -210,7 +210,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                         style={{maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                                 ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`}}
                                     />
-                                    {Number(userData.id) === Number(imageSelector[selectedPhoto].promptAuthor) && (
+                                    {Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor) && (
                                         <img
                                             src={telegramStar}
                                             alt="Telegram Star"
@@ -259,7 +259,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                 }
                                                 <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                     {t('repeat')}
-                                                      
                                                 </button>
                                                                                            
                                             </>
@@ -293,7 +292,13 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                         <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
                                                         </button>
-                                                        {imageSelector[selectedPhoto].count_generated_with_prompt}
+                                                        {imageSelector[selectedPhoto].id}
+                                                        <span style={{ fontSize: 18 }}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
+                                                        {
+                                                            imageSelector[selectedPhoto].count_generated_with_prompt_today && imageSelector[selectedPhoto].count_generated_with_prompt_today > 0 ? (
+                                                                <span style={{ color: "#008000", fontWeight: 800, fontSize: 12, marginTop: -8, marginLeft: -4 }}>+{imageSelector[selectedPhoto].count_generated_with_prompt_today}</span>
+                                                            ) : null
+                                                        }
                                                     </div>
                                                 </div>
                                                 {

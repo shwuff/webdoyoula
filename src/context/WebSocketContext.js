@@ -67,6 +67,7 @@ export const WebSocketProvider = ({ children }) => {
                                 prompt_id: photo.prompt_id,
                                 count_views: photo.count_views,
                                 count_generated_with_prompt: photo.count_generated_with_prompt,
+                                count_generated_with_prompt_today: photo.count_generated_with_prompt_today,
                                 size: photo.size,
                                 low: photo.low,
                                 promptAuthor: photo.promptAuthor

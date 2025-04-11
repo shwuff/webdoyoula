@@ -612,3 +612,24 @@ a, div, button {
     right: 0;
     top: 0;
 }
+
+.search-icon-feed {
+    display: none;
+}
+
+.d-none {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    .search-icon-feed {
+        display: block;
+        margin-left: 10px;
+    }
+}
+
+@media (min-width: 800px) {
+    .d-md-block {
+        display: flex;
+    }
+}

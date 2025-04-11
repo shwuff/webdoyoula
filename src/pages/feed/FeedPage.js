@@ -16,8 +16,8 @@ import FeedFilters from "../../components/input/FeedFilters";
 import { Chat } from "@mui/icons-material";
 
 const FeedPage = () => {
-    const [filter, setFilter] = useState("date");
-    const [dateRange, setDateRange] = useState("all_time");
+    const [filter, setFilter] = useState("repeats");
+    const [dateRange, setDateRange] = useState("last_1_day");
     const [feed, setFeed] = useState('feed');
     const [photosPage, setPhotosPage] = useState(1);
 

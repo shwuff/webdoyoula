@@ -43,7 +43,7 @@ const NavbarBottom = () => {
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
                                 navigate("/search");
-                            }} className={`${styles.navItem} ${location.pathname === '/search' ? styles.active : ''}`}>
+                            }} className={`${styles.navItem} d-none d-md-block ${location.pathname === '/search' ? styles.active : ''}`}>
                                 <div className={styles.navIcon}>
                                     <SearchIcon className={location.pathname === '/search' ? styles.activeIcon : ''} active={location.pathname === '/search'} />
                                 </div>

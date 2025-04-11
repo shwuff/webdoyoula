@@ -35,8 +35,6 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         toggleSelectPhoto(photo.id);
     };
 
-    const { token, myModels, setMyModels, userData } = useAuth();
-
 
     const imageSelector = useSelector((state) => state.image.images);
 
@@ -52,27 +50,26 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </div>
             )}
 
+            {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.promptAuthor) && (
+                <div className={styles.publishedBadge}>
+                    <img
+                        src={telegramStar}
+                        alt="Telegram Star"
+                        style={{
+                        
+                            width: '25px',
+                            height: '25px',
+                        }}
+                    />
+                </div>
+            )}
+
             {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
                 <div className={styles.publishedBadge}>
-
-                    {Number(userData.id) === Number(imageSelector[photo.id]?.promptAuthor) && (
-                        <img
-                            src={telegramStar}
-                            alt="Telegram Star"
-                            style={{
-                            
-                                width: '35px',
-                                height: '35px',
-                            }}
-                        />
-                    )}
 
                      <div className={styles.doubleCheck}>
                          <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
                      </div>
-
-                     
-
                 </div>
             )}
 
@@ -269,6 +266,44 @@ const MyGeneratedPhotosList = ({
         return uniqueSorted;
     };
 
+    const sortAndUniquePhotosWithRepeats = (photosArray) => {
+        const sorted = photosArray.sort((a, b) => {
+            const aCount = a.count_generated_with_prompt_today || 0;
+            const bCount = b.count_generated_with_prompt_today || 0;
+    
+            if (bCount !== aCount) {
+                return bCount - aCount;
+            }
+    
+            const aStr = String(a.id);
+            const bStr = String(b.id);
+    
+            if (aStr === bStr) return 0;
+    
+            const aStartsWithB = aStr.startsWith("b");
+            const bStartsWithB = bStr.startsWith("b");
+    
+            if (aStartsWithB && bStartsWithB) {
+                return parseInt(aStr.slice(1), 10) - parseInt(bStr.slice(1), 10);
+            }
+            if (aStartsWithB) {
+                return -1;
+            }
+            if (bStartsWithB) {
+                return 1;
+            }
+    
+            return Number(b.id) - Number(a.id);
+        });
+    
+        const uniqueSorted = sorted.filter((photo, index, arr) => {
+            return index === 0 || photo.id !== arr[index - 1].id;
+        });
+    
+        return uniqueSorted;
+    };
+    
+
     const uniquePhotos = (photosArray) => {
         const seen = new Set();
 
@@ -383,7 +418,6 @@ const MyGeneratedPhotosList = ({
     //close loading
     useEffect(() => {
         if (isLoadingRef.current) return;
-        if(!isConnected) return;
         if(token === null) return;
         isLoadingRef.current = true;
 
@@ -403,7 +437,7 @@ const MyGeneratedPhotosList = ({
                 ...(from === 'feedPage' ? {feed} : {})
             }
         });
-    }, [token, photosPage, photosSortModel, userIdLoaded, from, isConnected, requestId, searchQuery, filter, dateRange, feed]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed]);
 
     //start generating image
     useEffect(() => {
@@ -513,7 +547,11 @@ const MyGeneratedPhotosList = ({
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
                 } else {
-                    setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
+                    if(filter === 'repeats' && dateRange === 'last_1_day') {
+                        setPhotosList((prev) => sortAndUniquePhotosWithRepeats([...prev, ...msg.media]));
+                    } else {
+                        setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
+                    }
                 }
             }
             resetFetchingRef();
@@ -522,7 +560,7 @@ const MyGeneratedPhotosList = ({
 
         addHandler('generated_photos_append', handleAppend);
         return () => deleteHandler('generated_photos_append');
-    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId, setPhotosList]);
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId, setPhotosList, filter, dateRange]);
 
     //generated photos
     useEffect(() => {

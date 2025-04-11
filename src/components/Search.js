@@ -41,7 +41,6 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
 
             if (bottom && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-                // console.log(`📸 Следующая страница: ${nextPage}`);
 
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
@@ -127,7 +126,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                     />
                 </div>
                 {
-                    searchQuery.length < 1 ? (
+                    searchQuery.length < 0 ? (
                         <>
                             {/*{searchQuery.length < 1 && searchResults.length > 0 && shouldShowResults && (*/}
                             {/*    <div className="w-100 d-flex justify-content-end">*/}
@@ -179,7 +178,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                             )}
                         </>
                     ) : (
-                        <SearchPage userResults={searchResults} isFetchingRef={isFetchingRef} searchQuery={searchQuery} lastPageRef={lastPageRef} photosPage={photosPage} setPhotosPage={setPhotosPage}  />
+                        <SearchPage userResults={searchResults} setUserResults={setSearchResults} isFetchingRef={isFetchingRef} searchQuery={searchQuery} lastPageRef={lastPageRef} photosPage={photosPage} setPhotosPage={setPhotosPage}  />
                     )
                 }
             </div>
