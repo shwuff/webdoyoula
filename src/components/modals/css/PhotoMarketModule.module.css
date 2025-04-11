@@ -1,0 +1,54 @@
+.size-select-button {
+    border: 1px solid #ccc;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    padding: 15px 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 40px;
+    text-align: center;
+  }
+  
+  .size-select-button.selected {
+    background-color: black;
+    color: white;
+    border-color: black;
+  }
+  
+  @media (max-width: 576px) {
+    .size-select-button {
+      font-size: 14px;
+      padding: 5px 12px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .size-select-button {
+      font-size: 13px;
+      padding: 4px 10px;
+    }
+  }
+
+.addToCartButton {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+    width: 100%;
+    
+    transition: transform 0.15s ease; /* заменили background-color на transform */
+    will-change: transform;
+}
+  
+.addToCartButton:hover {
+    transform: scale(1.03); /* лёгкое увеличение */
+}

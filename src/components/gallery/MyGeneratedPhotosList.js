@@ -18,6 +18,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {useSelector} from "react-redux";
 import telegramStar from "../../assets/icons/telegramStar.png";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
+import PhotoMarketModal from '../modals/PhotoMarketModal';
 
 Modal.setAppElement('#app');
 
@@ -875,7 +876,9 @@ const MyGeneratedPhotosList = ({
                 )
             }
 
-            <PhotoPostModal
+            {isMarket 
+            ? 
+            <PhotoMarketModal 
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 setOpenBackdropLoader={setOpenBackdropLoader}
@@ -885,7 +888,21 @@ const MyGeneratedPhotosList = ({
                 userIdLoaded={userIdLoaded}
                 selectedPhoto={selectedPhoto}
                 setSelectedPhoto={setSelectedPhoto}
-            />
+            /> 
+            : 
+            <PhotoPostModal 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                setOpenBackdropLoader={setOpenBackdropLoader}
+                profileGallery={profileGallery}
+                nextPhoto={handleNextPhoto}
+                prevPhoto={handlePrevPhoto}
+                userIdLoaded={userIdLoaded}
+                selectedPhoto={selectedPhoto}
+                setSelectedPhoto={setSelectedPhoto}
+             />
+            }
+
 
         </div>
     );
