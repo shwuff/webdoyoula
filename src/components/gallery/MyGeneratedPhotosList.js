@@ -17,6 +17,7 @@ import { setCurrentImageSelected, updateImage } from '../../redux/actions/imageA
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {useSelector} from "react-redux";
 import telegramStar from "../../assets/icons/telegramStar.png";
+import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 
 Modal.setAppElement('#app');
 
@@ -95,10 +96,97 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     );
 };
 
+const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected, profileGallery }) => {
+    const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
+
+    const style = useSpring({
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'translateY(0px)' : 'translateY(20px)',
+        config: { tension: 55, friction: 9 },
+        delay: inView ? Math.min(index * 20, 100) : 0,
+    });
+
+    const handleCircleClick = (e) => {
+        e.stopPropagation();
+        toggleSelectPhoto(photo.id);
+    };
+
+
+    const imageSelector = useSelector((state) => state.image.images);
+
+    return (
+        <animated.div ref={ref} style={style} className={styles.photoMarketCard} onClick={() => openModal(photo.id)}>
+            <img src={TShirtMask} style={{maxWidth: "100%", position: "absolute", aspectRatio: "4/5"}} />
+            {photo.blob_url && photo.status !== 'processing' ? (
+                <img src={photo.blob_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
+            ) : (
+                <div className={styles.loadingPlaceholder}>
+                    <svg className="spinner" viewBox="25 25 50 50">
+                        <circle cx="50" cy="50" r="20"></circle>
+                    </svg>
+                </div>
+            )}
+
+            <span>1 ₽</span>
+
+            <button className={styles.addToCartButton}>Добавить в корзину</button>
+
+            {/* {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.promptAuthor) && (
+                <div className={styles.publishedBadge}>
+                    <img
+                        src={telegramStar}
+                        alt="Telegram Star"
+                        style={{
+                        
+                            width: '25px',
+                            height: '25px',
+                        }}
+                    />
+                </div>
+            )} */}
+
+            {/* {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
+                <div className={styles.publishedBadge}>
+
+                     <div className={styles.doubleCheck}>
+                         <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
+                     </div>
+                </div>
+            )} */}
+
+            {/* {
+                photo.status !== 'processing' && profileGallery === false && (
+                    <div
+                        className={`${styles.selectCircle} ${isSelected ? styles.selected : ''}`}
+                        onClick={handleCircleClick}
+                    >
+                        {isSelected && <FaCheck className={styles.checkIconSelected}/>}
+                    </div>
+                )
+            } */}
+
+            {/* {
+                photo.fileType === 'video/mp4' && (
+                    <button className={styles.playButton}>
+                        <BiPlay className={styles.playButtonIcon} />
+                    </button>
+                )
+            } */}
+        </animated.div>
+    );
+};
+
 const areEqual = (prevProps, nextProps) =>
     prevProps.photo.id === nextProps.photo.id &&
     prevProps.isSelected === nextProps.isSelected;
+
 const PhotoCard = memo(PhotoCardComponent, areEqual);
+
+const areEqualMarket = (prevProps, nextProps) =>
+    prevProps.photo.id === nextProps.photo.id &&
+    prevProps.isSelected === nextProps.isSelected;
+
+const PhotoCardMarket = memo(PhotoMarketCardComponent, areEqual);
 
 const MyGeneratedPhotosList = ({
     profileGallery = false,
@@ -112,7 +200,8 @@ const MyGeneratedPhotosList = ({
     searchQuery = '',
     filter = '',
     dateRange = '',
-    feed = 'feed'
+    feed = 'feed',
+    isMarket = false
 }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -739,17 +828,37 @@ const MyGeneratedPhotosList = ({
             )}
 
             <div className={styles.photoGrid} id="generatedPhotosList">
-                {validPhotos.map((photo, index) => (
-                    <PhotoCard
-                        key={photo.id}
-                        photo={photo}
-                        index={index}
-                        openModal={openModal}
-                        isSelected={selectedImages.includes(photo.id)}
-                        toggleSelectPhoto={toggleSelectPhoto}
-                        profileGallery={profileGallery}
-                    />
-                ))}
+                {
+                    isMarket ? (
+                        <>
+                            {validPhotos.map((photo, index) => (
+                                <PhotoCardMarket
+                                    key={photo.id}
+                                    photo={photo}
+                                    index={index}
+                                    openModal={openModal}
+                                    isSelected={selectedImages.includes(photo.id)}
+                                    toggleSelectPhoto={toggleSelectPhoto}
+                                    profileGallery={profileGallery}
+                                />
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            {validPhotos.map((photo, index) => (
+                                <PhotoCard
+                                    key={photo.id}
+                                    photo={photo}
+                                    index={index}
+                                    openModal={openModal}
+                                    isSelected={selectedImages.includes(photo.id)}
+                                    toggleSelectPhoto={toggleSelectPhoto}
+                                    profileGallery={profileGallery}
+                                />
+                            ))}
+                        </>
+                    )
+                }
             </div>
 
             {
