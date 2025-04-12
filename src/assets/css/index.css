@@ -641,3 +641,19 @@ a, div, button {
     left: 10px;
     z-index: 1000;
 }
+
+.cart-count {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 14px;
+    background: var(--secondary-bg-color);
+    aspect-ratio: 1/1;
+    padding: 3px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
