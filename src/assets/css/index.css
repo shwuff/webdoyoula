@@ -3,7 +3,8 @@
     padding: 0;
     text-decoration: none;
     list-style: none;
-    font-family: Arial, sans-serif;
+    /*font-family: Arial, sans-serif;*/
+    font-family: var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji");
     color: var(--text-color, #000);
     box-sizing: border-box;
     user-select: none;
@@ -632,4 +633,11 @@ a, div, button {
     .d-md-block {
         display: flex;
     }
+}
+
+.cartButton {
+    position: absolute;
+    bottom: 90px;
+    left: 10px;
+    z-index: 1000;
 }

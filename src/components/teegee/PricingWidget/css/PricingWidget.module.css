@@ -1,0 +1,150 @@
+.container {
+    background-color: #fdfdfd;
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.toggleWrapper {
+    position: relative;
+    display: flex;
+    background: #f2f2f7;
+    padding: 4px;
+    border-radius: 9999px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.toggleSlider {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 50%;
+    border-radius: 9999px;
+    background-color: white;
+    transition: transform 0.3s ease;
+    z-index: 1;
+}
+
+.toggleButton {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #444;
+    cursor: pointer;
+    z-index: 2;
+    position: relative;
+}
+
+.activeToggle {
+    font-weight: 600;
+    color: #000;
+}
+
+.plansWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.planCard {
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    position: relative;
+    transition: border 0.2s, box-shadow 0.2s;
+    border: 3px solid #edeef0;
+}
+
+.activePlanCard {
+    border: 3px solid transparent !important;
+}
+
+.selectedCard {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.planName {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.popularTag {
+    background: #f5f0c3;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #555;
+}
+
+.radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #edeef0;
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    will-change: background-color;
+    transition: background-color 0.3s ease;
+}
+
+.activeRadio {
+    background: var(--primary-color);
+}
+
+.price {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.per {
+    font-size: 14px;
+    color: #888;
+}
+
+.ctaButton {
+    width: 100%;
+    padding: 12px;
+    background: var(--button-color);
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.movingHighlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border: 3px solid var(--primary-color);
+    border-radius: 16px;
+    z-index: 0;
+    pointer-events: none;
+}

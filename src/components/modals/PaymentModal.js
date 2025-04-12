@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import RightModal from "../modal/RightModal";
 import "./PaymentModal.css";
 import { useAuth } from "../../context/UserContext";
@@ -6,6 +6,9 @@ import { useWebSocket } from "../../context/WebSocketContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import {useTranslation} from "react-i18next";
+import PricingWidget from "../teegee/PricingWidget/PricingWidget";
+import SmartDropdown from "../teegee/SmartDropdown/SmartDropdown";
+import GoldStarImg from './../../assets/images/gold_star.png';
 
 const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }) => {
     const { token, userData } = useAuth();
@@ -14,15 +17,15 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
     const {t} = useTranslation();
 
     const [selectedOption, setSelectedOption] = useState(null);
-    const [currencyType, setCurrencyType] = useState(isRubles ? 'rub' : 'stars');
+    const [currencyType, setCurrencyType] = useState(isRubles ? 'RUB' : 'XTR');
     const [paymentStep, setPaymentStep] = useState(1);
 
-    const paymentOptions = [
-        { id: 1, label: "100 " + t('photos'), rub: 899, stars: 749 },
-        { id: 2, label: "300 " + t('photos'), rub: 1499, stars: 1299 },
-        { id: 3, label: "500 " + t('photos'), rub: 2549, stars: 2199 },
-        { id: 4, label: "1000 " + t('photos'), rub: 4999, stars: 3999 },
-    ];
+    const [paymentOptions, setPaymentOptions] = useState([
+        { id: 1, name: "100 " + t('photos'), price: isRubles ? 899 : 749 },
+        { id: 2, name: "300 " + t('photos'), price: isRubles ? 1499 : 1299 },
+        { id: 3, name: "500 " + t('photos'), price: isRubles ? 2549 : 2199 },
+        { id: 4, name: "1000 " + t('photos'), price: isRubles ? 4999 : 3999 },
+    ]);
 
     const handleCurrencyChange = (event, newCurrency) => {
         if (newCurrency !== null) {
@@ -30,12 +33,11 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
         }
     };
 
-    const modelOption = {
+    const [modelOption, setModelOption] = useState({
         id: 5,
-        label: t('buy_avatar'),
-        rub: 399,
-        stars: 249
-    };
+        name: t('buy_avatar'),
+        price: isRubles ? 399 : 249
+    });
 
     const handleBuyClick = (option) => {
         if(userData.language_code === 'ru') {
@@ -47,14 +49,14 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
         }
     };
 
-    const handleConfirmPurchase = (currency) => {
+    const handleConfirmPurchase = () => {
         if (!selectedOption) return;
         sendData({
             action: "purchase_generates",
             data: {
                 jwt: token,
-                optionId: selectedOption.id,
-                currency: currency
+                optionId: selectedOption,
+                currency: currencyType
             }
         });
         setOpenPaymentModal(false);
@@ -64,6 +66,26 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
     const handleBack = () => {
         setPaymentStep(1);
     };
+
+    const currencyOptions = [
+        { label: 'RUB', icon: 'https://flagcdn.com/w40/ru.png', value: "RUB" },
+        { label: 'Telegram Stars', icon: GoldStarImg, value: "XTR" }
+    ];
+
+    useEffect(() => {
+        setPaymentOptions([
+            { id: 1, name: "100 " + t('photos'), price: currencyType === "RUB" ? 899 : 749 },
+            { id: 2, name: "300 " + t('photos'), price: currencyType === "RUB" ? 1499 : 1299 },
+            { id: 3, name: "500 " + t('photos'), price: currencyType === "RUB" ? 2549 : 2199 },
+            { id: 4, name: "1000 " + t('photos'), price: currencyType === "RUB" ? 4999 : 3999 },
+        ]);
+
+        setModelOption({
+            id: 5,
+            name: t('buy_avatar'),
+            price: currencyType === "RUB" ? 399 : 249
+        });
+    }, [currencyType, t]);
 
     return (
         <RightModal
@@ -88,65 +110,27 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                             <h2>{t("Buy photos")}</h2>
                             <div className="payment-plans">
                                 {isRubles && (
-                                    <div className="payment-plan-buttons">
-                                        <ToggleButtonGroup
-                                            value={currencyType}
-                                            exclusive
-                                            onChange={handleCurrencyChange}
-                                            color="primary"
-                                            sx={{ mb: 2 }}
-                                        >
-                                            <ToggleButton value="rub">Рубли</ToggleButton>
-                                            <ToggleButton value="stars">Stars</ToggleButton>
-                                        </ToggleButtonGroup>
+                                    <div className={"w-100 justify-content-center d-flex"}>
+                                        <SmartDropdown
+                                            options={currencyOptions}
+                                            selected={currencyType}
+                                            setSelected={setCurrencyType}
+                                        />
                                     </div>
                                 )}
 
-                                {paymentOptions.map((option) => (
-                                    <div className="payment-plan" onClick={() => handleBuyClick(option)} key={option.id}>
-                                        <div className="plan-label">{option.label}</div>
-                                        <div className="plan-price">
-                                            {currencyType === 'rub' ? `${option.rub} руб` : `${option.stars} Stars`}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                <PricingWidget
+                                    billingOptions={['photos_filter', 'avatar_filter']}
+                                    plansByCycle={{
+                                        photos_filter: paymentOptions,
+                                        avatar_filter: [modelOption]
+                                    }}
+                                    selectedOption={selectedOption}
+                                    setSelectedOption={setSelectedOption}
+                                    currency={currencyType}
+                                    billingVoid={handleConfirmPurchase}
+                                />
 
-                            <hr className="divider" />
-
-                            <div className="payment-plans">
-                                <div className="payment-plan" onClick={() => handleBuyClick(modelOption)}>
-                                    <div className="plan-label">{modelOption.label}</div>
-                                    <div className="plan-price">
-                                        {currencyType === 'rub' ? `${modelOption.rub} руб` : `${modelOption.stars} Stars`}
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {paymentStep === 2 && (
-                        <motion.div
-                            key="step2"
-                            initial={{ x: 100, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -100, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            <h2>Выберите метод оплаты</h2>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <button
-                                    className="buy-button"
-                                    onClick={() => handleConfirmPurchase('RUB')}
-                                >
-                                    Оплатить рублями
-                                </button>
-                                <button
-                                    className="buy-button"
-                                    onClick={() => handleConfirmPurchase('XTR')}
-                                >
-                                    Оплатить звёздами
-                                </button>
                             </div>
                         </motion.div>
                     )}

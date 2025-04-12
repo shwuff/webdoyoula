@@ -1,0 +1,15 @@
+.button {
+    width: 100%;
+    padding: 4px 10px;
+    background: var(--button-color);
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
