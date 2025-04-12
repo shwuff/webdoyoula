@@ -79,5 +79,8 @@
   "new_subscribe": "New subscribe from ",
   "new_comment": "New comment from ",
   "last_1_day": "Last 1 Day",
-  "market_mode": "Market"
+  "market_mode": "Market",
+  "Pay": "Pay",
+  "photos_filter": "Photos",
+  "avatar_filter": "Avatars"
 }

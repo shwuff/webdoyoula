@@ -1,4 +1,4 @@
-import { ADD_GOOD, DELETE_GOOD, UPDATE_COUNT } from '../actions/cartActions';
+import { ADD_GOOD, DELETE_GOOD, UPDATE_COUNT, SET_CART } from '../actions/cartActions';
 
 const initialState = {
     cart: {}
@@ -16,7 +16,15 @@ const cartReducer = (state = initialState, action) => {
                 },
             };
         }
-
+        case SET_CART: {
+            const cartData = action.payload;
+            return {
+                ...state,
+                cart: {
+                    ...cartData
+                },
+            };
+        }
         case DELETE_GOOD: {
             const idToDelete = action.payload;
             const newCart = { ...state.cart };

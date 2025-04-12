@@ -108,7 +108,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
 
     return (
         <div className={from != 'navbar' ? "globalBlock" : ""} onScroll={handleScroll}>
-            <div className={"center-content-block-search"}>
+            <div className={"center-content-block"}>
                 <div className={'d-flex align-items-center w-100'} style={{marginTop: 5}}>
                     {/*{*/}
                     {/*    from === 'navbar' && (*/}
