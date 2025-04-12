@@ -16,12 +16,31 @@
     aspect-ratio: 4/5;
 }
 
+.photoMarketCard {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+    height: max-content;
+}
+
 .photoImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
     aspect-ratio: 4/5;
     border-radius: 10px;
+}
+
+.addToCartButton {
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+    border-radius: 10px;
+    padding: 7px;
+    margin-bottom: 6px;
+    border: 1px solid #fff;
+    cursor: pointer;
 }
 
 .modalOverlay {
@@ -352,4 +371,3 @@
     width: 40px;
     height: 40px;
 }
-

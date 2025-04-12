@@ -5,8 +5,9 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import {useTranslation} from "react-i18next";
 import SearchIcon from "../../assets/svg/SearchIcon";
 import { useNavigate } from "react-router-dom";
+import { Switch, FormControlLabel } from '@mui/material';
 
-const FeedFilters = ({ filter, setFilter, dateRange, setDateRange, feed, setFeed, style, setPhotosPage }) => {
+const FeedFilters = ({ filter, setFilter, dateRange, setDateRange, feed, setFeed, style, setPhotosPage, isMarket, setIsMarket }) => {
 
     const {t} = useTranslation();
     const navigate = useNavigate();
@@ -31,6 +32,20 @@ const FeedFilters = ({ filter, setFilter, dateRange, setDateRange, feed, setFeed
 
     return (
         <>
+            <FormControlLabel
+                control={
+                    <Switch
+                        checked={isMarket}
+                        onChange={(e) => {
+                            setIsMarket(e.target.checked);
+                            setPhotosPage(1);
+                        }}
+                        size="small"
+                    />
+                }
+                label={t('market_mode')}
+                sx={{ ml: 1, mb: 1, fontSize: '0.8rem', marginBottom: "15px" }}
+            />
             <div className="w-100 d-flex align-items-center">
                 <FormControl
                     sx={{ marginBottom: "15px", fontSize: "0.8rem" }}
