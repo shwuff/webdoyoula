@@ -12,9 +12,8 @@
   }
   
   .size-select-button.selected {
-    background-color: black;
+    background-color: var(--primary-color);
     color: white;
-    border-color: black;
   }
   
   @media (max-width: 576px) {

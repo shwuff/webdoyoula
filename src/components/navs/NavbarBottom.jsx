@@ -89,7 +89,9 @@ const NavbarBottom = () => {
                                     <img src={userData.photo_url} alt=""/>
                                 </div>
                                 <div className={styles.profileAvatar}>
-                                    <img src={userData.photo_url} alt=""/>
+                                    <div className={`${styles.bigProfileIcon}`}>
+                                        <img src={userData.photo_url} alt=""/>
+                                    </div>
                                     <div>
                                         <p className={"navbar-content-title"}>{userData.first_name} {userData.last_name}</p>
                                         {

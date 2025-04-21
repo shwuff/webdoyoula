@@ -17,6 +17,7 @@ import { setCurrentImageSelected, updateImage } from '../../redux/actions/imageA
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {useSelector} from "react-redux";
 import telegramStar from "../../assets/icons/telegramStar.png";
+import telegramAnimationStar from "../../assets/gif/gold_star.gif";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import PhotoMarketModal from '../modals/PhotoMarketModal';
 
@@ -37,7 +38,6 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         toggleSelectPhoto(photo.id);
     };
 
-
     const imageSelector = useSelector((state) => state.image.images);
 
     return (
@@ -53,22 +53,35 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             )}
 
             {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.promptAuthor) && (
-                <div className={styles.publishedBadge}>
-                    <img
-                        src={telegramStar}
-                        alt="Telegram Star"
-                        style={{
-                        
-                            width: '25px',
-                            height: '25px',
-                        }}
-                    />
+                <div className={styles.publishedBadge} style={{ left: 0 }}>
+                    {
+                        imageSelector[photo.id]?.repeat_price !== null && imageSelector[photo.id]?.repeat_price > 0 ? (
+                            <img
+                                src={telegramAnimationStar}
+                                alt="Gold Animation Star"
+                                style={{
+
+                                    width: '25px',
+                                    height: '25px',
+                                }}
+                            />
+                        ) : (
+                            <img
+                                src={telegramStar}
+                                alt="Star"
+                                style={{
+
+                                    width: '25px',
+                                    height: '25px',
+                                }}
+                            />
+                        )
+                    }
                 </div>
             )}
 
             {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
-                <div className={styles.publishedBadge}>
-
+                <div className={styles.publishedBadge} style={{ right: 0 }}>
                      <div className={styles.doubleCheck}>
                          <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
                      </div>
@@ -111,7 +124,6 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
         e.stopPropagation();
         toggleSelectPhoto(photo.id);
     };
-
 
     const imageSelector = useSelector((state) => state.image.images);
 
@@ -404,8 +416,7 @@ const MyGeneratedPhotosList = ({
                 }
                 seen.add(photo.id);
                 return true;
-            })
-            .sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at));
+            });
 
         return uniqueSorted;
     };
@@ -834,7 +845,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCardMarket
-                                    key={photo.id}
+                                    key={photo.blob_url}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}
@@ -848,7 +859,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCard
-                                    key={photo.id}
+                                    key={photo.blob_url}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}

@@ -1,6 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
-
-export const ADD_GOOD = 'ADD_IMAGE';
+export const ADD_GOOD = 'ADD_GOOD';
 export const DELETE_GOOD = 'DELETE_GOOD';
 export const UPDATE_COUNT = 'UPDATE_COUNT';
 export const SET_CART = 'SET_CART';
@@ -16,11 +14,11 @@ export const setCart = (cartData) => ({
 });
 
 export const deleteGood = (cartId) => ({
-    type: ADD_GOOD,
+    type: DELETE_GOOD,
     payload: { cartId },
 });
 
-export const updateCount = (newCount) => ({
+export const updateCount = (cartId, newCount) => ({
     type: UPDATE_COUNT,
-    payload: { newCount },
+    payload: { cartId, newCount },
 });

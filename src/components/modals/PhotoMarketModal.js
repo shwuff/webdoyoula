@@ -18,8 +18,8 @@ import telegramStar from "../../assets/icons/telegramStar.png";
 import { addGood, deleteGood, updateCount } from "./../../redux/actions/cartActions";
 import marketStyles from "./css/PhotoMarketModule.module.css";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
-
+import TShirtMask from './../../assets/images/t_shirt_mask.webp';
+import BasketButton from "../buttons/BasketButton";
 
 const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
@@ -27,7 +27,9 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
     const {token, userData} = useAuth();
     const {t} = useTranslation();
 
-    const [selectedSize, setSelectedSize] = useState('L'); // начальное значение по умолчанию
+    const cartSelector = useSelector(state => state);
+
+    const [selectedSize, setSelectedSize] = useState('L');
 
     const sizes = ['S', 'M', 'L'];
 
@@ -75,6 +77,12 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
         });
     };
 
+    const deleteFromCart = (photoId) => {
+        sendData({
+            action: "delete_from_cart",
+            data: { jwt: token, photoId, size: selectedSize }
+        });
+    }
 
     useEffect(() => {
         const handleLikes = (msg) => {
@@ -110,12 +118,12 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
             if (!msg.media || msg.media.length < 1) return;
-            dispatch(updateImage(msg.media[0].id, {blob_url: msg.media[0].blob_url}));
+            dispatch(updateImage(msg.media[0].id, {blob_url: msg.media[0].blob_url, low: false}));
         };
 
         addHandler('photo_modal_studio', handlePhotoGeneratedModal);
         return () => deleteHandler('photo_modal_studio');
-    }, [addHandler, deleteHandler, BackButton, selectedPhoto]);
+    }, [addHandler, deleteHandler, BackButton, selectedPhoto, updateImage, dispatch]);
 
     useEffect(() => {
         const handleMessage = async (msg) => {
@@ -205,21 +213,23 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
                                     )
                                 }
                                 <div className={styles.imageBlock} style={{ maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
-                                    ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}>
-                                    {
-                                        from !== 'notification' && (
-                                            <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
-                                                <button
-                                                    className={styles.navButton}
-                                                    style={{ left: 10 }}
-                                                    onClick={() => prevPhoto(imageSelector[selectedPhoto])}
-                                                >
-                                                    <ArrowBackIosNewIcon />
-                                                </button>
-                                            </div>
-                                        )
-                                    }
+                                    ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}
+                                >
+                                    {/*{*/}
+                                    {/*    from !== 'notification' && (*/}
+                                    {/*        <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>*/}
+                                    {/*            <button*/}
+                                    {/*                className={styles.navButton}*/}
+                                    {/*                style={{ left: 10 }}*/}
+                                    {/*                onClick={() => prevPhoto(imageSelector[selectedPhoto])}*/}
+                                    {/*            >*/}
+                                    {/*                <ArrowBackIosNewIcon />*/}
+                                    {/*            </button>*/}
+                                    {/*        </div>*/}
+                                    {/*    )*/}
+                                    {/*}*/}
 
+                                    <img src={TShirtMask} style={{ width: "100%", height: "100%", position: "absolute", zIndex: 1000 }} />
                                     <img
                                         src={imageSelector[selectedPhoto].blob_url}
                                         alt={`photo-${imageSelector[selectedPhoto].id}`}
@@ -241,19 +251,19 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
                                         />
                                     )}
 
-                                    {
-                                        from !== 'notification' && (
-                                            <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
-                                                <button
-                                                    className={styles.navButton}
-                                                    style={{ right: 10 }}
-                                                    onClick={() => nextPhoto(imageSelector[selectedPhoto])}
-                                                >
-                                                    <ArrowForwardIosIcon />
-                                                </button>
-                                            </div>
-                                        )
-                                    }
+                                    {/*{*/}
+                                    {/*    from !== 'notification' && (*/}
+                                    {/*        <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>*/}
+                                    {/*            <button*/}
+                                    {/*                className={styles.navButton}*/}
+                                    {/*                style={{ right: 10 }}*/}
+                                    {/*                onClick={() => nextPhoto(imageSelector[selectedPhoto])}*/}
+                                    {/*            >*/}
+                                    {/*                <ArrowForwardIosIcon />*/}
+                                    {/*            </button>*/}
+                                    {/*        </div>*/}
+                                    {/*    )*/}
+                                    {/*}*/}
                                 </div>
                                 <div className="p-2">
                                     {
@@ -290,76 +300,17 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
                                                                     className={`${marketStyles['size-select-button']} ${selectedSize === size ? marketStyles.selected : ''}`}
                                                                     onClick={() => setSelectedSize(size)}
                                                                 >
-                                                                {size}
+                                                                    {size}
                                                                 </button>
                                                             ))}
                                                         </div>
-
-                                                        
-
-                                                        {/* <div className={"d-flex align-items-center"}>
-                                                            <button
-                                                                className="actionButton d-flex align-items-center"
-                                                                onClick={() => handleLike(imageSelector[selectedPhoto].id, userData.id)}
-                                                            >
-                                                                <LikeHeart liked={imageSelector[selectedPhoto].liked} />
-                                                            </button>
-                                                            <p style={{marginLeft: "5px"}}>
-                                                                {imageSelector[selectedPhoto].likes_count}
-                                                            </p>
-                                                        </div> */}
-                                                        {/* <div className={"d-flex align-items-center"}>
-                                                            <CommentsModal photoGallery={imageSelector[selectedPhoto]} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />
-                                                            <p style={{marginLeft: "8px"}}>
-                                                                {imageSelector[selectedPhoto].comments_count}
-                                                            </p>
-                                                        </div> */}
-                                                        {/* <div className={"d-flex align-items-center"} style={{marginLeft: 3}}>
-                                                            <VisibilityIcon sx={{width: 24, height: 24}} />
-                                                            <p style={{marginLeft: "8px"}}>
-                                                                {imageSelector[selectedPhoto].count_views}
-                                                            </p>
-                                                        </div> */}
-                                                        {/* <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
-                                                            {t('repeat')}
-                                                        </button> */}
-                                                        {/* <span style={{ fontSize: 18 }}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
-                                                        {
-                                                            imageSelector[selectedPhoto].count_generated_with_prompt_today && imageSelector[selectedPhoto].count_generated_with_prompt_today > 0 ? (
-                                                                <span style={{ color: "#008000", fontWeight: 800, fontSize: 12, marginTop: -8, marginLeft: -4 }}>+{imageSelector[selectedPhoto].count_generated_with_prompt_today}</span>
-                                                            ) : null
-                                                        } */}
                                                     </div>
                                                     
                                                     
                                                 </div>
                                                 <div className="d-flex justify-content-center">
-                                                        <button className={marketStyles.addToCartButton} onClick={() => addToCart(imageSelector[selectedPhoto].id)}>
-                                                            <ShoppingCartIcon sx={{ fontSize: 20, marginRight: 1, fill: 'white'}} />
-                                                            Добавить
-                                                        </button>
+                                                    <BasketButton selectedSize={selectedSize} deleteFromCart={() => deleteFromCart(imageSelector[selectedPhoto].id)} addToCart={() => addToCart(imageSelector[selectedPhoto].id)} photo_id={imageSelector[selectedPhoto].id} />
                                                  </div>
-                                                {
-                                                    Number(imageSelector[selectedPhoto].author.id) === userData.id && (
-                                                        <>
-                                                            {
-                                                                !imageSelector[selectedPhoto].hided === true ? (
-                                                                    <button className={"btn btn-outline-primary w-100"} style={{marginTop: 5}} onClick={() => {
-                                                                        handleDeleteFromGallery(imageSelector[selectedPhoto].id);
-                                                                    }}>
-                                                                        {t('hide')}
-                                                                    </button>
-                                                                ) : (
-                                                                    <button className={"btn btn-primary w-100"} style={{marginTop: 5}} onClick={() => {
-                                                                        handlePublishToGallery(imageSelector[selectedPhoto].id);
-                                                                    }}>
-                                                                        {t('to_publish')}
-                                                                    </button>
-                                                                )
-                                                            }
-                                                        </>
-                                                    )
-                                                }
                                             </>
                                         )
                                     }

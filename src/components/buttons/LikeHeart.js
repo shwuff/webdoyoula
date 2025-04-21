@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import HeartIcon from './../../assets/icons/heart.png';
 import RedHeartIcon from './../../assets/icons/red-heart.png';
 import HeartAnimate from './../../assets/gif/heart-animate.gif';
-import './LikeHeart.css';
+import './css/LikeHeart.css';
 
 const LikeHeart = ({ liked }) => {
     const [animate, setAnimate] = useState(false);

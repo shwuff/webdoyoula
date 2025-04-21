@@ -14,10 +14,17 @@ export const WebSocketProvider = ({ children }) => {
     const handlersRef = useRef({});
     const [isConnected, setIsConnected] = useState(false);
 
-    const dispatch = useDispatch();
     const imagesSelector = useSelector((state) => state.image.images);
+    const imagesSelectorRef = useRef(imagesSelector);
 
     useEffect(() => {
+        imagesSelectorRef.current = imagesSelector;
+    }, [imagesSelector]);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+
         const connectWebSocket = () => {
             const socket = new WebSocket(config.wsUrl);
 
@@ -73,18 +80,22 @@ export const WebSocketProvider = ({ children }) => {
                                 size: photo.size,
                                 low: photo.low,
                                 promptAuthor: photo.promptAuthor,
-                                order: photo.order
+                                order: photo.order,
+                                repeat_price: photo.repeat_price,
+                                get_price: photo.get_price,
+                                sale_price: photo.sale_price,
+                                created_at: photo.created_at,
+                                caption: photo.caption,
+                                ai_model: photo.ai_model,
                             };
 
                             offset += photo.size;
 
-                            if(!(photo.id in imagesSelector)) {
+                            if(!(photo.id in imagesSelectorRef.current)) {
                                 dispatch(addImage(photo.id, imageData));
                             }
 
-                            if(metaData.action === 'photo_modal_studio') {
-                                dispatch(updateImage(photo.id, imageData));
-                            }
+                            dispatch(updateImage(photo.id, {...imageData}));
 
                             images.push(imageData);
 
@@ -129,7 +140,7 @@ export const WebSocketProvider = ({ children }) => {
                 wsRef.current.close();
             }
         };
-    }, []);
+    }, [updateImage]);
 
     const addHandler = (action, handler) => {
         handlersRef.current[action] = handler;
@@ -143,27 +154,6 @@ export const WebSocketProvider = ({ children }) => {
         if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
             console.error('[WS] WebSocket is not open, unable to send data');
             return;
-        }
-
-        if (data.action === 'get_photo') {
-            const photoId = data.data?.photoId;
-
-            if (photoId in imagesSelector) {
-                const image = imagesSelector[photoId];
-
-                if (handlersRef.current['photo_modal_studio']) {
-                    if (image.low === false) {
-                        handlersRef.current['photo_modal_studio']({
-                            media: [image]
-                        });
-                        return;
-                    } else {
-                        handlersRef.current['photo_modal_studio']({
-                            media: [image]
-                        });
-                    }
-                }
-            }
         }
 
         try {

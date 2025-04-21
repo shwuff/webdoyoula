@@ -15,6 +15,7 @@ import TelegramStar from './../../assets/icons/profileIcons/telegram-star.png';
 import zzzIcon from './../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../assets/icons/profileIcons/hi.png';
+import FeedFilters from "../../components/input/FeedFilters";
 
 const Profile = () => {
     const { userData, token, setUserData } = useAuth();
@@ -164,6 +165,9 @@ const Profile = () => {
     // }, [tempUserData]);
 
     const [photosPage, setPhotosPage] = useState(1);
+    const [filter, setFilter] = useState("repeats");
+    const [dateRange, setDateRange] = useState("last_1_day");
+    const [isMarket, setIsMarket] = useState(false);
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
@@ -301,7 +305,7 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className={styles.profileUserInfo}>
-                            <h2 style={{ color: "white", zIndex: 5 }} className={styles.profileName}>{tempUserData.first_name} {tempUserData.last_name}</h2>
+                            <h2 style={{ color: "white", zIndex: 5 }} className={`no-wrap ${styles.profileName}`}>{tempUserData.first_name?.substring(0, 24)} {tempUserData.last_name?.substring(0, 24)}</h2>
                             {
                                 tempUserData?.username?.length > 0 && (
                                     <p style={{ color: "white", zIndex: 5 }} className={styles.profileUsername}>@{tempUserData.username}</p>
@@ -398,6 +402,20 @@ const Profile = () => {
                     {/*//     user={tempUserData}*/}
                     {/*// />*/}
 
+                    {/*<FeedFilters*/}
+                    {/*    filter={filter}*/}
+                    {/*    setFilter={setFilter}*/}
+                    {/*    dateRange={dateRange}*/}
+                    {/*    setDateRange={setDateRange}*/}
+                    {/*    feed={'feed'}*/}
+                    {/*    setFeed={() => {}}*/}
+                    {/*    style={{ marginBottom: "10px" }}*/}
+                    {/*    setPhotosPage={setPhotosPage}*/}
+                    {/*    isMarket={isMarket}*/}
+                    {/*    setIsMarket={setIsMarket}*/}
+                    {/*    fromProfile={true}*/}
+                    {/*/>*/}
+
                     <MyGeneratedPhotosList
                         key={tempUserData?.id}
                         profileGallery={true}
@@ -407,6 +425,8 @@ const Profile = () => {
                         setPhotosPage={setPhotosPage}
                         from={'viewGallery'}
                         userIdLoaded={tempUserData.id}
+                        // filter={filter}
+                        // dateRange={dateRange}
                     />
                 </div>
             </div>
@@ -445,8 +465,8 @@ const Profile = () => {
                                             </div>
                                             <div onClick={() => navigate(`/profile/${user.subscriber?.id || user.subscribedTo?.id}`)} className={styles.userInfo} >
                                                 <span
-                                                    className={styles.profileName}>
-                                                    {user.subscriber?.first_name || user.subscribedTo?.first_name} {user.subscriber?.last_name || user.subscribedTo?.last_name}
+                                                    className={`no-wrap ${styles.profileName}`}>
+                                                    {user.subscriber?.first_name?.substring(0, 24) || user.subscribedTo?.first_name?.substring(0, 24)} {user.subscriber?.last_name?.substring(0, 24) || user.subscribedTo?.last_name?.substring(0, 24)}
                                                 </span>
                                                 {
                                                     user.subscriber?.username?.length > 0 || user.subscribedTo?.username?.length > 0 ? (

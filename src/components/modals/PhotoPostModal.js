@@ -15,12 +15,22 @@ import {useTranslation} from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
 import { setCurrentImageSelected, updateImage } from "../../redux/actions/imageActions";
 import telegramStar from "../../assets/icons/telegramStar.png";
+import PublishToGalleryButton from "../buttons/PublishToGalleryButton";
+import telegramAnimationStar from "../../assets/gif/gold_star.gif";
+import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {getTimeAgo} from "../../App";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
     const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
     const {token, userData} = useAuth();
     const {t} = useTranslation();
+    const [expanded, setExpanded] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [closingModal, setClosingModal] = useState(false);
@@ -36,6 +46,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         setSelectedPhoto(0);
         setCurrentImageSelected(0);
         BackButton.hide();
+        setExpanded(false);
     }, [setCurrentImageSelected]);
 
     const handleLike = (imageId, userId) => {
@@ -45,20 +56,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         });
     };
 
-    const handleDeleteFromGallery = (photoId) => {
-        sendData({
-            action: "delete_from_gallery",
-            data: { jwt: token, photoId }
-        });
-    };
-
-    const handlePublishToGallery = (photoId) => {
-        sendData({
-            action: "publish_to_gallery",
-            data: { jwt: token, photoId }
-        });
-    };
-
+    //handle like post
     useEffect(() => {
         const handleLikes = (msg) => {
             if (!selectedPhoto || selectedPhoto !== msg.imageId) {
@@ -74,6 +72,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         return () => deleteHandler('handle_update_like');
     }, [userData, selectedPhoto, updateImage]);
 
+    //back button telegram
     useEffect(() => {
 
         const handleBackButtonClicked = () => {
@@ -90,6 +89,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         return () => BackButton.offClick(handleBackButtonClicked);
     }, [isCommentModalOpen]);
 
+    // get large size photo
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
             if (!msg.media || msg.media.length < 1) return;
@@ -99,18 +99,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         addHandler('photo_modal_studio', handlePhotoGeneratedModal);
         return () => deleteHandler('photo_modal_studio');
     }, [addHandler, deleteHandler, BackButton, selectedPhoto]);
-
-    useEffect(() => {
-        const handleMessage = async (msg) => {
-            if(selectedPhoto !== null && selectedPhoto === msg.photoId) {
-                dispatch(updateImage(msg.photoId, {hided: msg.hided}));
-            }
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        };
-
-        addHandler('update_photo_hided', handleMessage);
-        return () => deleteHandler('update_photo_hided');
-    }, [addHandler, deleteHandler, selectedPhoto]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -126,6 +114,27 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
             window.removeEventListener("keydown", handleKeyDown);
         };
     }, [selectedPhoto, nextPhoto, prevPhoto]);
+
+    const handleEdit = () => {
+        setAnchorEl(null);
+    };
+
+    const handleViewPrompt = () => {
+        setAnchorEl(null);
+    };
+
+    const handleShare = (photoId) => {
+        setAnchorEl(null);
+        window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=photoId${photoId}AAAfrom${userData.id}`;
+    };
+
+    const handleHideMedia = (photoId) => {
+        setAnchorEl(null);
+        sendData({
+            action: "delete_from_gallery",
+            data: { jwt: token, photoId }
+        });
+    };
 
     return (
         <AnimatePresence>
@@ -147,7 +156,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                         onClick={(e) => e.stopPropagation()}
                     >
                         {imageSelector[selectedPhoto] && (
-                            <div style={{ overflowY: "auto", paddingTop: "var(--safeAreaInset-top)" }}>
+                            <div style={{ overflowY: "auto", paddingTop: "var(--safeAreaInset-top)", minHeight: "100vh" }}>
                                 {
                                     profileGallery && (
                                         <div className="p-2 d-flex align-items-center justify-content-between">
@@ -173,24 +182,66 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     </Typography>
                                                 </Box>
                                             </Box>
-                                            {
-                                                Number(imageSelector[selectedPhoto].author.id) !== Number(userData.id) && (
-                                                    <SubscribeButton
-                                                        sub={imageSelector[selectedPhoto].author.sub}
-                                                        setSub={(sub) => {
-                                                            dispatch(updateImage(imageSelector[selectedPhoto].id, { author: {...imageSelector[selectedPhoto].author, sub: sub} }))
-                                                        }}
-                                                        userId={imageSelector[selectedPhoto].author.id}
-                                                    />
-                                                )
-                                            }
+                                            <Box sx={{ position: 'relative' }}>
+                                                {
+                                                    Number(imageSelector[selectedPhoto].author.id) !== Number(userData.id) && (
+                                                        <SubscribeButton
+                                                            style={{ marginRight: "10px" }}
+                                                            sub={imageSelector[selectedPhoto].author.sub}
+                                                            setSub={(sub) => {
+                                                                dispatch(updateImage(imageSelector[selectedPhoto].id, {
+                                                                    author: { ...imageSelector[selectedPhoto].author, sub: sub }
+                                                                }))
+                                                            }}
+                                                            userId={imageSelector[selectedPhoto].author.id}
+                                                        />
+                                                    )
+                                                }
+
+                                                <IconButton
+                                                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                                                >
+                                                    <MoreVertIcon />
+                                                </IconButton>
+
+                                                <Menu
+                                                    anchorEl={anchorEl}
+                                                    open={Boolean(anchorEl)}
+                                                    onClose={() => setAnchorEl(null)}
+                                                >
+                                                    {/*{*/}
+                                                    {/*    Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (*/}
+                                                    {/*        <MenuItem onClick={handleEdit}>*/}
+                                                    {/*            <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>*/}
+                                                    {/*            <ListItemText primary="Редактировать" />*/}
+                                                    {/*        </MenuItem>*/}
+                                                    {/*    )*/}
+                                                    {/*}*/}
+                                                    {/*<MenuItem onClick={handleViewPrompt}>*/}
+                                                    {/*    <ListItemIcon><VisibilityIcon fontSize="small" /></ListItemIcon>*/}
+                                                    {/*    <ListItemText primary="Посмотреть промт" />*/}
+                                                    {/*</MenuItem>*/}
+                                                    <MenuItem onClick={() => handleShare(selectedPhoto)}>
+                                                        <ListItemIcon><ShareIcon fontSize="small" /></ListItemIcon>
+                                                        <ListItemText primary="Поделиться" />
+                                                    </MenuItem>
+                                                    {
+                                                        Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (
+                                                            <MenuItem onClick={() => handleHideMedia(imageSelector[selectedPhoto].id)}>
+                                                                <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
+                                                                <ListItemText primary="Скрыть" />
+                                                            </MenuItem>
+                                                        )
+                                                    }
+                                                </Menu>
+                                            </Box>
                                         </div>
                                     )
                                 }
-                                <div className={styles.imageBlock} style={{ maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
+                                <div className={styles.imageBlock} style={{ width: expanded ? "30%" : undefined, transition: "0.5s all", maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                     ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}>
                                     {
-                                        from !== 'notification' && (
+                                        from !== 'notification' && !expanded && (
                                             <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
                                                 <button
                                                     className={styles.navButton}
@@ -210,22 +261,51 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                         style={{maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
                                                 ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`}}
                                     />
-                                    {Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor) && (
-                                        <img
-                                            src={telegramStar}
-                                            alt="Telegram Star"
-                                            style={{
-                                                position: 'absolute',
-                                                left: '8px',
-                                                bottom: '8px',
-                                                width: '40px',
-                                                height: '40px',
-                                            }}
-                                        />
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: 4,
+                                        right: 4,
+                                        borderRadius: "12px",
+                                        padding: "4px 8px",
+                                        border: "1px solid gold",
+                                        color: "gold"
+                                    }}>
+                                        {imageSelector[selectedPhoto].ai_model}
+                                    </span>
+                                    {Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor) && !expanded && (
+                                        <>
+                                            {
+                                                imageSelector[selectedPhoto]?.repeat_price !== null && imageSelector[selectedPhoto]?.repeat_price > 0 ? (
+                                                    <img
+                                                        src={telegramAnimationStar}
+                                                        alt="Gold Animation Star"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            left: '8px',
+                                                            bottom: '8px',
+                                                            width: '40px',
+                                                            height: '40px',
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={telegramStar}
+                                                        alt="Star"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            left: '8px',
+                                                            bottom: '8px',
+                                                            width: '40px',
+                                                            height: '40px',
+                                                        }}
+                                                    />
+                                                )
+                                            }
+                                        </>
                                     )}
 
                                     {
-                                        from !== 'notification' && (
+                                        from !== 'notification' && !expanded && (
                                             <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
                                                 <button
                                                     className={styles.navButton}
@@ -242,24 +322,20 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                     {
                                         profileGallery === false ? (
                                             <>
+                                                <PublishToGalleryButton
+                                                    photoId={imageSelector[selectedPhoto]}
+                                                    selectedPhoto={selectedPhoto}
+                                                    expanded={expanded}
+                                                    setExpanded={setExpanded}
+                                                    isMyPrompt={Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor)}
+                                                />
                                                 {
-                                                    !imageSelector[selectedPhoto].hided === true ? (
-                                                        <button className={"btn btn-outline-primary w-100"} onClick={() => {
-                                                            handleDeleteFromGallery(imageSelector[selectedPhoto].id);
-                                                        }}>
-                                                            {t('hide')}
-                                                        </button>
-                                                    ) : (
-                                                        <button className={"btn btn-primary w-100"} onClick={() => {
-                                                            handlePublishToGallery(imageSelector[selectedPhoto].id);
-                                                        }}>
-                                                            {t('to_publish')}
+                                                    !expanded && (
+                                                        <button className={"publish-outline-button iconButton w-100"} style={{}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
+                                                            {t('repeat')}
                                                         </button>
                                                     )
                                                 }
-                                                <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
-                                                    {t('repeat')}
-                                                </button>
                                                                                            
                                             </>
                                         ) : (
@@ -289,8 +365,23 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                 {imageSelector[selectedPhoto].count_views}
                                                             </p>
                                                         </div>
-                                                        <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
+                                                        <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5, display: "flex", alignItems: "center"}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
+                                                            {
+                                                                imageSelector[selectedPhoto].repeat_price && imageSelector[selectedPhoto].repeat_price > 0 ? (
+                                                                    <span style={{ marginLeft: "5px" }}>
+                                                                        <img
+                                                                            src={telegramAnimationStar}
+                                                                            alt={"Animation Gold Star"}
+                                                                            style={{
+                                                                                width: "8px",
+                                                                                height: "8px"
+                                                                            }}
+                                                                        />
+                                                                        {imageSelector[selectedPhoto].repeat_price}
+                                                                    </span>
+                                                                ) : null
+                                                            }
                                                         </button>
                                                         <span style={{ fontSize: 18 }}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
                                                         {
@@ -300,27 +391,14 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                         }
                                                     </div>
                                                 </div>
-                                                {
-                                                    Number(imageSelector[selectedPhoto].author.id) === userData.id && (
-                                                        <>
-                                                            {
-                                                                !imageSelector[selectedPhoto].hided === true ? (
-                                                                    <button className={"btn btn-outline-primary w-100"} style={{marginTop: 5}} onClick={() => {
-                                                                        handleDeleteFromGallery(imageSelector[selectedPhoto].id);
-                                                                    }}>
-                                                                        {t('hide')}
-                                                                    </button>
-                                                                ) : (
-                                                                    <button className={"btn btn-primary w-100"} style={{marginTop: 5}} onClick={() => {
-                                                                        handlePublishToGallery(imageSelector[selectedPhoto].id);
-                                                                    }}>
-                                                                        {t('to_publish')}
-                                                                    </button>
-                                                                )
-                                                            }
-                                                        </>
-                                                    )
-                                                }
+                                                <p style={{margin: "5px 0"}}>
+                                                    {imageSelector[selectedPhoto]?.caption}
+                                                </p>
+                                                <span className={"caption no-wrap"} style={{ marginTop: "10px" }}>
+                                                    {
+                                                        getTimeAgo(imageSelector[selectedPhoto].posted_at)
+                                                    }
+                                                </span>
                                             </>
                                         )
                                     }

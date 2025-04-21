@@ -9,7 +9,6 @@
 
     background: var(--bg-color, #fff);
     color: var(--text-color, #000);
-    border: 1px solid var(--border-color, #2196F3);
     border-radius: 8px;
 }
 
@@ -87,7 +86,7 @@
     width: 100%;
     background: var(--bg-color);
     border-radius: 4px;
-    padding: 20px;
+    margin-top: 10px;
 }
 
 /* Содержание шага */

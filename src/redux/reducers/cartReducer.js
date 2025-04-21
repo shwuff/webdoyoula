@@ -1,52 +1,41 @@
 import { ADD_GOOD, DELETE_GOOD, UPDATE_COUNT, SET_CART } from '../actions/cartActions';
 
 const initialState = {
-    cart: {}
+    cartList: {}
 };
 
 const cartReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_GOOD: {
-            const cartData = action.payload;
+            const cartData = action.payload.cartData;
+            console.log(cartData);
             return {
                 ...state,
-                cart: {
-                    ...state.cart,
-                    [cartData.id]: cartData,
-                },
+                cartList: [...state.cartList, cartData],
             };
         }
         case SET_CART: {
-            const cartData = action.payload;
+            const cartData = action.payload.cartData;
             return {
                 ...state,
-                cart: {
-                    ...cartData
-                },
+                cartList: cartData
             };
         }
         case DELETE_GOOD: {
-            const idToDelete = action.payload;
-            const newCart = { ...state.cart };
-            delete newCart[idToDelete];
+            const idToDelete = action.payload.cartId;
             return {
                 ...state,
-                cart: newCart,
+                cartList: state.cartList.filter(item => item.id !== idToDelete),
             };
         }
 
         case UPDATE_COUNT: {
-            const { id, count } = action.payload;
-            if (!state.cart[id]) return state;
+            const { cartId, newCount } = action.payload;
             return {
                 ...state,
-                cart: {
-                    ...state.cart,
-                    [id]: {
-                        ...state.cart[id],
-                        count,
-                    },
-                },
+                cartList: state.cartList.map(item =>
+                    item.id === cartId ? { ...item, count: newCount } : item
+                ),
             };
         }
 

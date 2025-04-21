@@ -4,6 +4,10 @@ import { useAuth } from "../../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PhotoPostModal from "../../components/modals/PhotoPostModal";
+import {useTranslation} from "react-i18next";
+import styles from "../../components/teegee/PricingWidget/css/PricingWidget.module.css";
+import {getTimeAgo} from "../../App";
+import animationStarGold from './../../assets/gif/gold_star.gif';
 
 const NotificationsPage = () => {
     const { addHandler, deleteHandler, sendData } = useWebSocket();
@@ -11,11 +15,14 @@ const NotificationsPage = () => {
 
     const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     const imageSelector = useSelector(state => state.image.images);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(0);
+    const [page, setPage] = useState("notifications");
+    const [financeHistory, setFinanceHistory] = useState([]);
     
     const BackButton = window.Telegram.WebApp.BackButton;
 
@@ -51,6 +58,16 @@ const NotificationsPage = () => {
 
         return () => deleteHandler('receive_notifications');
     }, [setNotifications, addHandler, deleteHandler, setUserData]);
+
+    useEffect(() => {
+        const handleReceiveFinanceHistory = (msg) => {
+            setFinanceHistory(msg.financeHistory);
+        };
+
+        addHandler('receive_finance_history', handleReceiveFinanceHistory);
+
+        return () => deleteHandler('receive_finance_history');
+    }, [addHandler, deleteHandler, setFinanceHistory]);
 
     const sortNotificationsByTime = (notifications) => {
         return notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -171,10 +188,86 @@ const NotificationsPage = () => {
         });
     };
 
+    useEffect(() => {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    }, [page]);
+
     return (
         <div className="globalBlock">
             <div className="center-content-block">
-                {renderNotifications()}
+
+                <div className="w-100 d-flex justify-content-center">
+                    <div style={{ width: "80%" }}>
+                        <div className={styles.toggleWrapper}>
+                            <div
+                                className={styles.toggleSlider}
+                                style={{
+                                    transform: page === "notifications" ? 'translateX(0%)' : 'translateX(calc(100% - 8px))',
+                                }}
+                            />
+                            <button
+                                onClick={() => {
+                                    setPage("notifications")
+                                }}
+                                className={`${styles.toggleButton} ${page === "notifications" ? styles.activeToggle : ''}`}
+                            >
+                                {t('Notifications')}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setPage("finance")
+                                }}
+                                className={`${styles.toggleButton} ${page === "finance" ? styles.activeToggle : ''}`}
+                            >
+                                {t('Finance')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {
+                    page === 'notifications' ? (
+                        <>
+                            {renderNotifications()}
+                            {
+                                Object.keys(notifications).length < 1 && (
+                                    <p>{t('Not found recently notifications')}</p>
+                                )
+                            }
+                        </>
+                    ) : page === 'finance' ? (
+                        <div>
+                            {
+                                financeHistory.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        style={{
+                                            padding: "12px",
+                                            borderRadius: "8px",
+                                            backgroundColor: "var(--secondary-bg-color)",
+                                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                        }}
+                                    >
+                                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>
+                                            {item.amount > 0 ? `+${item.amount}` : item.amount} <img src={animationStarGold} width={14} />
+                                        </p>
+                                        <p style={{ margin: 0, color: "#555" }}>
+                                            {t(item.action)}
+                                        </p>
+                                        <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
+                                            {getTimeAgo(item.createdAt)}
+                                        </p>
+                                    </div>
+                                ))
+                            }
+                            {
+                                financeHistory.length < 1 && (
+                                    <p>{t('Finance history is empty')}</p>
+                                )
+                            }
+                        </div>
+                    ) : <></>
+                }
                 <PhotoPostModal
                     isModalOpen={isModalOpen}
                     setIsModalOpen={setIsModalOpen}

@@ -1,0 +1,86 @@
+/* Обычный reset для кнопки */
+.close-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+
+    width: 24px;
+    height: 24px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* ----- КРЕСТИК (X) ----- */
+.close-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+/* Две диагональные полосы, толщина 2px, пересекающиеся в центре */
+.close-icon::before,
+.close-icon::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: var(--icon-color, #999);
+
+    /* Чтобы полосы вращались вокруг центра */
+    transform-origin: center;
+
+    /* Ставим в центр иконки по горизонтали */
+    left: 50%;
+}
+
+.close-icon::before {
+    /* Повернём на +45° */
+    transform: translateX(-50%) rotate(45deg);
+}
+.close-icon::after {
+    /* Повернём на -45° */
+    transform: translateX(-50%) rotate(-45deg);
+}
+
+/* ----- СТРЕЛКА (←) ----- */
+.arrow-icon {
+    position: relative;
+    width: 20px; /* рамка под иконку */
+    height: 20px;
+}
+
+/* Две полосы: одна горизонтальная, вторая диагональная «головка» */
+.arrow-icon::before,
+.arrow-icon::after {
+    content: "";
+    position: absolute;
+    background-color: var(--icon-color, #999);
+    height: 2px;             /* толщина полосок */
+    transform-origin: left center;
+}
+
+
+.arrow-icon::before {
+    width: 15px;
+    left: 2px;
+    top: 9px;
+    transform: translateY(-50%);
+}
+
+/* Диагональная «головка» (6px),
+   также ставим в (top: 50%, left: 4px)
+   и поворачиваем на 135°, чтобы «смотреть» вверх-влево */
+.arrow-icon::after {
+    width: 8px;
+    height: 8px;
+    top: 12.6px;
+    background: inherit;
+    border-right: 2px solid var(--icon-color, #999);
+    border-top: 2px solid var(--icon-color, #999);
+    transform: translateY(-50%) rotate(225deg);
+}

@@ -7,93 +7,42 @@ import {useInView} from "react-intersection-observer";
 import {animated, useSpring} from "@react-spring/web";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-
-const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected }) => {
-    const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
-
-    const style = useSpring({
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0px)' : 'translateY(20px)',
-        config: { tension: 55, friction: 9 },
-        delay: inView ? Math.min(index * 20, 100) : 0,
-    });
-
-    const handleCircleClick = (e) => {
-        e.stopPropagation();
-        toggleSelectPhoto(photo.id);
-    };
-
-    return (
-        <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
-            {photo.blob_url && photo.status !== 'processing' ? (
-                <img src={photo.blob_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
-            ) : (
-                <div className={styles.loadingPlaceholder}>
-                    <svg className="spinner" viewBox="25 25 50 50">
-                        <circle cx="50" cy="50" r="20"></circle>
-                    </svg>
-                </div>
-            )}
-
-            {
-                photo.status !== 'processing' && (
-                    <div
-                        className={`${styles.selectCircle} ${isSelected ? styles.selected : ''}`}
-                        onClick={handleCircleClick}
-                    >
-                        {isSelected && <FaCheck className={styles.checkIcon}/>}
-                    </div>
-                )
-            }
-        </animated.div>
-    );
-};
-
-const areEqual = (prevProps, nextProps) =>
-    prevProps.photo.id === nextProps.photo.id &&
-    prevProps.isSelected === nextProps.isSelected;
-const PhotoCard = memo(PhotoCardComponent, areEqual);
+import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
+import animationStarGold from "../../../assets/gif/gold_star.gif";
+import redSirenAnimation from "./../../../assets/gif/red_siren.gif"
 
 const GenerateImageAvatar = () => {
     const [step, setStep] = useState(1);
     const [mediaGroup, setMediaGroup] = useState(0);
-    const [aiStyles, setAiStyles] = useState([]);
+    const [availableModels, setAvailableModels] = useState([]);
+    const [promptData, setPromptData] = useState(null);
 
-    const {t} = useTranslation();
+    const { t} = useTranslation();
 
-    const {userData} = useAuth();
-
-    const {promptId} = useParams();
-
+    const { userData, setUserData } = useAuth();
+    const { promptId} = useParams();
     const navigate = useNavigate();
-
-    const [completedImages, setCompletedImages] = useState([]);
-
-    const [generationType, setGenerationType] = useState(null);
-
-    const [quantity, setQuantity] = useState(1);
-    const availableQuantities = [2, 3, 4, 5, 6, 9];
-
-    const [selectedModel, setSelectedModel] = useState(0);
-
-    const [selectedStyle, setSelectedStyle] = useState(0);
-    const [prompt, setPrompt] = useState('');
-
     const { myModels, token } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
 
+    const [photoFormat, setPhotoFormat] = useState(userData.aspect_ratio);
+    const [prompt, setPrompt] = useState('');
+
     const textareaRef = useRef(null);
 
-    const stepIcons = promptId !== undefined ? [FaUser, FaSortNumericUp] : [FaUser, FaRobot, FaCog, FaSortNumericUp];
-
-    const nextStep = () => {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        setStep(prev => Math.min(prev + 1, 6));
+    const handleFocus = () => {
+        const navbar = document.getElementById('navbarBottom');
+        if (navbar && window?.Telegram?.WebApp?.platform === 'ios') {
+            navbar.style.display = 'none';
+        }
     };
-    
-    const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-    const fillWidth = promptId === undefined ? ((step - 1) / (stepIcons.length - 1)) * 100 : step === 1 ? 0 : (3 / 3) * 100;
+    const handleBlur = () => {
+        const navbar = document.getElementById('navbarBottom');
+        if (navbar) {
+            navbar.style.display = 'flex';
+        }
+    };
 
     useEffect(() => {
 
@@ -117,92 +66,10 @@ const GenerateImageAvatar = () => {
     }, [step, setStep]);
 
     useEffect(() => {
-        if(generationType === 'style' && step === 3) {
-            sendData({action: "get/styles/avatar", data: { jwt: token, answerAction: "aistyles_for_generate_photo_avatar" }});
-        }
-    }, [generationType, step]);
-
-    useEffect(() => {
-
-        const handleHandler = (msg) => {
-            setAiStyles(msg.styles);
-        }
-
-        addHandler('aistyles_for_generate_photo_avatar', handleHandler)
-
-        return () => deleteHandler('aistyles_for_generate_photo_avatar');
-    }, []);
-
-    useEffect(() => {
-
-        // const MainButton = window.Telegram.WebApp.MainButton;
-        //
-        // if(step === 1 && selectedModel > 0) {
-        //     MainButton.show();
-        //     MainButton.text = 'Далее'
-        //     MainButton.onClick(() => {
-        //         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        //         setStep(Math.min(step + 1, 6));
-        //     });
-        // } else if(step === 2 && generationType !== null) {
-        //     MainButton.show();
-        //     MainButton.text = 'Далее'
-        //     MainButton.onClick(() => {
-        //         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        //         setStep(Math.min(step + 1, 6));
-        //     });
-        // } else if(step === 3 && generationType === 'style' && selectedStyle > 0) {
-        //     MainButton.show();
-        //     MainButton.text = 'Далее'
-        //     MainButton.onClick(() => {
-        //         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        //         setStep(Math.min(step + 1, 6));
-        //     });
-        // } else if(step === 3 && generationType === 'prompt' && prompt.length > 0) {
-        //     MainButton.show();
-        //     MainButton.text = 'Далее'
-        //     MainButton.onClick(() => {
-        //         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        //         setStep(Math.min(step + 1, 6));
-        //         handleBlur();
-        //     });
-        // } else if(step === 4 && quantity > 1) {
-        //     MainButton.show();
-        //     MainButton.text = 'Начать генерацию'
-        //     MainButton.onClick(() => {
-        //         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        //         setStep(Math.min(step + 1, 6));
-        //         sendData(
-        //             {
-        //                 action: "generate/photo/avatar",
-        //                 data: {
-        //                     jwt: token,
-        //                     generationType,
-        //                     promptData: prompt,
-        //                     quantity,
-        //                     selectedModel,
-        //                     selectedStyle,
-        //                     callback_data: "webapp"
-        //                 }
-        //             }
-        //         );
-        //     });
-        // } else {
-        //     MainButton.hide();
-        // }
-        //
-        // return () => {
-        //     MainButton.hide();
-        //     MainButton.offClick();
-        // }
-    }, [step, generationType, prompt, quantity, selectedModel, nextStep, selectedStyle]);
-
-    useEffect(() => {
 
         const handleGenAvatarCompleted = (msg) => {
             if(mediaGroup === msg.mediaGroupId) {
                 setStep(6);
-                setCompletedImages(msg.photos);
             }
         }
 
@@ -222,220 +89,271 @@ const GenerateImageAvatar = () => {
         return () => deleteHandler('start_generating_image_avatar')
     }, []);
 
-    const handleFocus = () => {
-        const navbar = document.getElementById('navbarBottom');
-        if (navbar && window?.Telegram?.WebApp?.platform === 'ios') {
-            navbar.style.display = 'none';
-        }
-    };
-
-    const handleBlur = () => {
-        const navbar = document.getElementById('navbarBottom');
-        if (navbar) {
-            navbar.style.display = 'flex';
-        }
-    };
-
-    const newGeneration = () => {
-        setGenerationType(null);
-        setSelectedModel(0);
-        setSelectedStyle(0);
-        setPrompt('');
-        setQuantity(1);
-        setStep(1);
-        setMediaGroup(0);
-    }
-
     useEffect(() => {
         if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto'; // Сбросим высоту перед пересчетом
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Установим новую высоту
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
         }
     }, [prompt]);
 
+    useEffect(() => {
+        if(token) {
+            sendData({
+                action: "get_available_models",
+                data: {
+                    jwt: token
+                }
+            });
+        }
+    }, [token]);
+
+    useEffect(() => {
+        const receiveAvailableModels = (msg) => {
+            setAvailableModels(msg.models);
+        }
+
+        addHandler("receive_available_models", receiveAvailableModels);
+
+        return () => deleteHandler("receive_available_models");
+    }, [addHandler, deleteHandler, setAvailableModels]);
+
+    useEffect(() => {
+        if(promptId) {
+            sendData({
+                action: "get_prompt_data",
+                data: {
+                    jwt: token,
+                    promptId
+                }
+            });
+        } else {
+            setPromptData(null);
+        }
+    }, [promptId, token]);
+
+    useEffect(() => {
+
+        const receivePromptData = (msg) => {
+            console.log(msg.promptData)
+            setPromptData(msg.promptData);
+        }
+
+        addHandler('receive_prompt_data', receivePromptData);
+
+        return () => deleteHandler('receive_prompt_data')
+
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        if(photoFormat !== userData?.aspect_ratio) {
+            sendData({action: "update_content_settings", data: {jwt: token, photoFormat }});
+            setUserData({
+                ...userData,
+                aspect_ratio: photoFormat,
+            });
+        }
+    }, [photoFormat, userData, setUserData, token]);
 
     return (
-        <div className={styles.container}>
-            <div className={styles.progressBar}>
-                <div className={styles.progressLine} />
-                <div
-                    className={styles.progressLineFill}
-                    style={{ width: `${fillWidth}%` }}
-                />
-                {stepIcons.map((Icon, idx) => {
-                    const isActive = step >= (idx + 1);
-                    return (
-                        <div
-                            key={idx}
-                            className={`${styles.stepCircle} ${isActive ? styles.active : ''}`}
-                        >
-                            <Icon className={styles.stepIcon} />
-                        </div>
-                    );
-                })}
+        <div className={styles.container} style={{ paddingTop: "var(--safeAreaInset-top)" }}>
+
+            <div className="w-100 d-flex" style={{ gap: "10px" }}>
+                <FormControl
+                    sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
+                    size="small"
+                >
+                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                        {t('Select AI')}
+                    </InputLabel>
+                    <Select
+                        labelId="filter-select-label"
+                        value={userData.current_ai_id}
+                        onChange={(e) => {
+                            sendData({
+                                action: "update_selected_model",
+                                data: {
+                                    jwt: token,
+                                    modelId: e.target.value,
+                                }
+                            })
+                        }}
+                        label={t('feed_type')}
+                        sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                    >
+                        {availableModels?.map((model) =>
+                            (
+                                <MenuItem key={model.id} value={model.id}>
+                                    {model.name}
+                                </MenuItem>
+                            )
+                        )}
+                    </Select>
+                </FormControl>
+
+                <FormControl
+                    sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
+                    size="small"
+                >
+                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                        {t('Select quantity')}
+                    </InputLabel>
+                    <Select
+                        labelId="filter-select-label"
+                        value={userData.count_images_generate}
+                        onChange={(e) => {
+                            sendData({
+                                action: "update_count_images_generate",
+                                data: {
+                                    jwt: token,
+                                    quantity: e.target.value,
+                                }
+                            })
+                        }}
+                        label={t('Select quantity')}
+                        sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                    >
+                        <MenuItem value={1}>
+                            1
+                        </MenuItem>
+                        <MenuItem value={2}>
+                            2
+                        </MenuItem>
+                        <MenuItem value={3}>
+                            3
+                        </MenuItem>
+                        <MenuItem value={4}>
+                            4
+                        </MenuItem>
+                        <MenuItem value={5}>
+                            5
+                        </MenuItem>
+                        <MenuItem value={6}>
+                            6
+                        </MenuItem>
+                        <MenuItem value={9}>
+                            9
+                        </MenuItem>
+
+                    </Select>
+                </FormControl>
+                <FormControl
+                    sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}>
+                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                        {t('Select photo format')}
+                    </InputLabel>
+                    <Select
+                        labelId="filter-select-label"
+                        value={photoFormat}
+                        onChange={(e) => setPhotoFormat(e.target.value)}
+                        sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                        label={t('Select photo format')}
+                    >
+                        <MenuItem value="1:1">1:1</MenuItem>
+                        <MenuItem value="3:4">3:4</MenuItem>
+                        <MenuItem value="9:16">9:16</MenuItem>
+                        <MenuItem value="16:9">16:9</MenuItem>
+                        <MenuItem value="4:5">4:5</MenuItem>
+                    </Select>
+                </FormControl>
             </div>
 
-            <div className={styles.content}>
-
-                {step === 1 && (
-                    <div className={styles.stepContent}>
-                        <h2>{t('select_avatar')}</h2>
-                        {
-                            myModels.length < 1 && (
-                                <p>Test for free</p>
+            <FormControl
+                sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
+                size="small"
+            >
+                <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                    {t('select_avatar')}
+                </InputLabel>
+                <Select
+                    labelId="filter-select-label"
+                    value={userData.current_model_id}
+                    onChange={(e) => {
+                        sendData({
+                            action: "update_selected_avatar",
+                            data: {
+                                jwt: token,
+                                avatarId: e.target.value,
+                            }
+                        })
+                    }}
+                    label={t('feed_type')}
+                    sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                >
+                    {myModels?.map((model) =>
+                            model.status === 'ready' && (
+                                <MenuItem key={model.id} value={model.id}>
+                                    {model.name}
+                                </MenuItem>
                             )
-                        }
-                        <div className={styles.amountsContainer}>
-                            {myModels?.map((model) => (
-                                <>
+                    )}
+                    {
+                        myModels.length < 1 && (
+                            <MenuItem value={63}>Paul Du Rove</MenuItem>
+                        )
+                    }
+                </Select>
+            </FormControl>
+
+            <div className={styles.content}>
+                <div className={styles.stepContent}>
+                    {
+                        !promptId && (
+                            <>
+                                <h2>{t('enter_prompt')}</h2>
+                                <textarea
+                                    ref={textareaRef}
+                                    value={prompt}
+                                    onFocus={handleFocus}
+                                    onBlur={handleBlur}
+                                    rows={1}
+                                    className="input-field caption-field"
+                                    placeholder={t('Describe what you want to create...')}
+                                    onChange={(e) => {
+                                        setPrompt(e.target.value);
+                                    }}
+                                    style={{ resize: 'none', overflow: 'auto', maxHeight: "200px" }}
+                                />
+                                <div className="w-100 d-flex justify-content-end">
+                                    <span className={"caption"}>{prompt.length}</span>
+                                </div>
+                            </>
+                        )
+                    }
+                    {
+                        prompt.length > 0 || promptId ? (
+                            <>
+                                <button className={"publish-button w-100"} onClick={() => {
+                                    sendData(
+                                        {
+                                            action: "generate/photo/avatar",
+                                            data: {
+                                                jwt: token,
+                                                callback_data: promptId !== undefined ? "repeat_webapp_prompt" : "webapp",
+                                                promptData: promptId !== undefined ? promptId : prompt
+                                            }
+                                        }
+                                    );
+                                    navigate('/studio/create');
+                                }}>
                                     {
-                                        model.status === 'ready' && (
-                                            <button
-                                                key={model.id}
-                                                className={`${styles.amountBtn} ${selectedModel === model.id ? styles.active : ''}`}
-                                                onClick={() => {
-                                                    setSelectedModel(model.id);
-                                                    if(promptId !== undefined) {
-                                                        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                                        setStep(4);
-                                                        setGenerationType('prompt');
-                                                    } else {
-                                                        nextStep();
-                                                    }
-                                                }}
-                                            >
-                                                {model.name}
-                                            </button>
+                                        promptId ? (
+                                            <>{t("Repeat")}</>
+                                        ) : (
+                                            <>{t('Create')}</>
                                         )
                                     }
-                                </>
-                            ))}
-                            {
-                                myModels.length < 1 && (
-                                    <button
-                                        className={`${styles.amountBtn} ${selectedModel === 63 ? styles.active : ''}`}
-                                        onClick={() => {
-                                            setSelectedModel(63);
-                                            if(promptId !== undefined) {
-                                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                                setStep(4);
-                                                setGenerationType('prompt');
-                                            } else {
-                                                nextStep();
-                                            }
-                                        }}
-                                    >
-                                        Paul Du Rove
-                                    </button>
-                                )
-                            }
-                        </div>
-                    </div>
-                )}
-
-                {step === 2 && (
-                    <div className={styles.stepContent}>
-                        <h2>{t('select_the_generation_method')}</h2>
-                        <div className={styles.amountsContainer}>
-                            <button
-                                className={`${styles.amountBtn} ${generationType === 'prompt' ? styles.active : ''}`}
-                                onClick={() => {
-                                    setGenerationType('prompt');
-                                    nextStep();
-                                }}
-                            >
-                                {t('with_prompt')}
-                            </button>
-                            <button
-                                className={`${styles.amountBtn} ${generationType === 'style' ? styles.active : ''}`}
-                                onClick={() => {
-                                    setGenerationType('style');
-                                    nextStep();
-                                }}
-                            >
-                                {t('select_style')}
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {step === 3 && generationType === 'style' && (
-                    <div className={styles.stepContent}>
-                        <h2>{t('choose_a_style')}</h2>
-                        <div className={styles.amountsContainer} style={{
-                            overflowY: "scroll",
-                            height: `calc(100vh - ${200 + window?.Telegram?.WebApp?.safeAreaInset?.top * 2}px)`
-                        }}>
-                            {aiStyles?.map((style) => (
-                                <button
-                                    key={style.id}
-                                    className={`${styles.amountBtn} ${selectedStyle === style.id ? styles.active : ''}`}
-                                    onClick={() => {
-                                        style.id === selectedStyle ? setSelectedStyle(0) : setSelectedStyle(style.id);
-                                        nextStep();
-                                    }}
-                                >
-                                    {userData.language_code === 'ru' ? style.name : style.en_name}
                                 </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                {step === 3 && generationType === 'prompt' && (
-                    <div className={styles.stepContent}>
-                        <h2>{t('enter_prompt')}</h2>
-                        <textarea
-                            ref={textareaRef}
-                            value={prompt}
-                            onChange={(e) => {
-                                setPrompt(e.target.value);
-                            }}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            className={"promptInput"}
-                            rows={1}
-                            placeholder={t('Describe what you want to create...')}
-                        />
-                        {
-                            prompt.length > 0 && (
-                                <button className={"btn btn-primary w-100"} onClick={() => nextStep()}>Далее</button>
-                            )
-                        }
-                    </div>
-                )}
-
-                {step === 4 && (
-                    <div className={styles.stepContent}>
-                        <h2>{t('select_the_quantity')}</h2>
-                        <div className={styles.amountsContainer}>
-                            {availableQuantities.map((val) => (
-                                <button
-                                    key={val}
-                                    className={`${styles.amountBtn} ${quantity === val ? styles.active : ''}`}
-                                    onClick={() => {
-                                        sendData(
-                                            {
-                                                action: "generate/photo/avatar",
-                                                data: {
-                                                    jwt: token,
-                                                    generationType,
-                                                    quantity: val,
-                                                    selectedModel,
-                                                    selectedStyle,
-                                                    callback_data: promptId !== undefined ? "repeat_webapp_prompt" : "webapp",
-                                                    promptData: promptId !== undefined ? promptId : prompt
-                                                }
-                                            }
-                                        );
-                                        navigate('/studio/create');
-                                    }}
-                                >
-                                    {val}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                            </>
+                        ) : null
+                    }
+                    {
+                        promptData && promptData.repeat_price > 0 && promptData.owner !== userData.id ? (
+                            <p><img src={redSirenAnimation} width={18} /> Вы собираетесь повторить промт, за который автор установил цену в <span className={"no-wrap"}>{promptData.repeat_price} <img src={animationStarGold} width={12} /></span>. С Вас спишется <span className={"no-wrap"}>{ promptData.repeat_price * userData.count_images_generate + userData.count_images_generate } <img src={animationStarGold} width={12} /></span></p>
+                        ) : (
+                            <p><img src={redSirenAnimation} width={18} /> С Вас спишется <span className={"no-wrap"}>{ userData.count_images_generate } <img src={animationStarGold} width={12} /></span></p>
+                        )
+                    }
+                </div>
 
             </div>
         </div>

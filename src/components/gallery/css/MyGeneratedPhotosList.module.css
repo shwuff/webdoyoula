@@ -275,6 +275,7 @@
     display: block;
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
 .webAppModal {
@@ -328,7 +329,6 @@
 .publishedBadge {
     position: absolute;
     bottom: 5px;
-    left: 0;
     right: 8px;
     display: flex;
     justify-content: space-between;

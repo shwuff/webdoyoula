@@ -1,6 +1,6 @@
 {
   "name": "webdoyoula",
-  "version": "1.0.7",
+  "version": "2.0.2",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",

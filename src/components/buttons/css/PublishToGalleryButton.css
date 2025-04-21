@@ -1,0 +1,70 @@
+.publish-wrapper {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-height: 55px;
+}
+
+.publish-button.shrink {
+    width: 50px;
+    padding: 5px;
+}
+
+.publish-fields {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-10px);
+    transition: all 0.4s ease;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.publish-fields.visible {
+    opacity: 1;
+    max-height: 300px;
+    transform: translateY(0);
+}
+
+.input-field {
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 14px !important;
+    background: #f9f9f9;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.5s ease;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #007aff;
+    background: #fff;
+}
+
+.submit-button {
+    background: #34c759;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(52, 199, 89, 0.3);
+    transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+    background: #28a745;
+}
+
+.price-field {
+    width: 100px;
+}
+
+.caption-field {
+
+}

@@ -1,0 +1,39 @@
+.countButton {
+    width: 100%;
+    padding: 8px;
+    border: 0;
+    background: var(--primary-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--button-text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+}
+
+.countButton * {
+    fill: #fff;
+    width: 12px;
+    height: 12px;
+}
+
+.countButtonsContainer {
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.countSpan {
+    padding: 10px;
+    height: 30px;
+    min-width: 50px;
+    color: var(--button-text-color);
+    background: var(--primary-color);
+    border-radius: 8px;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

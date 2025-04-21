@@ -15,13 +15,16 @@ import FeedPage from "./pages/feed/FeedPage";
 import Content from "./pages/user/settings/Content";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Snackbar, Alert, CircularProgress as MUICircularProgress } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 import Auth from "./pages/user/auth/Auth";
 import {useTranslation} from "react-i18next";
 import Rating from "./pages/rating/Rating";
 import NotificationsPage from './pages/notifications/NotificationsPage';
 import RightModal from './components/modal/RightModal';
 import Cart from "./components/modals/Cart";
+import {addGood, deleteGood, setCart, updateCount} from "./redux/actions/cartActions";
+import {useDispatch} from "react-redux";
+import PhotoPostModal from "./components/modals/PhotoPostModal";
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -36,10 +39,12 @@ const App = () => {
 
     const { login, setUserData, setMyModels, token, userData } = useAuth();
     const { addHandler, deleteHandler, isConnected, sendData } = useWebSocket();
+    const dispatch = useDispatch();
 
     const [notification, setNotification] = useState(null);
     const [progress, setProgress] = useState(100);
     const [openCart, setOpenCart] = useState(false);
+    const [openedPhotoId, setOpenedPhotoId] = useState(0);
 
     const {t, i18n} = useTranslation();
 
@@ -186,8 +191,33 @@ const App = () => {
                 }
                 return false;
             });
+
+            params.some(param => {
+                const match = param.match(/photoId(\w+)/);
+                if (match && window.location.pathname === "/") {
+                    setOpenedPhotoId(match[1]);
+                    window.Telegram.WebApp.BackButton.show();
+                    sendData({
+                        action: "get_photo",
+                        data: {
+                            jwt: token,
+                            photoId: match[1],
+                            answerAction: "photo_modal_studio",
+                        }
+                    });
+                    return true;
+                }
+                setOpenedPhotoId(0);
+                return false;
+            });
         }
-    }, []);
+    }, [setOpenedPhotoId, token]);
+
+    useEffect(() => {
+        if(window.location.pathname !== '/') {
+            setOpenedPhotoId(0);
+        }
+    }, [window.location.pathname, setOpenedPhotoId]);
 
     useEffect(() => {
         if (!notification) {
@@ -232,9 +262,89 @@ const App = () => {
             }
         }
 
-        console.log(userData);
-
     }, [userData]);
+
+    useEffect(() => {
+        const receiveCart = (msg) => {
+            dispatch(setCart(msg.data.cartList));
+        }
+
+        addHandler("receive_cart", receiveCart);
+
+        return () => deleteHandler('receive_cart');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const receiveCart = (msg) => {
+            console.log(msg.data);
+            dispatch(addGood(msg.data));
+        }
+
+        addHandler("receive_new_cart_good", receiveCart);
+
+        return () => deleteHandler('receive_new_cart_good');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const receiveCart = (msg) => {
+            console.log(msg.data);
+            dispatch(updateCount(msg.data.id, msg.data.count));
+        }
+
+        addHandler("receive_update_count_cart_good", receiveCart);
+
+        return () => deleteHandler('receive_update_count_cart_good');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const receiveCart = (msg) => {
+            console.log(msg.data);
+            dispatch(deleteGood(msg.data.id));
+        }
+
+        addHandler("delete_good_from_cart", receiveCart);
+
+        return () => deleteHandler('delete_good_from_cart');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const updateSelectedAvatar = (msg) => {
+            setUserData((prev) => ({
+                ...prev,
+                current_model_id: msg.current_model_id
+            }));
+        }
+
+        addHandler("update_selected_avatar", updateSelectedAvatar);
+
+        return () => deleteHandler('update_selected_avatar');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const updateSelectedModel = (msg) => {
+            setUserData((prev) => ({
+                ...prev,
+                current_ai_id: msg.current_ai_id
+            }));
+        }
+
+        addHandler("update_selected_model", updateSelectedModel);
+
+        return () => deleteHandler('update_selected_model');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const handleUpdateCountImagesGenerate = (msg) => {
+            setUserData((prev) => ({
+                ...prev,
+                count_images_generate: msg.count_images_generate
+            }));
+        }
+
+        addHandler("update_count_images_generate", handleUpdateCountImagesGenerate);
+
+        return () => deleteHandler("update_count_images_generate");
+    }, [addHandler, deleteHandler]);
 
     // useEffect(() => {
     //     const SettingsButton = window?.Telegram?.WebApp?.SettingsButton;
@@ -293,7 +403,23 @@ const App = () => {
             </div>
             <NavbarBottom />
             {
-                userData.count_goods_in_cart && userData.count_goods_in_cart > 0 && (
+                openedPhotoId > 0 && (
+                    <PhotoPostModal
+                        isModalOpen={true}
+                        setIsModalOpen={() => setOpenedPhotoId(0)}
+                        setOpenBackdropLoader={() => {}}
+                        profileGallery={true}
+                        nextPhoto={() => {}}
+                        prevPhoto={() => {}}
+                        userIdLoaded={userData.id}
+                        selectedPhoto={openedPhotoId}
+                        setSelectedPhoto={() => setOpenedPhotoId(0)}
+                        from={"feed"}
+                    />
+                )
+            }
+            {
+                (userData.count_goods_in_cart && userData.count_goods_in_cart > 0) ? (
                     <div className='cartButton' onClick={() => setOpenCart(true)}>
                         <span className={"cart-count"}>{userData.count_goods_in_cart}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none">
@@ -301,6 +427,8 @@ const App = () => {
                             <path fill="var(--text-color)" d="M6.169.9h-4.71a1.31 1.31 0 1 0 0 2.618h3.337a1 1 0 0 1 .945.672l.942 2.71L9.35 5.6 8.035 2.182A2 2 0 0 0 6.17.9Z"></path>
                         </svg>
                     </div>
+                ) : (
+                    <></>
                 )
             }
 
@@ -358,6 +486,29 @@ const App = () => {
             </Snackbar>
         </div>
     );
+};
+
+export const getTimeAgo = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    const intervals = [
+        { label: "год", seconds: 31536000 },
+        { label: "мес.", seconds: 2592000 },
+        { label: "дн.", seconds: 86400 },
+        { label: "ч.", seconds: 3600 },
+        { label: "м.", seconds: 60 },
+    ];
+
+    for (const interval of intervals) {
+        const count = Math.floor(diffInSeconds / interval.seconds);
+        if (count >= 1) {
+            return `${count} ${interval.label} назад`;
+        }
+    }
+
+    return "только что";
 };
 
 export default App;

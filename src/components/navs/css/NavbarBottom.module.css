@@ -15,18 +15,18 @@
     color: #666;
     text-decoration: none;
     padding: 10px;
-    transition: all 0.1s ease;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: 0.5s all;
 }
 
 .navIcon {
     font-size: 20px;
     width: 24px;
     height: 24px;
-    transition: transform 0.2s ease;
+    transition: 0.5s all;
     position: relative;
 }
 
@@ -57,6 +57,25 @@
 .profileIcon img {
     width: 24px;
     border-radius: 50%;
+}
+
+.profileIcon {
+    transition: 0s all;
+}
+
+.active .profileIcon {
+    border: 2px solid var(--text-color);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.active .profileIcon img {
+    width: 18px;
+    height: 18px;
 }
 
 @media(min-width: 1200px) {
