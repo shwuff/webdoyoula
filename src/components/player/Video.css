@@ -1,0 +1,145 @@
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+}
+
+.video-wrapper {
+    position: relative;
+    background-color: black;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.video-element {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.video-controls {
+    background: transparent; /* Серый фон */
+    border-radius: 0 0 8px 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 70%; /* Серый блок теперь будет в 2 раза меньше */
+    margin: auto; /* Центрируем его по горизонтали */
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.left-controls {
+    display: flex;
+    align-items: center;
+}
+
+button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.play-icon, .volume-button img, .fullscreen-button img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.fullscreen-button img{
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.play-icon {
+    width: 30px;
+    height: 20px;
+    margin-right: 50px;
+}
+.volume-slider {
+    -webkit-appearance: none;
+    width: 80px;
+    height: 2px;
+    background: #ccc;
+    border-radius: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    position: relative;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 2px solid #333;
+    margin: 10px 0;
+}
+
+.filled {
+    background: rgba(255, 255, 255, 0.7);
+    height: 100%;
+    border-radius: 5px;
+}
+
+.progress-dot {
+    position: absolute;
+    top: -4px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.bottom-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.current-time, .total-time {
+    font-size: 14px;
+    color: white;
+}
+
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 20px;
+}
