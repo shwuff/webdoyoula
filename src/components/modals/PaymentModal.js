@@ -57,7 +57,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
                 jwt: token,
                 optionId: selectedOption,
                 currency: currencyType,
-                ...(isGift ? {  3: giftUserId } : {})
+                ...(isGift ? { giftUserId: giftUserId } : {})
             }
         });
         setOpenPaymentModal(false);

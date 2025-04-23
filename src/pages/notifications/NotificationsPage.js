@@ -16,7 +16,6 @@ const NotificationsPage = () => {
     const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate();
     const {t} = useTranslation();
-
     const imageSelector = useSelector(state => state.image.images);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -246,17 +245,49 @@ const NotificationsPage = () => {
                                             borderRadius: "8px",
                                             backgroundColor: "var(--secondary-bg-color)",
                                             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                            display: "flex",
+                                            justifyContent: "space-between",
                                         }}
                                     >
-                                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>
-                                            {item.amount > 0 ? `+${item.amount}` : item.amount} <img src={animationStarGold} width={14} />
-                                        </p>
-                                        <p style={{ margin: 0, color: "#555" }}>
-                                            {t(item.action)}
-                                        </p>
-                                        <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
-                                            {getTimeAgo(item.createdAt)}
-                                        </p>
+                                        <div>
+                                            <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>
+                                                {item.amount > 0 ? `+${item.amount}` : item.amount} <img src={animationStarGold} width={14} />
+                                            </p>
+                                            <p style={{ margin: 0, color: "#555" }}>
+                                                {t(item.action)}
+                                            </p>
+                                            <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
+                                                {getTimeAgo(item.createdAt)}
+                                            </p>
+                                        </div>
+                                        {
+                                            item.photo_id > 0 && (
+                                                <img
+                                                    onClick={() => {
+                                                        setSelectedPhoto(item.photo_id);
+                                                        setIsModalOpen(true);
+                                                        sendData({
+                                                            action: "get_photo",
+                                                            data: {
+                                                                jwt: token,
+                                                                photoId: item.photo_id,
+                                                                answerAction: "photo_modal_studio"
+                                                            }
+                                                        });
+                                                        BackButton.show();
+                                                    }}
+                                                    src={imageSelector[item.photo_id]?.blob_url}
+                                                    alt="user-image"
+                                                    style={{
+                                                        width: '50px',
+                                                        height: '50px',
+                                                        borderRadius: '8px',
+                                                        marginRight: '10px',
+                                                        objectFit: "cover"
+                                                    }}
+                                                />
+                                            )
+                                        }
                                     </div>
                                 ))
                             }
