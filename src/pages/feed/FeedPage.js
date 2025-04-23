@@ -21,6 +21,7 @@ const FeedPage = () => {
     const [feed, setFeed] = useState('feed');
     const [photosPage, setPhotosPage] = useState(1);
     const [isMarket, setIsMarket] = useState(false);
+    const [showPaidPrompts, setShowPaidPrompts] = useState(false);
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
@@ -65,8 +66,8 @@ const FeedPage = () => {
                     setFeed={setFeed}
                     style={{ marginBottom: "10px" }}
                     setPhotosPage={setPhotosPage}
-                    isMarket={isMarket}
-                    setIsMarket={setIsMarket}
+                    isMarket={showPaidPrompts}
+                    setIsMarket={setShowPaidPrompts}
                 />
                 <MyGeneratedPhotosList
                     profileGallery={true}
@@ -79,6 +80,7 @@ const FeedPage = () => {
                     dateRange={dateRange}
                     feed={feed}
                     isMarket={isMarket}
+                    showPaidPrompts={showPaidPrompts}
                 />
 
                 <div style={{ position: "absolute", bottom: "100px", right: "20px", padding: "10px", background: "var(--primary-color)", borderRadius: "50%" }} onClick={() => window.location.href = 'https://t.me/doyoulachat'}>

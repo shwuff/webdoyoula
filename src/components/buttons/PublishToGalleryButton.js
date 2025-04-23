@@ -7,6 +7,14 @@ import { useTranslation } from "react-i18next";
 import './css/PublishToGalleryButton.css';
 import CloseButton from "./CloseButton";
 import Button from "../teegee/Button/Button";
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button as MUIButton,
+    Typography
+} from '@mui/material';
 
 const PublishToGalleryButton = ({ photoId, selectedPhoto, expanded, setExpanded, isMyPrompt }) => {
     const { t } = useTranslation();
@@ -20,6 +28,7 @@ const PublishToGalleryButton = ({ photoId, selectedPhoto, expanded, setExpanded,
     const [salePrice, setSalePrice] = useState('');
     const [getPrice, setGetPrice] = useState('');
     const [caption, setCaption] = useState(selected && selected.caption ? selected.caption : '');
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const handleDeleteFromGallery = (photoId) => {
         sendData({
@@ -28,15 +37,24 @@ const PublishToGalleryButton = ({ photoId, selectedPhoto, expanded, setExpanded,
         });
     };
 
-    const handleProcessPublishToGallery = (photoId) => {
+    const handleProcessPublishToGallery = () => {
+        if (parseFloat(repeatPrice) > 0) {
+            setOpenConfirmDialog(true);
+        } else {
+            confirmPublish();
+        }
+    };
 
-        dispatch(updateImage(photoId, {caption, repeat_price: repeatPrice}));
+    const confirmPublish = () => {
+        dispatch(updateImage(selected.id, { caption, repeat_price: repeatPrice }));
 
         sendData({
             action: "publish_to_gallery",
-            data: { jwt: token, photoId, repeatPrice, salePrice, getPrice, caption }
+            data: { jwt: token, photoId: selected.id, repeatPrice, salePrice, getPrice, caption }
         });
+
         setExpanded(false);
+        setOpenConfirmDialog(false);
     };
 
     useEffect(() => {
@@ -130,6 +148,25 @@ const PublishToGalleryButton = ({ photoId, selectedPhoto, expanded, setExpanded,
                             {t('to_publish')}
                         </Button>
                     </div>
+                    <Dialog
+                        open={openConfirmDialog}
+                        onClose={() => setOpenConfirmDialog(false)}
+                    >
+                        <DialogTitle>{t('Confirmation')}</DialogTitle>
+                        <DialogContent>
+                            <Typography>
+                                Публикация платного промта стоит 1 ⭐. Вы согласны?
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <MUIButton onClick={() => setOpenConfirmDialog(false)} color="inherit">
+                                {t('Cancel')}
+                            </MUIButton>
+                            <MUIButton onClick={confirmPublish} color="primary" autoFocus>
+                                {t('Yes')}
+                            </MUIButton>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             )}
         </>

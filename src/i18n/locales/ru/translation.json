@@ -51,7 +51,7 @@
   "to_publish": "Опубликовать",
   "repeat": "Повторить",
   "comments": "Комментарии",
-  "Buy photos":  "Покупка фотографий",
+  "Buy photos":  "Пополнение баланса",
   "photos": "Фотографий",
   "buy_avatar": "Купить модель",
   "Save changes!": "Изменения сохранены!",
@@ -99,5 +99,15 @@
   "Not found recently notifications": "Нет новых уведомлений",
   "Limit balance": "Не хватает средств",
   "Repeat": "Повторить",
-  "Create": "Создать"
+  "Create": "Создать",
+  "Yes": "Да",
+  "Cancel": "Отмена",
+  "Balance": "Баланс",
+  "Educations": "Обучение",
+  "pcs": "шт.",
+  "Select AI": "Способ генерации",
+  "Select quantity": "Выберите количество",
+  "Select photo format": "Выберите формат фото",
+  "Buy More Stars": "Пополнить баланс",
+  "Give a gift": "Подарите подарок"
 }

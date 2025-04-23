@@ -73,8 +73,8 @@ const App = () => {
     useEffect(() => {
         const token = localStorage.getItem('auth_token');
 
-        document.documentElement.style.setProperty('--button-color', '#2196F3');
-        document.documentElement.style.setProperty('--primary-color', '#2d88ff');
+        document.documentElement.style.setProperty('--button-color', '#007aff');
+        document.documentElement.style.setProperty('--primary-color', '#007aff');
         document.documentElement.style.setProperty('--text-color', '#000');
         document.documentElement.style.setProperty('--bg-color', '#FFFFFF');
         document.documentElement.style.setProperty('--secondary-bg-color', '#edeef0');

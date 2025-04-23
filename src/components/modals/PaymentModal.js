@@ -10,7 +10,7 @@ import PricingWidget from "../teegee/PricingWidget/PricingWidget";
 import SmartDropdown from "../teegee/SmartDropdown/SmartDropdown";
 import GoldStarImg from './../../assets/images/gold_star.png';
 
-const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }) => {
+const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, isGift = false, giftUserId = 0 }) => {
     const { token, userData } = useAuth();
     const { sendData } = useWebSocket();
 
@@ -56,7 +56,8 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
             data: {
                 jwt: token,
                 optionId: selectedOption,
-                currency: currencyType
+                currency: currencyType,
+                ...(isGift ? {  3: giftUserId } : {})
             }
         });
         setOpenPaymentModal(false);
@@ -107,7 +108,13 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true }
                             exit={{ x: 100, opacity: 0 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <h2>{t("Buy photos")}</h2>
+                            {
+                                isGift ? (
+                                    <h2>{t("Give a gift")}</h2>
+                                ) : (
+                                    <h2>{t("Buy photos")}</h2>
+                                )
+                            }
                             <div className="payment-plans">
                                 {isRubles && (
                                     <div className={"w-100 justify-content-center d-flex"}>

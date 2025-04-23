@@ -16,6 +16,10 @@ import zzzIcon from './../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../assets/icons/profileIcons/hi.png';
 import FeedFilters from "../../components/input/FeedFilters";
+import {faGift} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import GiftIcon from "../../assets/svg/GiftIcon";
+import PaymentModal from "../../components/modals/PaymentModal";
 
 const Profile = () => {
     const { userData, token, setUserData } = useAuth();
@@ -165,9 +169,11 @@ const Profile = () => {
     // }, [tempUserData]);
 
     const [photosPage, setPhotosPage] = useState(1);
-    const [filter, setFilter] = useState("repeats");
-    const [dateRange, setDateRange] = useState("last_1_day");
+    const [filter, setFilter] = useState("date");
+    const [dateRange, setDateRange] = useState("all_time");
     const [isMarket, setIsMarket] = useState(false);
+    const [showPaidPrompts, setShowPaidPrompts] = useState(false);
+    const [openGiftMenu, setOpenGiftMenu] = useState(false);
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
@@ -278,7 +284,7 @@ const Profile = () => {
         }}>
             <div className={"center-content-block"}>
                 <div className={styles.profileHeader}>
-                    <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
+                    <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
                                  ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: tempUserData.profile_color.second_color_full}}>
                         <div className={styles.miniProfileIconWrapper}>
                             <img
@@ -313,6 +319,13 @@ const Profile = () => {
                             }
                             {/*<p style={{ color: "white" }} className={styles.profileDescription}>{tempUserData.bio}</p>*/}
                         </div>
+                        {
+                            tempUserData.id !== userData.id && (
+                                <span className={styles.giftIcon} onClick={() => setOpenGiftMenu(true)}>
+                                    <GiftIcon />
+                                </span>
+                            )
+                        }
                     </div>
                     <div className={styles.blockStats}>
                         <div className={styles.profileStats}>
@@ -352,6 +365,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
+                <PaymentModal openPaymentModal={openGiftMenu} setOpenPaymentModal={setOpenGiftMenu} isRubles={userData.language_code === 'ru'} isGift={true} giftUserId={tempUserData?.id} />
                 <Box sx={{ display: 'flex', gap: 1, padding: "4px" }}>
                     {
                         userData.id === tempUserData.id ? (
@@ -385,13 +399,14 @@ const Profile = () => {
                         )
                     }
                     <Box sx={{ width: '50%' }}>
-                        <Button
-                            variant="contained"
+                        <button
+                            className={"publish-button"}
+                            // variant="contained"
                             onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}AAAfrom${userId}`}
-                            sx={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px' }}
+                            // s={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px' }}
                         >
                             {t('share_profile')}
-                        </Button>
+                        </button>
                     </Box>
                 </Box>
                 <div className="w-100" style={{padding: 3}}>
@@ -402,19 +417,19 @@ const Profile = () => {
                     {/*//     user={tempUserData}*/}
                     {/*// />*/}
 
-                    {/*<FeedFilters*/}
-                    {/*    filter={filter}*/}
-                    {/*    setFilter={setFilter}*/}
-                    {/*    dateRange={dateRange}*/}
-                    {/*    setDateRange={setDateRange}*/}
-                    {/*    feed={'feed'}*/}
-                    {/*    setFeed={() => {}}*/}
-                    {/*    style={{ marginBottom: "10px" }}*/}
-                    {/*    setPhotosPage={setPhotosPage}*/}
-                    {/*    isMarket={isMarket}*/}
-                    {/*    setIsMarket={setIsMarket}*/}
-                    {/*    fromProfile={true}*/}
-                    {/*/>*/}
+                    <FeedFilters
+                        filter={filter}
+                        setFilter={setFilter}
+                        dateRange={dateRange}
+                        setDateRange={setDateRange}
+                        feed={'feed'}
+                        setFeed={() => {}}
+                        style={{ marginBottom: "10px" }}
+                        setPhotosPage={setPhotosPage}
+                        isMarket={showPaidPrompts}
+                        setIsMarket={setShowPaidPrompts}
+                        fromProfile={true}
+                    />
 
                     <MyGeneratedPhotosList
                         key={tempUserData?.id}
@@ -425,8 +440,9 @@ const Profile = () => {
                         setPhotosPage={setPhotosPage}
                         from={'viewGallery'}
                         userIdLoaded={tempUserData.id}
-                        // filter={filter}
-                        // dateRange={dateRange}
+                        filter={filter}
+                        dateRange={dateRange}
+                        showPaidPrompts={showPaidPrompts}
                     />
                 </div>
             </div>

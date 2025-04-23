@@ -11,6 +11,7 @@ import PaymentModal from "../../components/modals/PaymentModal";
 import CreateAvatarModal from "../../components/modals/CreateAvatarModal";
 import {useWebSocket} from "../../context/WebSocketContext";
 import {useTranslation} from "react-i18next";
+import animationStarGold from './../../assets/gif/gold_star.gif';
 
 const CreateContent = () => {
 
@@ -72,12 +73,14 @@ const CreateContent = () => {
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
                     <div className={"p-2-phone d-flex"}>
                         <div>
-                            <p>{t('photos_left')} {userData.photos_left}</p>
-                            <p>{t('models_left')} {userData.models_left}</p>
+                            <p>{t('Balance')}: {userData.photos_left} <img src={animationStarGold} width={14}/></p>
+                            <p>{t('Educations')}: {userData.models_left} {t('pcs')}</p>
                         </div>
-                        <button className={"btn btn-primary"} style={{marginTop: 4, marginLeft: 8}} onClick={() => setOpenPaymentModal(true)}>
-                            {t('buy_photos')}
-                        </button>
+                        <div>
+                            <button className={"publish-button"} style={{marginTop: 4, marginLeft: 8}} onClick={() => setOpenPaymentModal(true)}>
+                                {t('Buy More Stars')}
+                            </button>
+                        </div>
                     </div>
                     <Link to={"/settings/content"}>
                         <CiSettings style={{width: 24, height: 24}} />

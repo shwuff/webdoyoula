@@ -182,11 +182,10 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     </Typography>
                                                 </Box>
                                             </Box>
-                                            <Box sx={{ position: 'relative' }}>
+                                            <Box sx={{ position: 'relative', display: "flex", width: "max-content", marginRight: "35px", gap: "10px" }}>
                                                 {
                                                     Number(imageSelector[selectedPhoto].author.id) !== Number(userData.id) && (
                                                         <SubscribeButton
-                                                            style={{ marginRight: "10px" }}
                                                             sub={imageSelector[selectedPhoto].author.sub}
                                                             setSub={(sub) => {
                                                                 dispatch(updateImage(imageSelector[selectedPhoto].id, {
@@ -365,6 +364,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                 {imageSelector[selectedPhoto].count_views}
                                                             </p>
                                                         </div>
+                                                        {/*{imageSelector[selectedPhoto].prompt_id}*/}
                                                         <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5, display: "flex", alignItems: "center"}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
                                                             {

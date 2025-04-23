@@ -140,13 +140,13 @@ const EditData = () => {
 
     return (
         <>
-            <Button
-                variant="contained"
+            <button
                 onClick={() => setIsOpen(true)}
-                sx={{bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px', px: 3}}
+                className={"publish-button"}
+                // sx={{bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px', px: 3}}
             >
                 {t('edit_profile')}
-            </Button>
+            </button>
 
             <RightModal
                 isOpen={isOpen}

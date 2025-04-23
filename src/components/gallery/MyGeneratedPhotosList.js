@@ -52,7 +52,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </div>
             )}
 
-            {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.promptAuthor) && (
+            {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.promptAuthor) ? (
                 <div className={styles.publishedBadge} style={{ left: 0 }}>
                     {
                         imageSelector[photo.id]?.repeat_price !== null && imageSelector[photo.id]?.repeat_price > 0 ? (
@@ -78,6 +78,23 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                         )
                     }
                 </div>
+            ) : (
+                <>
+                    { imageSelector[photo.id]?.repeat_price !== null && imageSelector[photo.id]?.repeat_price > 0 && (
+                        <div className={styles.publishedBadge} style={{ left: 0 }}>
+                            <img
+                                src={telegramAnimationStar}
+                                alt="Gold Animation Star"
+                                style={{
+
+                                    width: '25px',
+                                    height: '25px',
+                                }}
+                            />
+                        </div>
+                        )
+                    }
+                </>
             )}
 
             {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
@@ -214,7 +231,8 @@ const MyGeneratedPhotosList = ({
     filter = '',
     dateRange = '',
     feed = 'feed',
-    isMarket = false
+    isMarket = false,
+    showPaidPrompts = false
 }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -444,8 +462,9 @@ const MyGeneratedPhotosList = ({
                     photosSortModel,
                     userIdLoaded,
                     requestId: requestUUID,
-                    ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}),
-                    ...(filter.length > 1 && from === 'feedPage' ? { filter: filter, dateRange: dateRange } : {}),
+                    ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
+                    ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
+                    ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
                     ...(from === 'feedPage' ? {feed} : {})
                 }
             });
@@ -464,7 +483,8 @@ const MyGeneratedPhotosList = ({
             userIdLoaded,
             requestId,
             filter,
-            dateRange
+            dateRange,
+            showPaidPrompts,
         ]
     );
 
@@ -489,7 +509,7 @@ const MyGeneratedPhotosList = ({
     useEffect(() => {
         setPhotosList([]);
         setPhotosPage(1);
-    }, [filter, dateRange, feed]);
+    }, [filter, dateRange, feed, showPaidPrompts]);
 
     //clean photos ref
     useEffect(() => {
@@ -533,12 +553,13 @@ const MyGeneratedPhotosList = ({
                 photosSortModel,
                 userIdLoaded,
                 requestId: requestUUID,
-                ...(searchQuery.length > 1 && from === 'feedPage' ? { searchParam: searchQuery } : {}),
-                ...(filter.length > 1 && from === 'feedPage' ? { filter: filter, dateRange: dateRange } : {}),
+                ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
+                ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
+                ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
                 ...(from === 'feedPage' ? {feed} : {})
             }
         });
-    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed, showPaidPrompts]);
 
     //start generating image
     useEffect(() => {
@@ -654,13 +675,10 @@ const MyGeneratedPhotosList = ({
                         setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
                     }
                 }
-
-                if(msg.media[0].order == 29 || !filter) {
-                    resetFetchingRef();
-                    isLoadingRef.current = false;
-                }
-
             }
+
+            resetFetchingRef();
+            isLoadingRef.current = false;
         };
 
         addHandler('generated_photos_append', handleAppend);

@@ -28,11 +28,11 @@ const SubscribeButton = ({ sub, setSub, userId, style = {}, setFollowersCount = 
     }, []);
 
     return (
-        <Button variant={sub ? "outlined" : "contained"}
-                sx={{ bgcolor: sub ? 'var(--bg-color)' : 'var(--button-color)', fontSize: '8px', borderRadius: "8px", ...style }}
+        <button className={sub ? "publish-outline-button" : "publish-button"}
+                style={{ ...style }}
                 onClick={handleSub}>
             {sub ? t('unfollow') : t('follow')}
-        </Button>
+        </button>
     );
 };
 
