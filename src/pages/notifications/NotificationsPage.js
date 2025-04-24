@@ -255,6 +255,17 @@ const NotificationsPage = () => {
                                             </p>
                                             <p style={{ margin: 0, color: "#555" }}>
                                                 {t(item.action)}
+                                                {
+                                                    item.fromUser !== undefined && item.fromUser?.id !== undefined ? (
+                                                        <> {t('from')} <Link to={`/profile/${item.fromUser.id}`}>
+                                                                {item.fromUser.first_name} {item.fromUser.last_name}
+                                                            </Link>
+                                                        </>
+                                                    ) : item.action === 'The gift of a stars' && item.anonymous ? (
+                                                        <> {t('from')} {t('anonymous user')}
+                                                        </>
+                                                    ) : null
+                                                }
                                             </p>
                                             <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>
                                                 {getTimeAgo(item.createdAt)}

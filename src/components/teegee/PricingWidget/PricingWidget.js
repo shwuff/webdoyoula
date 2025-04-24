@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import {useTranslation} from 'react-i18next';
 import GoldStarIcon from './../../../assets/images/gold_star.png';
 
-export default function PricingWidget({ billingOptions = [], plansByCycle = {}, currency, selectedOption, setSelectedOption, billingVoid = () => {} }) {
+export default function PricingWidget({ billingOptions = [], plansByCycle = {}, currency, selectedOption, setSelectedOption, billingVoid = () => {}, afterBillingButton = () => {} }) {
     const [billingCycle, setBillingCycle] = useState(billingOptions[0]);
     const [selectedPlan, setSelectedPlan] = useState(
         plansByCycle[billingCycle] && plansByCycle[billingCycle][0]?.id || ''
@@ -104,6 +104,9 @@ export default function PricingWidget({ billingOptions = [], plansByCycle = {}, 
             </div>
 
             <button onClick={billingVoid} className={styles.ctaButton}>{t('Pay')} {activePlan.price} {currency === 'RUB' ? "₽" : currency === "XTR" ? "Telegram Stars" : ""}</button>
+
+            {afterBillingButton()}
+
         </div>
     );
 }

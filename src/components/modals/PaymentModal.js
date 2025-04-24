@@ -4,7 +4,7 @@ import "./PaymentModal.css";
 import { useAuth } from "../../context/UserContext";
 import { useWebSocket } from "../../context/WebSocketContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import {FormControlLabel, Switch, ToggleButton, ToggleButtonGroup} from '@mui/material';
 import {useTranslation} from "react-i18next";
 import PricingWidget from "../teegee/PricingWidget/PricingWidget";
 import SmartDropdown from "../teegee/SmartDropdown/SmartDropdown";
@@ -19,6 +19,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
     const [selectedOption, setSelectedOption] = useState(null);
     const [currencyType, setCurrencyType] = useState(isRubles ? 'RUB' : 'XTR');
     const [paymentStep, setPaymentStep] = useState(1);
+    const [isAnonymous, setIsAnonymous] = useState(false);
 
     const [paymentOptions, setPaymentOptions] = useState([
         { id: 1, name: "100 " + t('photos'), price: isRubles ? 899 : 749 },
@@ -57,7 +58,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
                 jwt: token,
                 optionId: selectedOption,
                 currency: currencyType,
-                ...(isGift ? { giftUserId: giftUserId } : {})
+                ...(isGift ? { giftUserId: giftUserId, isAnonymous: isAnonymous } : {})
             }
         });
         setOpenPaymentModal(false);
@@ -75,10 +76,10 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
 
     useEffect(() => {
         setPaymentOptions([
-            { id: 1, name: "100 " + t('photos'), price: currencyType === "RUB" ? 899 : 749 },
-            { id: 2, name: "300 " + t('photos'), price: currencyType === "RUB" ? 1499 : 1299 },
-            { id: 3, name: "500 " + t('photos'), price: currencyType === "RUB" ? 2549 : 2199 },
-            { id: 4, name: "1000 " + t('photos'), price: currencyType === "RUB" ? 4999 : 3999 },
+            { id: 1, name: "100 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 899 : 749 },
+            { id: 2, name: "300 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 1499 : 1299 },
+            { id: 3, name: "500 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 2549 : 2199 },
+            { id: 4, name: "1000 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 4999 : 3999 },
         ]);
 
         setModelOption({
@@ -136,6 +137,28 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
                                     setSelectedOption={setSelectedOption}
                                     currency={currencyType}
                                     billingVoid={handleConfirmPurchase}
+                                    afterBillingButton={() => {
+                                        return (
+                                            <>
+                                                {
+                                                    isGift && (
+                                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "1rem" }}>
+                                                            <FormControlLabel
+                                                                control={
+                                                                    <Switch
+                                                                        checked={isAnonymous}
+                                                                        onChange={(e) => setIsAnonymous(e.target.checked)}
+                                                                        color="primary"
+                                                                    />
+                                                                }
+                                                                label={t("Send anonymously")}
+                                                            />
+                                                        </div>
+                                                    )
+                                                }
+                                            </>
+                                        )
+                                    }}
                                 />
 
                             </div>
