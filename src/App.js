@@ -51,8 +51,6 @@ const App = () => {
 
     const [loading, setLoading] = useState(true);
 
-    const videoUrl = "https://khagwal.com/interactions/static/video/pricing_widget.mp4";
-
     useEffect(() => {
         if(isConnected) {
             addHandler('authorization', (msg) => {
@@ -87,7 +85,7 @@ const App = () => {
         document.documentElement.style.setProperty('--hint-color', '#2196F3');
         document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
         document.documentElement.style.setProperty('--secondary-text-color', '#888888');
-        document.documentElement.style.setProperty('--content-height', `calc(100vh - ${window?.Telegram?.WebApp?.safeAreaInset?.top + 40}px)`);
+        document.documentElement.style.setProperty('--content-height', `calc(100vh - ${window?.Telegram?.WebApp?.safeAreaInset?.top}px)`);
         document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top ? window?.Telegram?.WebApp?.safeAreaInset?.top * 2 : 5}px`);
         document.documentElement.style.setProperty('--safeAreaInset-top-value', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}`);
 
@@ -403,10 +401,6 @@ const App = () => {
                     <Route path="/rating" element={<Rating />} />
                     <Route path="/notifications" element={<NotificationsPage />} />
                 </Routes>
-            </div>
-            <div>
-            {/* Передаем videoUrl в компонент Video */}
-            <Video videoUrl={videoUrl} />
             </div>
             <NavbarBottom />
             {

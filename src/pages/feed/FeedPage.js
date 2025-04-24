@@ -13,7 +13,7 @@ import LikeHeart from "../../components/buttons/LikeHeart";
 import PhotoPostModal from "../../components/modals/PhotoPostModal";
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import FeedFilters from "../../components/input/FeedFilters";
-import { Chat } from "@mui/icons-material";
+import ChatPng from './../../assets/images/chat.png';
 
 const FeedPage = () => {
     const [filter, setFilter] = useState("repeats");
@@ -83,18 +83,9 @@ const FeedPage = () => {
                     showPaidPrompts={showPaidPrompts}
                 />
 
-                <div style={{ position: "absolute", bottom: "100px", right: "20px", padding: "10px", background: "var(--primary-color)", borderRadius: "50%" }} onClick={() => window.location.href = 'https://t.me/doyoulachat'}>
-                    <Chat style={{fill: "white"}} />
+                <div style={{ position: "absolute", bottom: "100px", right: "20px", padding: "10px", borderRadius: "50%", cursor: "pointer" }} onClick={() => window.location.href = 'https://t.me/doyoulachat'}>
+                    <img src={ChatPng} width={52} />
                 </div>
-
-                {/*<PhotoPostModal*/}
-                {/*    isModalOpen={isModalOpen}*/}
-                {/*    setIsModalOpen={setIsModalOpen}*/}
-                {/*    setOpenBackdropLoader={setOpenBackdropLoader}*/}
-                {/*    profileGallery={true}*/}
-                {/*    nextPhoto={handleNextPhoto}*/}
-                {/*    prevPhoto={handlePrevPhoto}*/}
-                {/*/>*/}
             </div>
 
         </div>

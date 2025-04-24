@@ -253,11 +253,11 @@ const NotificationsPage = () => {
                                             <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px" }}>
                                                 {item.amount > 0 ? `+${item.amount}` : item.amount} <img src={animationStarGold} width={14} />
                                             </p>
-                                            <p style={{ margin: 0, color: "#555" }}>
+                                            <p style={{ margin: 0, color: "#555", display: "flex", alignItems: "center", gap: "5px" }}>
                                                 {t(item.action)}
                                                 {
                                                     item.fromUser !== undefined && item.fromUser?.id !== undefined ? (
-                                                        <> {t('from')} <Link to={`/profile/${item.fromUser.id}`}>
+                                                        <> {t('from')} <img src={item.fromUser.photo_url} width={18} style={{ borderRadius: "50%" }} /> <Link to={`/profile/${item.fromUser.id}`}>
                                                                 {item.fromUser.first_name} {item.fromUser.last_name}
                                                             </Link>
                                                         </>
