@@ -25,6 +25,7 @@ import Cart from "./components/modals/Cart";
 import {addGood, deleteGood, setCart, updateCount} from "./redux/actions/cartActions";
 import {useDispatch} from "react-redux";
 import PhotoPostModal from "./components/modals/PhotoPostModal";
+import Video from './components/player/Video';
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -49,6 +50,8 @@ const App = () => {
     const {t, i18n} = useTranslation();
 
     const [loading, setLoading] = useState(true);
+
+    const videoUrl = "https://khagwal.com/interactions/static/video/pricing_widget.mp4";
 
     useEffect(() => {
         if(isConnected) {
@@ -400,6 +403,10 @@ const App = () => {
                     <Route path="/rating" element={<Rating />} />
                     <Route path="/notifications" element={<NotificationsPage />} />
                 </Routes>
+            </div>
+            <div>
+            {/* Передаем videoUrl в компонент Video */}
+            <Video videoUrl={videoUrl} />
             </div>
             <NavbarBottom />
             {

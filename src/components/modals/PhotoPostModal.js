@@ -23,6 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {getTimeAgo} from "../../App";
+import Video from '../player/Video';
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
@@ -135,6 +136,9 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
             data: { jwt: token, photoId }
         });
     };
+
+    const videoUrl = "https://khagwal.com/interactions/static/video/pricing_widget.mp4"; // Ссылка на видео
+
 
     return (
         <AnimatePresence>
@@ -253,13 +257,25 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                         )
                                     }
 
-                                    <img
-                                        src={imageSelector[selectedPhoto].blob_url}
-                                        alt={`photo-${imageSelector[selectedPhoto].id}`}
-                                        className={styles.modalImage}
-                                        style={{maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
-                                                ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`}}
-                                    />
+                                    {
+                                        imageSelector[selectedPhoto].fileType === 'video/mp4' ? (
+                                            <Video videoUrl={videoUrl} />
+                                        )
+                                        : (
+                                            <img
+                                                src={imageSelector[selectedPhoto].blob_url}
+                                                alt={`photo-${imageSelector[selectedPhoto].id}`}
+                                                className={styles.modalImage}
+                                                style={{
+                                                    maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
+                                                        ? `calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)`
+                                                        : `calc(100vh - 200px)`
+                                                }}
+                                            />
+                                        )
+                                    }
+                                        
+                                    
                                     <span style={{
                                         position: 'absolute',
                                         top: 4,
