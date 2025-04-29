@@ -20,6 +20,8 @@ import telegramStar from "../../assets/icons/telegramStar.png";
 import telegramAnimationStar from "../../assets/gif/gold_star.gif";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import PhotoMarketModal from '../modals/PhotoMarketModal';
+import SearchInput from '../input/SearchInput';
+import SearchIcon from "@mui/icons-material/Search";
 
 Modal.setAppElement('#app');
 
@@ -253,6 +255,28 @@ const MyGeneratedPhotosList = ({
     const {t} = useTranslation();
 
     const dispatch = useDispatch();
+
+    
+
+    const [searchExpanded, setSearchExpanded] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    
+    const searchInputRef = useRef(null);
+
+    const handleSearchFocus = () => setSearchExpanded(true);
+
+    const handleSearchBlur = () => {
+        setSearchExpanded(false);
+        setTimeout(() => {
+            setSearchText('');
+        }, 300);
+    };
+
+    useEffect(() => {
+        setSearchText('');
+    }, []);
+      
+
 
     const photosRef = useRef([]);
     const isLoadingRef = useRef(false);
@@ -783,24 +807,67 @@ const MyGeneratedPhotosList = ({
         <div>
             {
                 profileGallery === false && (
-                    <div className="myButtonsContainer horizontal-list">
-                        <button
-                            onClick={() => handleChangePhotosSortModel(0, myModels)}
-                            className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-outline-primary'}`}
-                        >
-                            {t('all')}
-                        </button>
-                        {myModels && myModels.map((model, idx) => (
+                    <div className="myButtonsContainer horizontal-list ">
+                        {(searchText.length === 0 || photosSortModel === 0) && (
                             <button
-                                key={model.id}
-                                onClick={() => handleChangePhotosSortModel(model.id, myModels)}
-                                className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-outline-primary'}`}
-                                style={{ animationDelay: `${idx * 0.05}s` }}
+                                onClick={() => handleChangePhotosSortModel(0, myModels)}
+                                className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-outline-primary'}`}
                             >
-                                {model.name}
+                                {t('all')}
+                            </button>
+                        )}
+
+
+
+                        {[...new Set([
+                            ...myModels.filter((model) =>
+                            model.name.toLowerCase().includes(searchText.toLowerCase())
+                            ),
+                            ...(photosSortModel !== 0
+                            ? myModels.filter((model) => model.id === photosSortModel)
+                            : [])
+                        ])].map((model, idx) => (
+                            <button
+                            key={model.id}
+                            onClick={() => handleChangePhotosSortModel(model.id, myModels)}
+                            className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-outline-primary'}`}
+                            style={{ animationDelay: `${idx * 0.05}s` }}
+                            >
+                            {model.name}
                             </button>
                         ))}
+
+                        {/* Поисковое поле */}
+                        <div className={styles.searchWrapper}>
+                        {/* Иконка поиска — кликабельная */}
+                            {!searchExpanded && (
+                                <div
+                                className={styles.searchIcon}
+                                onClick={() => {
+                                    setSearchExpanded(true);
+                                    setTimeout(() => {
+                                    searchInputRef.current?.focus();
+                                    }, 10);
+                                }}
+                                >
+                                <SearchIcon sx={{ fontSize: 22 }} />
+                                </div>
+                            )}
+
+                            {/* Анимируемое поле */}
+                            <div className={`${styles.searchFieldWrapper} ${searchExpanded ? styles.expanded : ''}`}>
+                                <SearchInput
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
+                                onFocus={handleSearchFocus}
+                                onBlur={handleSearchBlur}
+                                inputRef={searchInputRef}
+                                collapsed={!searchExpanded}
+                                />
+                            </div>
+                        </div>
                     </div>
+
                 )
             }
 

@@ -371,3 +371,34 @@
     width: 40px;
     height: 40px;
 }
+
+.searchWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+  
+.searchIcon {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.searchFieldWrapper {
+    overflow: hidden;
+    transition: width 0.3s ease, opacity 0.3s ease;
+    width: 0;
+    opacity: 0;
+}
+  
+.searchFieldWrapper.expanded {
+    width: 220px;
+    opacity: 1;
+}
+  
+  
+  
+  
+  
