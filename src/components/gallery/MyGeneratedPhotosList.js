@@ -814,13 +814,12 @@ const MyGeneratedPhotosList = ({
             {selectedImages.length > 0 && (
                 <div className={styles.selectedBar}>
                     <span className={"no-wrap"} style={{width: "max-content", marginRight: 7, fontSize: 14}}>Выбрано: {selectedImages.length}</span>
-                    <div className="horizontal-list align-items-center" style={{padding: 0}}>
+                    <div className="horizontal-list d-flex align-items-center" style={{padding: 0}}>
                         {
                             from === 'createContent' ? (
                                 <>
                                     <button
                                         className="btn btn-outline-primary no-wrap"
-                                        style={{marginTop: '10px'}}
                                         onClick={handleUploadToBot}
                                     >
                                         {t('upload_to_bot')}
@@ -828,7 +827,6 @@ const MyGeneratedPhotosList = ({
 
                                     <button
                                         className="btn btn-outline-primary no-wrap"
-                                        style={{marginTop: '10px'}}
                                         onClick={handlePublishToGallery}
                                     >
                                         {t('to_publish')}

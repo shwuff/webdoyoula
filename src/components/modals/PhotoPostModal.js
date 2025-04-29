@@ -399,6 +399,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                 ) : null
                                                             }
                                                         </button>
+                                                        {imageSelector[selectedPhoto].prompt_id}
                                                         <span style={{ fontSize: 18 }}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
                                                         {
                                                             imageSelector[selectedPhoto].count_generated_with_prompt_today && imageSelector[selectedPhoto].count_generated_with_prompt_today > 0 ? (
