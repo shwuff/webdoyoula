@@ -1,0 +1,41 @@
+.mode-switch {
+    width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #ccc;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+  
+.switch-track.active {
+    background-color: #f0c419;
+}
+  
+.switch-thumb {
+    width: 26px;
+    height: 26px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s ease;
+}
+  
+.switch-track.active .switch-thumb {
+    left: 32px;
+}
+  
+.star-icon {
+    width: 100%;
+    height: 100%;
+}
+  
+.no-star {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 18px;
+}
