@@ -808,6 +808,35 @@ const MyGeneratedPhotosList = ({
             {
                 profileGallery === false && (
                     <div className="myButtonsContainer horizontal-list ">
+                        <div className={styles.searchWrapper}>
+                        {/* Иконка поиска — кликабельная */}
+                            {!searchExpanded && (
+                                <div
+                                className={styles.searchIcon}
+                                onClick={() => {
+                                    setSearchExpanded(true);
+                                    setTimeout(() => {
+                                    searchInputRef.current?.focus();
+                                    }, 10);
+                                }}
+                                >
+                                <SearchIcon sx={{ fontSize: 22 }} />
+                                </div>
+                            )}
+
+                            {/* Анимируемое поле */}
+                            <div className={`${styles.searchFieldWrapper} ${searchExpanded ? styles.expanded : ''}`}>
+                                <SearchInput
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
+                                onFocus={handleSearchFocus}
+                                onBlur={handleSearchBlur}
+                                inputRef={searchInputRef}
+                                collapsed={!searchExpanded}
+                                />
+                            </div>
+                        </div>
+
                         {(searchText.length === 0 || photosSortModel === 0) && (
                             <button
                                 onClick={() => handleChangePhotosSortModel(0, myModels)}
@@ -837,35 +866,7 @@ const MyGeneratedPhotosList = ({
                             </button>
                         ))}
 
-                        {/* Поисковое поле */}
-                        <div className={styles.searchWrapper}>
-                        {/* Иконка поиска — кликабельная */}
-                            {!searchExpanded && (
-                                <div
-                                className={styles.searchIcon}
-                                onClick={() => {
-                                    setSearchExpanded(true);
-                                    setTimeout(() => {
-                                    searchInputRef.current?.focus();
-                                    }, 10);
-                                }}
-                                >
-                                <SearchIcon sx={{ fontSize: 22 }} />
-                                </div>
-                            )}
-
-                            {/* Анимируемое поле */}
-                            <div className={`${styles.searchFieldWrapper} ${searchExpanded ? styles.expanded : ''}`}>
-                                <SearchInput
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                onFocus={handleSearchFocus}
-                                onBlur={handleSearchBlur}
-                                inputRef={searchInputRef}
-                                collapsed={!searchExpanded}
-                                />
-                            </div>
-                        </div>
+                        
                     </div>
 
                 )
