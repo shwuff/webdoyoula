@@ -115,6 +115,10 @@ const Rating = () => {
 
     const topUsers = sortUsers(filter).slice(0, 3);
 
+    const formatFullName = (firstName, lastName) => {
+        return `${firstName || ''} ${lastName || ''}`.trim();
+    };
+
     return (
         <div className="globalProfileBlock" style={{ position: 'relative' }}>
             <div className="center-content-block">
@@ -158,7 +162,7 @@ const Rating = () => {
                             <div>
                                 <ListItemText
                                     onClick={() => navigate(`/profile/${topUsers[1].id}`)}
-                                    primary={`${topUsers[1].first_name} ${topUsers[1].last_name}`}
+                                    primary={`${topUsers[1].first_name || ''} ${topUsers[1].last_name || ''}`.trim()}
                                     // secondary={topUsers[1].username !== null && topUsers[1].username.length > 0 && "@" + topUsers[1].username}
                                     // secondary={filter === 'repeats' ? `Повторы: ${topUsers[1].repeats}` :
                                     //     filter === 'refs' ? `Рефы: ${topUsers[1].refs}` :
@@ -204,7 +208,7 @@ const Rating = () => {
                             <div>
                                 <ListItemText
                                     onClick={() => navigate(`/profile/${topUsers[0].id}`)}
-                                    primary={`${topUsers[0].first_name} ${topUsers[0].last_name}`}
+                                    primary={`${topUsers[0].first_name || ''} ${topUsers[0].last_name || ''}`.trim()}
                                     // secondary={topUsers[0].username !== null && topUsers[0].username.length > 0 && "@" + topUsers[0].username}
                                     // secondary={filter === 'repeats' ? `Повторы: ${topUsers[0].repeats}` :
                                     //     filter === 'refs' ? `Рефы: ${topUsers[0].refs}` :
@@ -251,7 +255,7 @@ const Rating = () => {
                             <div>
                                 <ListItemText
                                     onClick={() => navigate(`/profile/${topUsers[2].id}`)}
-                                    primary={`${topUsers[2].first_name} ${topUsers[2].last_name}`}
+                                    primary={`${topUsers[2].first_name || ''} ${topUsers[2].last_name || ''}`.trim()}
                                     // secondary={topUsers[2].username !== null && topUsers[2].username.length > 0 && "@" + topUsers[2].username}
                                     sx={{
                                         '& .MuiTypography-root': {

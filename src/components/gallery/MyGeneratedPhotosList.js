@@ -33,6 +33,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         transform: inView ? 'translateY(0px)' : 'translateY(20px)',
         config: { tension: 55, friction: 9 },
         delay: inView ? Math.min(index * 20, 100) : 0,
+        immediate: !inView,
     });
 
     const handleCircleClick = (e) => {
@@ -928,7 +929,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCardMarket
-                                    key={photo.blob_url}
+                                    key={photo.blob_url || `temp-${index}`}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}
@@ -942,7 +943,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCard
-                                    key={photo.blob_url}
+                                    key={photo.blob_url || `temp-${index}`}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}
