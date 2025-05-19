@@ -46,7 +46,7 @@ const PublishToGalleryButton = ({ photoId, selectedPhoto, expanded, setExpanded,
     };
 
     const confirmPublish = () => {
-        dispatch(updateImage(selected.id, { caption, repeat_price: repeatPrice }));
+        dispatch(updateImage(selected.id, { caption }));
 
         sendData({
             action: "publish_to_gallery",

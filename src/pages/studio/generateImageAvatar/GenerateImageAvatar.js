@@ -11,7 +11,7 @@ import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import animationStarGold from "../../../assets/gif/gold_star.gif";
 import redSirenAnimation from "./../../../assets/gif/red_siren.gif"
 
-const GenerateImageAvatar = () => {
+const GenerateImageAvatar = ({ editImage = false }) => {
     const [step, setStep] = useState(1);
     const [mediaGroup, setMediaGroup] = useState(0);
     const [availableModels, setAvailableModels] = useState([]);
@@ -20,13 +20,15 @@ const GenerateImageAvatar = () => {
     const { t} = useTranslation();
 
     const { userData, setUserData } = useAuth();
-    const { promptId} = useParams();
+    const { promptId, photoId} = useParams();
     const navigate = useNavigate();
-    const { myModels, token } = useAuth();
+    const { myLoras, token } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
 
     const [photoFormat, setPhotoFormat] = useState(userData.aspect_ratio);
+    const [currentModelFields, setCurrentModelFields] = useState({});
     const [prompt, setPrompt] = useState('');
+    const [image, setImage] = useState('');
 
     const textareaRef = useRef(null);
 
@@ -43,6 +45,15 @@ const GenerateImageAvatar = () => {
             navbar.style.display = 'flex';
         }
     };
+
+    useEffect(() => {
+        const selectedModel = availableModels.find(model => model.id === userData.current_ai_id);
+        if (selectedModel?.fields) {
+            setCurrentModelFields(selectedModel.fields);
+        } else {
+            setCurrentModelFields({});
+        }
+    }, [availableModels, userData.current_ai_id]);
 
     useEffect(() => {
 
@@ -101,11 +112,12 @@ const GenerateImageAvatar = () => {
             sendData({
                 action: "get_available_models",
                 data: {
-                    jwt: token
+                    jwt: token,
+                    editImage: editImage
                 }
             });
         }
-    }, [token]);
+    }, [token, editImage]);
 
     useEffect(() => {
         const receiveAvailableModels = (msg) => {
@@ -154,150 +166,179 @@ const GenerateImageAvatar = () => {
         }
     }, [photoFormat, userData, setUserData, token]);
 
+    console.log(currentModelFields);
+
     return (
-        <div className={styles.container} style={{ paddingTop: "var(--safeAreaInset-top)" }}>
+        <div className={`globalBlock`} style={{ paddingTop: "var(--safeAreaInset-top)" }}>
 
-            <div className="w-100 d-flex" style={{ gap: "10px" }}>
-                <FormControl
-                    sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
-                    size="small"
-                >
-                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
-                        {t('Select AI')}
-                    </InputLabel>
-                    <Select
-                        labelId="filter-select-label"
-                        value={userData.current_ai_id}
-                        onChange={(e) => {
-                            sendData({
-                                action: "update_selected_model",
-                                data: {
-                                    jwt: token,
-                                    modelId: e.target.value,
-                                }
-                            })
-                        }}
-                        label={t('feed_type')}
-                        sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+            <div className={"center-content-block"}>
+                <div className="w-100 d-flex" style={{ gap: "10px" }}>
+                    <FormControl
+                        sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
+                        size="small"
                     >
-                        {availableModels?.map((model) =>
-                            (
-                                <MenuItem key={model.id} value={model.id}>
-                                    {model.name}
-                                </MenuItem>
-                            )
-                        )}
-                    </Select>
-                </FormControl>
-
-                <FormControl
-                    sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
-                    size="small"
-                >
-                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
-                        {t('Select quantity')}
-                    </InputLabel>
-                    <Select
-                        labelId="filter-select-label"
-                        value={userData.count_images_generate}
-                        onChange={(e) => {
-                            sendData({
-                                action: "update_count_images_generate",
-                                data: {
-                                    jwt: token,
-                                    quantity: e.target.value,
-                                }
-                            })
-                        }}
-                        label={t('Select quantity')}
-                        sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
-                    >
-                        <MenuItem value={1}>
-                            1
-                        </MenuItem>
-                        <MenuItem value={2}>
-                            2
-                        </MenuItem>
-                        <MenuItem value={3}>
-                            3
-                        </MenuItem>
-                        <MenuItem value={4}>
-                            4
-                        </MenuItem>
-                        <MenuItem value={5}>
-                            5
-                        </MenuItem>
-                        <MenuItem value={6}>
-                            6
-                        </MenuItem>
-                        <MenuItem value={9}>
-                            9
-                        </MenuItem>
-
-                    </Select>
-                </FormControl>
-                <FormControl
-                    sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}>
-                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
-                        {t('Select photo format')}
-                    </InputLabel>
-                    <Select
-                        labelId="filter-select-label"
-                        value={photoFormat}
-                        onChange={(e) => setPhotoFormat(e.target.value)}
-                        sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
-                        label={t('Select photo format')}
-                    >
-                        <MenuItem value="1:1">1:1</MenuItem>
-                        <MenuItem value="3:4">3:4</MenuItem>
-                        <MenuItem value="9:16">9:16</MenuItem>
-                        <MenuItem value="16:9">16:9</MenuItem>
-                        <MenuItem value="4:5">4:5</MenuItem>
-                    </Select>
-                </FormControl>
-            </div>
-
-            <FormControl
-                sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
-                size="small"
-            >
-                <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
-                    {t('select_avatar')}
-                </InputLabel>
-                <Select
-                    labelId="filter-select-label"
-                    value={userData.current_model_id}
-                    onChange={(e) => {
-                        sendData({
-                            action: "update_selected_avatar",
-                            data: {
-                                jwt: token,
-                                avatarId: e.target.value,
+                        <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                            {t('Select AI')}
+                        </InputLabel>
+                        <Select
+                            labelId="filter-select-label"
+                            value={!editImage ? userData.current_ai_id : 4}
+                            onChange={(e) => {
+                                sendData({
+                                    action: "update_selected_model",
+                                    data: {
+                                        jwt: token,
+                                        modelId: e.target.value,
+                                    }
+                                });
+                                setPrompt('');
+                                setImage('');
+                            }}
+                            label={t('feed_type')}
+                            sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                        >
+                            {
+                                editImage ? (
+                                        <MenuItem value={4}>
+                                            Lora + Sora
+                                        </MenuItem>
+                                    ) :
+                                    promptData?.photo_id ? (
+                                            <MenuItem value={3}>
+                                                Lora + Sora
+                                            </MenuItem>
+                                        ) :
+                                    promptData?.edit_photo ? (
+                                            <MenuItem value={3}>
+                                                Sora
+                                            </MenuItem>
+                                    ) :
+                                    availableModels?.map((model) =>
+                                        (
+                                            <MenuItem key={model.id} value={model.id}>
+                                                {model.name}
+                                            </MenuItem>
+                                        )
+                                    )
                             }
-                        })
-                    }}
-                    label={t('feed_type')}
-                    sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
-                >
-                    {myModels?.map((model) =>
-                            model.status === 'ready' && (
-                                <MenuItem key={model.id} value={model.id}>
-                                    {model.name}
-                                </MenuItem>
-                            )
-                    )}
-                    {
-                        myModels.length < 1 && (
-                            <MenuItem value={63}>Paul Du Rove</MenuItem>
-                        )
-                    }
-                </Select>
-            </FormControl>
+                        </Select>
+                    </FormControl>
 
-            <div className={styles.content}>
-                <div className={styles.stepContent}>
+                    <FormControl
+                        sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
+                        size="small"
+                    >
+                        <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                            {t('Select quantity')}
+                        </InputLabel>
+                        <Select
+                            labelId="filter-select-label"
+                            value={userData.count_images_generate}
+                            onChange={(e) => {
+                                sendData({
+                                    action: "update_count_images_generate",
+                                    data: {
+                                        jwt: token,
+                                        quantity: e.target.value,
+                                    }
+                                })
+                            }}
+                            label={t('Select quantity')}
+                            sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                        >
+                            <MenuItem value={1}>
+                                1
+                            </MenuItem>
+                            <MenuItem value={2}>
+                                2
+                            </MenuItem>
+                            <MenuItem value={3}>
+                                3
+                            </MenuItem>
+                            <MenuItem value={4}>
+                                4
+                            </MenuItem>
+                            <MenuItem value={5}>
+                                5
+                            </MenuItem>
+                            <MenuItem value={6}>
+                                6
+                            </MenuItem>
+                            <MenuItem value={9}>
+                                9
+                            </MenuItem>
+
+                        </Select>
+                    </FormControl>
                     {
-                        !promptId && (
+                        !editImage && (userData.current_ai_id === 1 || userData.current_ai_id === 2) ? (
+                            <FormControl
+                                sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}>
+                                <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                                    {t('Select photo format')}
+                                </InputLabel>
+                                <Select
+                                    labelId="filter-select-label"
+                                    value={photoFormat}
+                                    onChange={(e) => setPhotoFormat(e.target.value)}
+                                    sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                                    label={t('Select photo format')}
+                                >
+                                    <MenuItem value="1:1">1:1</MenuItem>
+                                    <MenuItem value="3:4">3:4</MenuItem>
+                                    <MenuItem value="9:16">9:16</MenuItem>
+                                    <MenuItem value="16:9">16:9</MenuItem>
+                                    <MenuItem value="4:5">4:5</MenuItem>
+                                </Select>
+                            </FormControl>
+                        ) : null
+                    }
+                </div>
+
+                {
+                    (currentModelFields.avatar !== undefined) || promptData?.photo_id ? (
+                        <FormControl
+                            sx={{ fontSize: "0.8rem", width: "100%", marginTop: "15px" }}
+                            size="small"
+                        >
+                            <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                                {t('select_avatar')}
+                            </InputLabel>
+                            <Select
+                                labelId="filter-select-label"
+                                value={userData.current_model_id}
+                                onChange={(e) => {
+                                    sendData({
+                                        action: "update_selected_avatar",
+                                        data: {
+                                            jwt: token,
+                                            avatarId: e.target.value,
+                                        }
+                                    })
+                                }}
+                                label={t('feed_type')}
+                                sx={{ fontSize: "0.8rem", height: "40px", width: "100%" }}
+                            >
+                                {myLoras?.map((model) =>
+                                    model.status === 'ready' && (
+                                        <MenuItem key={model.id} value={model.id}>
+                                            {model.name}
+                                        </MenuItem>
+                                    )
+                                )}
+                                {
+                                    myLoras?.length < 1 && (
+                                        <MenuItem value={63}>Paul Du Rove</MenuItem>
+                                    )
+                                }
+                            </Select>
+                        </FormControl>
+                    ) : null
+                }
+
+                <div className={styles.content}>
+                    <div className={styles.stepContent}>
+                        {(currentModelFields.prompt === 'required' && !promptId) || editImage ? (
                             <>
                                 <h2>{t('enter_prompt')}</h2>
                                 <textarea
@@ -317,44 +358,88 @@ const GenerateImageAvatar = () => {
                                     <span className={"caption"}>{prompt.length}</span>
                                 </div>
                             </>
-                        )
-                    }
-                    {
-                        prompt.length > 0 || promptId ? (
+                        ) : null}
+                        {(((currentModelFields.image === 'required' || currentModelFields.image === 'optional') && !promptId) || (promptData && promptData?.edit_photo === true && promptId)) && !editImage ? (
                             <>
-                                <button className={"publish-button w-100"} onClick={() => {
-                                    sendData(
-                                        {
-                                            action: "generate/photo/avatar",
-                                            data: {
-                                                jwt: token,
-                                                callback_data: promptId !== undefined ? "repeat_webapp_prompt" : "webapp",
-                                                promptData: promptId !== undefined ? promptId : prompt
-                                            }
+                                <h2 style={{ marginBottom: '10px' }}>{t('Upload image')}</h2>
+                                {
+                                    image && (
+                                        <img src={image} width={100} style={{ borderRadius: "12px" }} />
+                                    )
+                                }
+                                <label
+                                    htmlFor="upload-image"
+                                    style={{
+                                        display: 'inline-block',
+                                        padding: '10px 20px',
+                                        background: 'var(--button-secondary-bg-color)',
+                                        borderRadius: '12px',
+                                        color: '#000',
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                                        transition: 'background 0.3s ease',
+                                        textAlign: 'center',
+                                        maxWidth: '100%',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.background = '#e0e0e0'}
+                                    onMouseLeave={(e) => e.target.style.background = '#f1f1f1'}
+                                >
+                                    {image ? t('Edit choose image') : t('Choose image')}
+                                </label>
+                                <input
+                                    type="file"
+                                    id="upload-image"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setImage(reader.result);
+                                            };
+                                            reader.readAsDataURL(file);
                                         }
-                                    );
-                                    navigate('/studio/create');
-                                }}>
-                                    {
-                                        promptId ? (
-                                            <>{t("Repeat")}</>
-                                        ) : (
-                                            <>{t('Create')}</>
-                                        )
-                                    }
-                                </button>
+                                    }}
+                                    style={{ display: 'none' }}
+                                />
                             </>
-                        ) : null
-                    }
-                    {
-                        promptData && promptData.repeat_price > 0 && promptData.owner !== userData.id ? (
-                            <p><img src={redSirenAnimation} width={18} /> Вы собираетесь повторить промт, за который автор установил цену в <span className={"no-wrap"}>{promptData.repeat_price} <img src={animationStarGold} width={12} /></span>. С Вас спишется <span className={"no-wrap"}>{ promptData.repeat_price * userData.count_images_generate + userData.count_images_generate } <img src={animationStarGold} width={12} /></span></p>
-                        ) : (
-                            <p><img src={redSirenAnimation} width={18} /> С Вас спишется <span className={"no-wrap"}>{ userData.count_images_generate } <img src={animationStarGold} width={12} /></span></p>
-                        )
-                    }
-                </div>
+                        ) : null}
+                        <button className={"publish-button w-100"} onClick={() => {
+                            sendData(
+                                {
+                                    action: "generate/photo/avatar",
+                                    data: {
+                                        jwt: token,
+                                        callback_data: promptId !== undefined ? "repeat_webapp_prompt" : "webapp",
+                                        promptData: promptId !== undefined ? promptId : prompt,
+                                        ...(currentModelFields.image || (promptId && promptData?.edit_photo === true) ? { image: image } : {}),
+                                        ...(editImage ? {image_for_edit: photoId} : {})
+                                    }
+                                }
+                            );
+                            navigate('/studio/create');
+                        }}>
+                            {
+                                promptId ? (
+                                    <>{t("Repeat")}</>
+                                ) : (
+                                    <>{t('Create')}</>
+                                )
+                            }
+                        </button>
+                        {
+                            promptData && promptData.repeat_price > 0 && promptData.owner !== userData.id ? (
+                                <p><img src={redSirenAnimation} width={18} /> Вы собираетесь повторить промт, за который автор установил цену в <span className={"no-wrap"}>{promptData.repeat_price} <img src={animationStarGold} width={12} /></span>. С Вас спишется <span className={"no-wrap"}>{ (promptData.repeat_price * userData.count_images_generate + userData.count_images_generate) * (editImage ? 2 : 1) } <img src={animationStarGold} width={12} /></span></p>
+                            ) : (
+                                <p><img src={redSirenAnimation} width={18} /> С Вас спишется <span className={"no-wrap"}>{ userData.count_images_generate * (editImage || (!editImage && userData.current_ai_id === 3) ? 2 : 1) } <img src={animationStarGold} width={12} /></span></p>
+                            )
+                        }
+                    </div>
 
+                </div>
             </div>
         </div>
     );

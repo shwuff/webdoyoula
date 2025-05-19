@@ -9,7 +9,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [userData, setUserData] = useState(null);
-    const [myModels, setMyModels] = useState(null);
+    const [myLoras, setMyLoras] = useState([]);
     const [myPhotos, setMyPhotos] = useState(null);
 
     const updateUserData = (newData) => {
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, login, logout, setUserData, userData, myModels, setMyModels, setMyPhotos, myPhotos, updateUserData }}>
+        <AuthContext.Provider value={{ token, login, logout, setUserData, userData, myLoras, setMyLoras, setMyPhotos, myPhotos, updateUserData }}>
             {children}
         </AuthContext.Provider>
     );

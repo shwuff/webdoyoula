@@ -251,7 +251,7 @@ const MyGeneratedPhotosList = ({
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
-    const { token, myModels, setMyModels } = useAuth();
+    const { token, myLoras, setMyLoras } = useAuth();
     const {t} = useTranslation();
 
     const dispatch = useDispatch();
@@ -741,10 +741,10 @@ const MyGeneratedPhotosList = ({
                         ...avatar,
                         id: Number(avatar.id)
                     },
-                    ...myModels
+                    ...myLoras
                 ]);
 
-                setMyModels(prev => ([
+                setMyLoras(prev => ([
                     {
                         ...avatar,
                         id: Number(avatar.id)
@@ -757,16 +757,16 @@ const MyGeneratedPhotosList = ({
         addHandler('handle_create_new_avatar', handleNewAvatar);
 
         return () => deleteHandler('handle_create_new_avatar');
-    }, [profileGallery]);
+    }, [profileGallery, myLoras]);
 
-    const handleChangePhotosSortModel = useCallback((value, myModels) => {
+    const handleChangePhotosSortModel = useCallback((value, myLoras) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         setPhotosList([]);
         setPhotosPage(1);
         setPhotosSortModel(value);
-        for (let i = 0; i < myModels.length; i++) {
-            if (myModels[i].id === value) {
-                setSelectedModel(myModels[i]);
+        for (let i = 0; i < myLoras.length; i++) {
+            if (myLoras[i].id === value) {
+                setSelectedModel(myLoras[i]);
                 break;
             }
         }
@@ -810,7 +810,7 @@ const MyGeneratedPhotosList = ({
                     <div className="myButtonsContainer horizontal-list ">
                         {(searchText.length === 0 || photosSortModel === 0) && (
                             <button
-                                onClick={() => handleChangePhotosSortModel(0, myModels)}
+                                onClick={() => handleChangePhotosSortModel(0, myLoras)}
                                 className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-outline-primary'}`}
                             >
                                 {t('all')}
@@ -820,16 +820,16 @@ const MyGeneratedPhotosList = ({
 
 
                         {[...new Set([
-                            ...myModels.filter((model) =>
+                            ...myLoras?.filter((model) =>
                             model.name.toLowerCase().includes(searchText.toLowerCase())
                             ),
                             ...(photosSortModel !== 0
-                            ? myModels.filter((model) => model.id === photosSortModel)
+                            ? myLoras.filter((model) => model.id === photosSortModel)
                             : [])
                         ])].map((model, idx) => (
                             <button
                             key={model.id}
-                            onClick={() => handleChangePhotosSortModel(model.id, myModels)}
+                            onClick={() => handleChangePhotosSortModel(model.id, myLoras)}
                             className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-outline-primary'}`}
                             style={{ animationDelay: `${idx * 0.05}s` }}
                             >
@@ -838,34 +838,34 @@ const MyGeneratedPhotosList = ({
                         ))}
 
                         {/* Поисковое поле */}
-                        <div className={styles.searchWrapper}>
-                        {/* Иконка поиска — кликабельная */}
-                            {!searchExpanded && (
-                                <div
-                                className={styles.searchIcon}
-                                onClick={() => {
-                                    setSearchExpanded(true);
-                                    setTimeout(() => {
-                                    searchInputRef.current?.focus();
-                                    }, 10);
-                                }}
-                                >
-                                <SearchIcon sx={{ fontSize: 22 }} />
-                                </div>
-                            )}
+                        {/*<div className={styles.searchWrapper}>*/}
+                        {/*/!* Иконка поиска — кликабельная *!/*/}
+                        {/*    {!searchExpanded && (*/}
+                        {/*        <div*/}
+                        {/*        className={styles.searchIcon}*/}
+                        {/*        onClick={() => {*/}
+                        {/*            setSearchExpanded(true);*/}
+                        {/*            setTimeout(() => {*/}
+                        {/*            searchInputRef.current?.focus();*/}
+                        {/*            }, 10);*/}
+                        {/*        }}*/}
+                        {/*        >*/}
+                        {/*        <SearchIcon sx={{ fontSize: 22 }} />*/}
+                        {/*        </div>*/}
+                        {/*    )}*/}
 
-                            {/* Анимируемое поле */}
-                            <div className={`${styles.searchFieldWrapper} ${searchExpanded ? styles.expanded : ''}`}>
-                                <SearchInput
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                onFocus={handleSearchFocus}
-                                onBlur={handleSearchBlur}
-                                inputRef={searchInputRef}
-                                collapsed={!searchExpanded}
-                                />
-                            </div>
-                        </div>
+                        {/*    /!* Анимируемое поле *!/*/}
+                        {/*    <div className={`${styles.searchFieldWrapper} ${searchExpanded ? styles.expanded : ''}`}>*/}
+                        {/*        <SearchInput*/}
+                        {/*        value={searchText}*/}
+                        {/*        onChange={(e) => setSearchText(e.target.value)}*/}
+                        {/*        onFocus={handleSearchFocus}*/}
+                        {/*        onBlur={handleSearchBlur}*/}
+                        {/*        inputRef={searchInputRef}*/}
+                        {/*        collapsed={!searchExpanded}*/}
+                        {/*        />*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
 
                 )

@@ -10,6 +10,8 @@
     background: var(--bg-color, #fff);
     color: var(--text-color, #000);
     border-radius: 8px;
+    overflow-y: auto;
+    max-height: 100%;
 }
 
 /* Прогресс-бар */

@@ -120,7 +120,7 @@ const Profile = () => {
     useEffect(() => {
         if (userId && userData) {
             setPhotosPage(1);
-            sendData({ action: 'getProfile', data: { jwt: token, userId } });
+            sendData({ action: 'getProfile', data: { jwt: token, userId: userId } });
         }
     }, [userId]);
 
@@ -160,7 +160,7 @@ const Profile = () => {
 
         return () => deleteHandler('get_user_answere');
 
-    }, [userData, addHandler, deleteHandler]);
+    }, [userData, addHandler, deleteHandler, userId]);
 
     // useEffect(() => {
     //     if(tempUserData) {
@@ -466,7 +466,7 @@ const Profile = () => {
                         </div>
                     ) : (
                         <ul className={styles.userList}>
-                            {followUsers.length > 0 ? (
+                            {followUsers && followUsers.length > 0 ? (
                                 followUsers.map((user) => {
 
                                     return (

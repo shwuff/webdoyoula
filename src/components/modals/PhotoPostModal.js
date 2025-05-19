@@ -137,8 +137,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         });
     };
 
-    const videoUrl = "https://khagwal.com/interactions/static/video/pricing_widget.mp4"; // Ссылка на видео
-
+    const videoUrl = "https://khagwal.com/interactions/static/video/pricing_widget.mp4";
 
     return (
         <AnimatePresence>
@@ -344,12 +343,20 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     setExpanded={setExpanded}
                                                     isMyPrompt={Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor)}
                                                 />
+                                                {/*{imageSelector[selectedPhoto].id}*/}
                                                 {
                                                     !expanded && (
                                                         <button className={"publish-outline-button iconButton w-100"} style={{}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
                                                             {t('repeat')}
                                                         </button>
                                                     )
+                                                }
+                                                {
+                                                    Number(imageSelector[selectedPhoto].ai_id) === 1 || Number(imageSelector[selectedPhoto].ai_id) === 2 ? (
+                                                        <button className={"publish-outline-button iconButton w-100"} style={{ marginTop: "10px" }} onClick={() => navigate(`/studio/edit-image/${imageSelector[selectedPhoto].id}`)}>
+                                                            {t('Edit')}
+                                                        </button>
+                                                    ) : null
                                                 }
                                                                                            
                                             </>
@@ -399,7 +406,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                 ) : null
                                                             }
                                                         </button>
-                                                        {imageSelector[selectedPhoto].prompt_id}
                                                         <span style={{ fontSize: 18 }}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
                                                         {
                                                             imageSelector[selectedPhoto].count_generated_with_prompt_today && imageSelector[selectedPhoto].count_generated_with_prompt_today > 0 ? (

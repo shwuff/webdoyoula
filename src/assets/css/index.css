@@ -45,7 +45,7 @@ a, div, button {
 }
 
 .publish-button {
-    padding: 8px 16px;
+    padding: 8px 12px;
     font-size: 14px;
     font-weight: 500;
     border: none;
@@ -57,8 +57,8 @@ a, div, button {
     box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
     flex-shrink: 0;
     width: 100%;
-    height: 40px;
     display: flex;
+    height: 35px;
     align-items: center;
     justify-content: center;
 }
@@ -68,8 +68,8 @@ a, div, button {
 }
 
 .publish-outline-button {
-    padding: 12px 24px;
-    font-size: 16px;
+    padding: 8px 12px;
+    font-size: 14px;
     font-weight: 500;
     border: none;
     border-radius: 16px;
@@ -80,7 +80,7 @@ a, div, button {
     box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
     flex-shrink: 0;
     width: 100%;
-    height: 40px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;

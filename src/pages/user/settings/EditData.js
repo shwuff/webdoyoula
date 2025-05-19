@@ -92,7 +92,7 @@ const EditData = () => {
         if(isConnected && token) {
 
             sendData({
-                action: "get_available_settings",
+                action: "get/settings/profile",
                 data: {
                     jwt: token
                 }
@@ -240,7 +240,7 @@ const EditData = () => {
                         </div>
                     </div>
                     <div className={styles.profileUserInfo}>
-                        <h2 style={{ color: "white", zIndex: 5 }} className={styles.profileName}>{name} {surname}</h2>
+                        <h2 style={{ color: "white", zIndex: 5 }} className={`${styles.profileName} no-wrap`}>{name} {surname}</h2>
                         {
                             username && username.length > 0 && (
                                 <p className={styles.profileUsername} style={{ color: "white", zIndex: 5 }}>@{username}</p>

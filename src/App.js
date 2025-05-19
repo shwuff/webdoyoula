@@ -26,6 +26,7 @@ import {addGood, deleteGood, setCart, updateCount} from "./redux/actions/cartAct
 import {useDispatch} from "react-redux";
 import PhotoPostModal from "./components/modals/PhotoPostModal";
 import Video from './components/player/Video';
+import {updateImage} from "./redux/actions/imageActions";
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -38,7 +39,7 @@ const App = () => {
 
     window.Telegram?.WebApp?.setBottomBarColor(themeParams.secondary_bg_color);
 
-    const { login, setUserData, setMyModels, token, userData } = useAuth();
+    const { login, setUserData, setMyLoras, token, userData } = useAuth();
     const { addHandler, deleteHandler, isConnected, sendData } = useWebSocket();
     const dispatch = useDispatch();
 
@@ -61,12 +62,29 @@ const App = () => {
 
                 login(msg.token);
                 setUserData(msg.user);
-                setMyModels(msg.myModels);
+                setMyLoras(msg.myModels);
                 setLoading(false);
             });
 
             return () => {
                 deleteHandler('authorization');
+            }
+        }
+    }, [isConnected]);
+
+    useEffect(() => {
+        if(isConnected) {
+            addHandler('handleGetMyProfile', (msg) => {
+                const token = localStorage.getItem('auth_token');
+                login(token);
+                setUserData(msg.user);
+                setMyLoras(msg.loras);
+                console.log(msg);
+                setLoading(false);
+            });
+
+            return () => {
+                deleteHandler('handleGetMyProfile');
             }
         }
     }, [isConnected]);
@@ -85,9 +103,10 @@ const App = () => {
         document.documentElement.style.setProperty('--hint-color', '#2196F3');
         document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
         document.documentElement.style.setProperty('--secondary-text-color', '#888888');
-        document.documentElement.style.setProperty('--content-height', `calc(100vh - ${window?.Telegram?.WebApp?.safeAreaInset?.top}px)`);
+        document.documentElement.style.setProperty('--content-height', `calc(100vh)`);
         document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top ? window?.Telegram?.WebApp?.safeAreaInset?.top * 2 : 5}px`);
         document.documentElement.style.setProperty('--safeAreaInset-top-value', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}`);
+        document.documentElement.style.setProperty('--button-secondary-bg-color', "#f1f1f1");
 
         if (token && isConnected) {
             sendData({
@@ -99,6 +118,7 @@ const App = () => {
         } else if(isConnected) {
             setLoading(false);
         }
+        setLoading(false);
     }, [isConnected]);
 
     useEffect(() => {
@@ -335,6 +355,18 @@ const App = () => {
     }, [addHandler, deleteHandler]);
 
     useEffect(() => {
+        const updateRepeatPrice = (msg) => {
+            dispatch(updateImage(msg.photo_id, {repeat_price: msg.repeat_price}))
+        }
+
+        addHandler("update_repeat_price", updateRepeatPrice);
+
+        return () => deleteHandler('update_repeat_price');
+    }, [addHandler, deleteHandler]);
+
+    // repeat_price: repeatPrice
+
+    useEffect(() => {
         const handleUpdateCountImagesGenerate = (msg) => {
             setUserData((prev) => ({
                 ...prev,
@@ -397,6 +429,7 @@ const App = () => {
                     <Route path="/studio/create" element={<CreateContent />} />
                     <Route path="/studio/generate-image-avatar" element={<GenerateImageAvatar />} />
                     <Route path="/studio/generate-image-avatar/:promptId" element={<GenerateImageAvatar />} />
+                    <Route path="/studio/edit-image/:photoId" element={<GenerateImageAvatar editImage={true} />} />
                     <Route path="/post/edit/:postId" element={<EditPost />} />
                     <Route path="/rating" element={<Rating />} />
                     <Route path="/notifications" element={<NotificationsPage />} />

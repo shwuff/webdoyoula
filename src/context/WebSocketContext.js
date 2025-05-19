@@ -87,6 +87,8 @@ export const WebSocketProvider = ({ children }) => {
                                 created_at: photo.created_at,
                                 caption: photo.caption,
                                 ai_model: photo.ai_model,
+                                last_photo_id: photo.last_photo_id,
+                                ai_id: photo.ai_id
                             };
 
                             offset += photo.size;
@@ -141,6 +143,12 @@ export const WebSocketProvider = ({ children }) => {
             }
         };
     }, [updateImage]);
+
+    const generateUUID = () => {
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    };
 
     const addHandler = (action, handler) => {
         handlersRef.current[action] = handler;
