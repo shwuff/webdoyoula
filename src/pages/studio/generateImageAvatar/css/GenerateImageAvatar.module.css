@@ -1,179 +1,70 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: sans-serif;
-
-    background: var(--bg-color, #fff);
-    color: var(--text-color, #000);
-    border-radius: 8px;
-    overflow-y: auto;
-    max-height: 100%;
-}
-
-/* Прогресс-бар */
-.progressBar {
-    position: relative;
+.modelPreview {
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    align-items: center; /* центрируем кружки по вертикали */
 }
 
-/* Линия фоновая */
-.progressLine {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--secondary-bg-color, #000);
-    z-index: 0;
-    transform: translateY(-50%);
+.promptPreview {
+    width: 50%;
+    border-left: 1px solid var(--glass-border);
+    display: flex;
+    padding-left: 10px;
 }
 
-/* Заполненная часть, которая будет анимироваться */
-.progressLineFill {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 2px;
-    background-color: var(--button-color, #2196F3);
-    z-index: 0;
-    transform: translateY(-50%);
-    width: 0; /* начальное значение, при шаге 1 = 0% */
-    transition: width 0.4s ease;
+.hiddenHr {
+    display: none;
 }
 
-/* Кружки (шаги) */
-.stepCircle {
-    position: relative;
-    z-index: 1; /* над линиями */
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--secondary-bg-color, #edeef0);
+@media screen and (max-width: 800px) {
+    .promptPreview {
+        border: 0;
+        padding: 0;
+        width: 100%;
+        margin-top: 15px;
+    }
 
+    .modelPreview {
+        display: block;
+    }
+
+    .hiddenHr {
+        display: block;
+    }
+}
+
+.modelPreview img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.header {
+    display: flex;
+    gap: 8px;
+}
+
+.runs {
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: background 0.3s ease;
-}
-
-/* Когда шаг активен - заливаем цветом */
-.stepCircle.active {
-    background: var(--button-color, #2196F3);
-    animation: spin 0.6s ease; /* Быстрая прокрутка при активации */
-}
-
-/* Анимация вращения (4 оборота) */
-@keyframes spin {
-    0%   { transform: rotate(0deg);   }
-    100% { transform: rotate(1440deg); } /* 1440deg = 4 оборота */
-}
-
-.stepIcon {
-    font-size: 14px;
-    fill: #fff !important;
-}
-
-.stepCircle:not(.active) .stepIcon {
-    fill: var(--text-color) !important;
-}
-
-.content {
-    width: 100%;
-    background: var(--bg-color);
-    border-radius: 4px;
-    margin-top: 10px;
-}
-
-/* Содержание шага */
-.stepContent {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    justify-content: center;
-}
-
-.stepContent h2 {
-    margin: 0;
-    font-size: 18px;
-    color: var(--text-color);
-}
-
-input[type="text"],
-input[type="number"],
-textarea {
-    border-radius: 4px;
-    padding: 10px;
-    font-size: 14px;
-    color: var(--text-color);
-    outline: none;
-}
-
-.amountsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.amountBtn {
-    min-width: 50px;
-    height: 40px;
-    border-radius: 8px;
-    background: var(--secondary-bg-color, #edeef0);
-    color: var(--text-color);
-    font-size: 16px;
-    padding: 0 10px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-    border: 1px solid var(--button-color, #2196F3);
-}
-
-.amountBtn:hover {
-    background: rgba(0,0,0,0.1);
-}
-
-.amountBtn.active {
-    background: var(--button-color);
-    color: var(--button-text-color);
-    transform: translateY(-2px);
-}
-
-.amountBtn:active {
-    transform: scale(0.95);
-}
-
-.photoGrid {
-    display: grid;
-    height: calc(100vh - 200px);
-    grid-template-columns: repeat(3, 1fr);
     gap: 5px;
-    margin-top: 0px;
-    padding-bottom: 100px;
-    overflow-y: auto;
-    /*overflow-y: auto;*/
-    /*height: calc(100vh - 350px);*/
-
 }
 
-.photoCard {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    cursor: pointer;
-    height: 250px;
+.info {
+    display: block;
 }
 
-.photoImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
+.authorAvatar {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+}
+
+.promptAuthor {
+    margin: 0 10px;
+    display: flex;
+}
+
+.authorInfo {
+    margin-left: 8px;
 }

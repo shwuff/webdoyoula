@@ -59,8 +59,8 @@ const Profile = () => {
         BackButton.onClick(() => {setIsModalOpen(false)});
         setIsFollowLoading(true);
         sendData({
-            action: "get_followers",
-            data: { jwt: token, userId: tempUserData.id }
+            action: "get/followers/" + tempUserData.id,
+            data: { jwt: token }
         });
     };
 
@@ -81,8 +81,8 @@ const Profile = () => {
         BackButton.onClick(() => {setIsModalOpen(false)});
         setIsFollowLoading(true);
         sendData({
-            action: "get_following",
-            data: { jwt: token, userId: tempUserData.id }
+            action: "get/followings/" + tempUserData.id,
+            data: { jwt: token }
         });
     };
 
@@ -119,8 +119,8 @@ const Profile = () => {
 
     useEffect(() => {
         if (userId && userData) {
-            setPhotosPage(1);
-            sendData({ action: 'getProfile', data: { jwt: token, userId: userId } });
+            setPhotosPage(0);
+            sendData({ action: 'get/user/' + userId, data: { jwt: token } });
         }
     }, [userId]);
 
@@ -156,9 +156,9 @@ const Profile = () => {
 
         }
 
-        addHandler('get_user_answere', handleGetProfile);
+        addHandler('get/user/' + userId, handleGetProfile);
 
-        return () => deleteHandler('get_user_answere');
+        return () => deleteHandler('get/user/' + userId);
 
     }, [userData, addHandler, deleteHandler, userId]);
 
@@ -168,7 +168,7 @@ const Profile = () => {
     //     }
     // }, [tempUserData]);
 
-    const [photosPage, setPhotosPage] = useState(1);
+    const [photosPage, setPhotosPage] = useState(0);
     const [filter, setFilter] = useState("date");
     const [dateRange, setDateRange] = useState("all_time");
     const [isMarket, setIsMarket] = useState(false);
@@ -337,14 +337,14 @@ const Profile = () => {
                                 openModal();
                                 handleShowFollowers();
                             }}>
-                                <p className={styles.statNumber}>{tempUserData.followersCount}</p>
+                                <p className={styles.statNumber}>{tempUserData.followers_count}</p>
                                 <p className={styles.statLabel}>{t('followers')}</p>
                             </div>
                             <div className={styles.statBlock} onClick={() => {
                                 openModal();
                                 handleShowFollowing();
                             }}>
-                                <p className={styles.statNumber}>{tempUserData.followingCount}</p>
+                                <p className={styles.statNumber}>{tempUserData.follows_count}</p>
                                 <p className={styles.statLabel}>{t('follows')}</p>
                             </div>
                         

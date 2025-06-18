@@ -79,17 +79,17 @@ const FeedFilters = ({
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
         if (event.target.value === "date") setDateRange("all_time");
-        setPhotosPage(1);
+        setPhotosPage(0);
     };
 
     const handleFeedChange = (event) => {
         setFeed(event.target.value);
-        setPhotosPage(1);
+        setPhotosPage(0);
     };
 
     const handleDateRangeChange = (event) => {
         setDateRange(event.target.value);
-        setPhotosPage(1);
+        setPhotosPage(0);
     };
 
     return (
@@ -103,7 +103,7 @@ const FeedFilters = ({
                                     checked={isMarket}
                                     onChange={(e) => {
                                         setIsMarket(e.target.checked);
-                                        setPhotosPage(1);
+                                        setPhotosPage(0);
                                     }}
                                     size="small"
                                 />

@@ -1,10 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {
-    Avatar,
     Box,
     Button,
     TextField,
-    Typography,
     IconButton,
 } from '@mui/material';
 import {PhotoCamera} from '@mui/icons-material';
@@ -89,7 +87,7 @@ const EditData = () => {
     };
 
     useEffect(() => {
-        if(isConnected && token) {
+        if(isConnected && token && availableSettings === []) {
 
             sendData({
                 action: "get/settings/profile",
@@ -99,7 +97,7 @@ const EditData = () => {
             })
 
         }
-    }, [token, isConnected, sendData]);
+    }, [token, isConnected, availableSettings]);
 
     useEffect(() => {
 
@@ -174,7 +172,7 @@ const EditData = () => {
                             {t('cancel')}
                         </Button>
                         <Button
-                            variant="contained"
+                            variant="action"
                             onClick={async () => {
                                 const base64 = await getCroppedImg(cropImageSrc, croppedAreaPixels);
                                 setProfileImage(base64);
@@ -234,6 +232,7 @@ const EditData = () => {
                                             width: `${starCoordinates[index].size}px`,
                                             height: `${starCoordinates[index].size}px`,
                                         }}
+                                        alt={'MiniIcon'}
                                     />
                                 ))}
                             </div>
@@ -294,10 +293,8 @@ const EditData = () => {
                         />
 
                         <Button
-                            type="submit"
-                            variant="contained"
+                            variant="action"
                             fullWidth
-                            sx={{bgcolor: '#2196F3', fontSize: '14px', borderRadius: '8px'}}
                         >
                             {t('save')}
                         </Button>
@@ -318,16 +315,16 @@ const EditData = () => {
                     }
                     <div className="w-100 d-flex" style={{marginTop: 20, gap: "10px"}}>
                         <div className={"c-pointer"} style={selectedMiniIconProfile === 'star' ? { border: "1px solid var(--primary-color)", background: "rgb(0,0,0,.2", borderRadius: 12} : {background: "rgb(0,0,0,.2", borderRadius: 12, border: "1px solid var(--bg-color)"}} onClick={() => seselectedMiniIconProfile('star')}>
-                            <img src={TelegramStar} style={{width: 32}} />
+                            <img src={TelegramStar} style={{width: 32}} alt={'MiniIcon'} />
                         </div>
                         <div className={"c-pointer"} style={selectedMiniIconProfile === 'hi' ? { border: "1px solid var(--primary-color)", borderRadius: 12} : {borderRadius: 12, border: "1px solid var(--bg-color)"} } onClick={() => seselectedMiniIconProfile('hi')}>
-                            <img src={hiIcon} style={{width: 32}} />
+                            <img src={hiIcon} style={{width: 32}} alt={'MiniIcon'} />
                         </div>
                         <div className={"c-pointer"} style={selectedMiniIconProfile === 'palm' ? { border: "1px solid var(--primary-color)", borderRadius: 12} : {borderRadius: 12, border: "1px solid var(--bg-color)"} } onClick={() => seselectedMiniIconProfile('palm')}>
-                            <img src={palmIcon} style={{width: 32}} />
+                            <img src={palmIcon} style={{width: 32}} alt={'MiniIcon'} />
                         </div>
                         <div className={"c-pointer"} style={selectedMiniIconProfile === 'zzz' ? { border: "1px solid var(--primary-color)", borderRadius: 12} : {borderRadius: 12, border: "1px solid var(--bg-color)"} } onClick={() => seselectedMiniIconProfile('zzz')}>
-                            <img src={zzzIcon} style={{width: 32}} />
+                            <img src={zzzIcon} style={{width: 32}} alt={'MiniIcon'} />
                         </div>
                     </div>
                 </Box>

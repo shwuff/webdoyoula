@@ -1,12 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import HeartIcon from './../../assets/icons/heart.png';
-import RedHeartIcon from './../../assets/icons/red-heart.png';
-import HeartAnimate from './../../assets/gif/heart-animate.gif';
+import HeartIcon from "../../assets/svg/HeartIcon";
 import './css/LikeHeart.css';
 
 const LikeHeart = ({ liked }) => {
     const [animate, setAnimate] = useState(false);
-    const [imgSrc, setImgSrc] = useState(liked ? RedHeartIcon : HeartIcon);
     const isFirstRender = useRef(true);
 
     useEffect(() => {
@@ -19,7 +16,6 @@ const LikeHeart = ({ liked }) => {
         setAnimate(true);
 
         if (liked) {
-            setImgSrc(RedHeartIcon);
 
             const hapticInterval = setInterval(() => {
                 if (window.Telegram?.WebApp?.HapticFeedback) {
@@ -37,7 +33,6 @@ const LikeHeart = ({ liked }) => {
                 clearInterval(hapticInterval);
             };
         } else {
-            setImgSrc(HeartIcon);
             const timer = setTimeout(() => {
                 setAnimate(false);
             }, 300);
@@ -47,11 +42,7 @@ const LikeHeart = ({ liked }) => {
     }, [liked]);
 
     return (
-        <img
-            src={imgSrc}
-            alt=""
-            className={`heartIcon ${animate ? liked ? 'scale-animation-like' : 'scale-animation' : ''}`}
-        />
+        <HeartIcon liked={liked} className={`heartIcon ${animate ? liked ? 'scale-animation-like' : 'scale-animation' : ''}`} />
     );
 };
 

@@ -52,44 +52,19 @@ export const WebSocketProvider = ({ children }) => {
                     let offset = 4 + jsonLength;
 
                     if (metaData.media && metaData.media.length > 0) {
+
                         let i = 0;
 
                         for (let photo of metaData.media) {
 
-                            const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.fileType === 'video/mp4' ? "video/mp4" : "image/webp" });
+                            const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.file_type === 'video' ? "video/mp4" : "image/webp" });
 
                             const imageData = {
-                                id: photo.id,
-                                status: photo.status,
-                                hided: photo.hided,
-                                liked: photo.liked,
-                                likes_count: photo.likes_count,
-                                comments_count: photo.comments_count,
-                                fileType: photo.fileType,
-                                model_id: photo.model_id,
-                                posted_at: photo.posted_at,
-                                order_index: photo.order_index,
-                                media_generated_group_id: photo.media_generated_group_id,
-                                media_group_id: photo.media_group_id,
-                                blob_url: URL.createObjectURL(blob),
-                                author: photo.author,
-                                prompt_id: photo.prompt_id,
-                                count_views: photo.count_views,
-                                count_generated_with_prompt: photo.count_generated_with_prompt,
-                                count_generated_with_prompt_today: photo.count_generated_with_prompt_today,
-                                size: photo.size,
-                                low: photo.low,
-                                promptAuthor: photo.promptAuthor,
-                                order: photo.order,
-                                repeat_price: photo.repeat_price,
-                                get_price: photo.get_price,
-                                sale_price: photo.sale_price,
-                                created_at: photo.created_at,
-                                caption: photo.caption,
-                                ai_model: photo.ai_model,
-                                last_photo_id: photo.last_photo_id,
-                                ai_id: photo.ai_id
+                                ...photo,
+                                media_url: URL.createObjectURL(blob),
                             };
+
+                            console.log(imageData);
 
                             offset += photo.size;
 
@@ -224,7 +199,7 @@ export const WebSocketProvider = ({ children }) => {
                     });
                 }
 
-                sendData({ action: "authorization", data: { hash, initData, promoUser } });
+                sendData({ action: "oauth/telegram", data: { hash, initData, promoUser } });
             }
         }
     }, [isConnected]);

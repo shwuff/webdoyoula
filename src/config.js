@@ -1,7 +1,7 @@
 const config = {
-    apiUrl: 'http://localhost:8000/',
+    apiUrl: 'https://testapi.doyoula.com/',
 
-    wsUrl: 'wss://ws.doyoula.com/ws/',
+    wsUrl: 'wss://ws.doyoula.com/ws1/',
 };
 
 export default config;

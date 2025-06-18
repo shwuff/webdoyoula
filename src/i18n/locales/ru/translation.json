@@ -116,5 +116,19 @@
   "Model is not available": "Выбранная модель недоступна",
   "Upload image": "Загрузите изображение",
   "Choose image": "Выбрать изображение",
-  "Edit choose image": "Изменить изображение"
+  "Edit choose image": "Изменить изображение",
+  "prompt": "промт",
+  "lora": "модель",
+  "aspect ratio": "соотношение сторон",
+  "quantity": "кол-во",
+  "Select an option": "Выберите",
+  "Average generation time": "Среднее время генерации",
+  "Total runs": "Всего запусков",
+  "Search models...": "Поиск по моделям",
+  "duration": "длительность",
+  "start image": "стартовое изображение",
+  "Write a comment...": "Оставьте комментарий",
+  "Attach image or GIF": "Выберите фото или GIF",
+  "Example prompt's": "Пример промта",
+  "Prompt's author": "Автор промта"
 }

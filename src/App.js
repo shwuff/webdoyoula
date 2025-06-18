@@ -56,13 +56,13 @@ const App = () => {
         if(isConnected) {
             addHandler('authorization', (msg) => {
 
-                if (msg.token) {
-                    localStorage.setItem('auth_token', msg.token);
+                if (msg.session) {
+                    localStorage.setItem('auth_token', msg.session);
                 }
 
-                login(msg.token);
+                login(msg.session || msg.jwt);
                 setUserData(msg.user);
-                setMyLoras(msg.myModels);
+                setMyLoras(msg.loras);
                 setLoading(false);
             });
 
@@ -74,17 +74,16 @@ const App = () => {
 
     useEffect(() => {
         if(isConnected) {
-            addHandler('handleGetMyProfile', (msg) => {
+            addHandler('get/my', (msg) => {
                 const token = localStorage.getItem('auth_token');
                 login(token);
                 setUserData(msg.user);
                 setMyLoras(msg.loras);
-                console.log(msg);
                 setLoading(false);
             });
 
             return () => {
-                deleteHandler('handleGetMyProfile');
+                deleteHandler('get/my');
             }
         }
     }, [isConnected]);
@@ -94,31 +93,35 @@ const App = () => {
 
         document.documentElement.style.setProperty('--button-color', '#007aff');
         document.documentElement.style.setProperty('--primary-color', '#007aff');
-        document.documentElement.style.setProperty('--text-color', '#000');
-        document.documentElement.style.setProperty('--bg-color', '#FFFFFF');
+        document.documentElement.style.setProperty('--text-color', '#fff');
+        document.documentElement.style.setProperty('--bg-color', '#000');
         document.documentElement.style.setProperty('--secondary-bg-color', '#edeef0');
         document.documentElement.style.setProperty('--header-bg-color', '#f2f2f7');
         document.documentElement.style.setProperty('--section-bg-color', '#f2f2f7');
         document.documentElement.style.setProperty('--border-color', '#2196F3');
         document.documentElement.style.setProperty('--hint-color', '#2196F3');
-        document.documentElement.style.setProperty('--button-text-color', '#FFFFFF');
+        document.documentElement.style.setProperty('--button-text-color', '#fff');
         document.documentElement.style.setProperty('--secondary-text-color', '#888888');
         document.documentElement.style.setProperty('--content-height', `calc(100vh)`);
         document.documentElement.style.setProperty('--safeAreaInset-top', `${window?.Telegram?.WebApp?.safeAreaInset?.top ? window?.Telegram?.WebApp?.safeAreaInset?.top * 2 : 5}px`);
         document.documentElement.style.setProperty('--safeAreaInset-top-value', `${window?.Telegram?.WebApp?.safeAreaInset?.top * 2}`);
         document.documentElement.style.setProperty('--button-secondary-bg-color', "#f1f1f1");
+        document.documentElement.style.setProperty('--glass-bg', "rgba(255, 255, 255, 0.1)");
+        document.documentElement.style.setProperty('--glass-secondary-bg', "rgba(255, 255, 255, 0.15)");
+        document.documentElement.style.setProperty('--glass-border', "rgba(255, 255, 255, 0.15)");
 
         if (token && isConnected) {
             sendData({
-                action: "handleGetMyProfile",
+                action: "get/my",
                 data: {
                     jwt: token
                 }
             });
-        } else if(isConnected) {
+        }
+
+        if(!token && isConnected) {
             setLoading(false);
         }
-        setLoading(false);
     }, [isConnected]);
 
     useEffect(() => {
@@ -329,29 +332,29 @@ const App = () => {
     }, [addHandler, deleteHandler]);
 
     useEffect(() => {
-        const updateSelectedAvatar = (msg) => {
-            setUserData((prev) => ({
-                ...prev,
-                current_model_id: msg.current_model_id
-            }));
-        }
-
-        addHandler("update_selected_avatar", updateSelectedAvatar);
-
-        return () => deleteHandler('update_selected_avatar');
-    }, [addHandler, deleteHandler]);
-
-    useEffect(() => {
         const updateSelectedModel = (msg) => {
             setUserData((prev) => ({
                 ...prev,
-                current_ai_id: msg.current_ai_id
+                current_model_id: msg.model_id
             }));
         }
 
         addHandler("update_selected_model", updateSelectedModel);
 
         return () => deleteHandler('update_selected_model');
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const updateSelectedLora = (msg) => {
+            setUserData((prev) => ({
+                ...prev,
+                current_lora_id: msg.lora_id
+            }));
+        }
+
+        addHandler("update_selected_lora", updateSelectedLora);
+
+        return () => deleteHandler('update_selected_lora');
     }, [addHandler, deleteHandler]);
 
     useEffect(() => {
@@ -406,7 +409,7 @@ const App = () => {
     }
 
     return (
-        <div className="App" style={{background: "var(--bg-color)", width: "100vw", height: "100vh"}}>
+        <div className="App">
             {
                 window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && !window.location.pathname.startsWith("/profile/") && !window.location.pathname.startsWith("/rating") && (
                     <div style={{width: "100%", height: window.Telegram.WebApp?.safeAreaInset?.top
@@ -416,25 +419,21 @@ const App = () => {
                     </div>
                 )
             }
-            <div>
-                <Routes>
-                    <Route path="/" element={<FeedPage />} />
-                    {/*<Route path="/profile/auth" element={<Auth />} />*/}
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/bookmark" element={<Bookmark />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/settings/blanks" element={<Blanks />} />
-                    <Route path="/settings/content" element={<Content />} />
-                    <Route path="/profile/:userId" element={<Profile />} />
-                    <Route path="/studio/create" element={<CreateContent />} />
-                    <Route path="/studio/generate-image-avatar" element={<GenerateImageAvatar />} />
-                    <Route path="/studio/generate-image-avatar/:promptId" element={<GenerateImageAvatar />} />
-                    <Route path="/studio/edit-image/:photoId" element={<GenerateImageAvatar editImage={true} />} />
-                    <Route path="/post/edit/:postId" element={<EditPost />} />
-                    <Route path="/rating" element={<Rating />} />
-                    <Route path="/notifications" element={<NotificationsPage />} />
-                </Routes>
-            </div>
+            <Routes>
+                <Route path="/" element={<FeedPage />} />
+                {/*<Route path="/profile/auth" element={<Auth />} />*/}
+                <Route path="/search" element={<Search />} />
+                <Route path="/bookmark" element={<Bookmark />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/settings/blanks" element={<Blanks />} />
+                <Route path="/settings/content" element={<Content />} />
+                <Route path="/profile/:userId" element={<Profile />} />
+                <Route path="/studio/create" element={<CreateContent />} />
+                <Route path="/studio/create/:owner/:model" element={<GenerateImageAvatar />} />
+                <Route path="/studio/repeat/:prompt_id" element={<GenerateImageAvatar />} />
+                <Route path="/rating" element={<Rating />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+            </Routes>
             <NavbarBottom />
             {
                 openedPhotoId > 0 && (

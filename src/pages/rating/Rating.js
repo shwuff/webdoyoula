@@ -5,6 +5,7 @@ import {useWebSocket} from "../../context/WebSocketContext";
 import {useAuth} from "../../context/UserContext";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import styles from "../../components/teegee/PricingWidget/css/PricingWidget.module.css";
 
 const TopUser = styled(ListItem)(({ theme, position }) => ({
     display: "flex",
@@ -68,7 +69,7 @@ const Rating = () => {
         if(token) {
             setUsers([]);
             sendData({
-                action: "get_rating",
+                action: "v2/get/rating",
                 data: {
                     jwt: token,
                     sort: filter
@@ -116,22 +117,36 @@ const Rating = () => {
     const topUsers = sortUsers(filter).slice(0, 3);
 
     return (
-        <div className="globalProfileBlock" style={{ position: 'relative' }}>
+        <div className="globalBlock" style={{ position: 'relative' }}>
             <div className="center-content-block">
-                <div style={{ minHeight: "var(--safeAreaInset-top)", width: "100%", paddingBottom: "5px", background: userData.profile_color.second_color_full, paddingTop: "var(--safeAreaInset-top" }}>
-                    <Tabs value={filter} sx={{ overflowX: "auto", height: "16px",  "& .MuiTabs-indicator": {
-                            backgroundColor: "white",
-                        } }} onChange={(event, newValue) => setFilter(newValue)} centered>
-                        <Tab sx={{fontSize: 12, height: "16px", fontWeight: "800", color: "white", "&.Mui-selected": {
-                                color: "white",
-                            }}}  label={t("sort_by_repeats")} value="repeats" />
-                        <Tab sx={{fontSize: 12, height: "16px", fontWeight: "800", color: "white", "&.Mui-selected": {
-                                color: "white",
-                            }}} label={t("refs")} value="refs" />
-                        {/*<Tab sx={{fontSize: 12, height: "16px", fontWeight: "800", color: "white", "&.Mui-selected": {*/}
-                        {/*        color: "white",*/}
-                        {/*    }}} label="Создания" value="creationCount" />*/}
-                    </Tabs>
+
+                <div className="w-100 d-flex justify-content-center">
+                    <div style={{ width: "80%" }}>
+                        <div className={styles.toggleWrapper}>
+                            <div
+                                className={styles.toggleSlider}
+                                style={{
+                                    transform: filter === "repeats" ? 'translateX(0%)' : 'translateX(calc(100% - 8px))',
+                                }}
+                            />
+                            <button
+                                onClick={() => {
+                                    setFilter("repeats")
+                                }}
+                                className={`${styles.toggleButton} ${filter === "repeats" ? styles.activeToggle : ''}`}
+                            >
+                                {t('Repeats')}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setFilter("refs")
+                                }}
+                                className={`${styles.toggleButton} ${filter === "refs" ? styles.activeToggle : ''}`}
+                            >
+                                {t('Refs')}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <TopUsers>

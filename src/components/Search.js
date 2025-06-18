@@ -15,7 +15,6 @@ const users = ["Komissar1", "Komi", "Alex", "JohnDoe", "Komrad", "Kevin", "Marku
 
 const Search = ({ from = 'page', setHideMenu = () => {} }) => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [filteredUsers, setFilteredUsers] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [isInputFocused, setIsInputFocused] = useState(false);
 
@@ -23,12 +22,10 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
     const { token } = useAuth();
     const navigate = useNavigate();
 
-    const {t} = useTranslation();
-
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
     const scrollTimeoutRef = useRef(null);
-    const [photosPage, setPhotosPage] = useState(1);
+    const [photosPage, setPhotosPage] = useState(0);
 
     const handleScroll = (e) => {
         if (scrollTimeoutRef.current) {
@@ -50,7 +47,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
     };
 
     const handleOnChangeSearch = (textSearch) => {
-        sendData({ action: "search_users", data: { jwt: token, params: textSearch } });
+        sendData({ action: "get/search/users", data: { jwt: token, param: textSearch } });
     };
 
     useEffect(() => {
@@ -58,36 +55,23 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
             setSearchResults(msg.users);
         };
 
-        addHandler('receive_search_results', handler);
+        addHandler('users_search_results', handler);
 
         return () => {
-            deleteHandler('receive_search_results');
+            deleteHandler('users_search_results');
         };
     }, []);
 
     const deleteUserFromHistory = (userId) => {
         sendData({
-            action: "delete_user_from_history",
+            action: "search/delete/user/" + userId,
             data: {
-                jwt: token,
-                userId
+                jwt: token
             }
         });
 
         setSearchResults(searchResults.filter(user => user.id !== userId));
     }
-
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        if (query.trim() !== "") {
-            const results = users.filter(user =>
-                user.toLowerCase().includes(query.toLowerCase())
-            );
-            setFilteredUsers(results);
-        } else {
-            setFilteredUsers([]);
-        }
-    };
 
     useEffect(() => {
         if (searchQuery.length < 1 && isConnected && token) {
@@ -153,8 +137,8 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                                                 onMouseDown={(e) => e.preventDefault()}
                                                 onClick={() => {
                                                     sendData({
-                                                        action: "add_user_search_history",
-                                                        data: { jwt: token, searchingUserId: user.id }
+                                                        action: "search/add/user/" + user.id,
+                                                        data: { jwt: token }
                                                     });
                                                     navigate(`/profile/${user.id}`);
                                                 }}

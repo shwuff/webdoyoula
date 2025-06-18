@@ -2,9 +2,11 @@ import React from 'react';
 
 const RatingIcon = ({className, active}) => {
 
+    const color = '#fff';
+
     if(active) {
         return (
-            <svg className={className} fill="currentColor"
+            <svg className={className} fill={color}
                  height="24" role="img" viewBox="0 0 24 24" width="24">
                 <path
                     d="M18.44 1H5.56A4.566 4.566 0 0 0 1 5.56v12.88A4.566 4.566 0 0 0 5.56 23h12.88A4.566 4.566 0 0 0 23 18.44V5.56A4.566 4.566 0 0 0 18.44 1ZM9 16a1 1 0 1 1-2 0v-3a1 1 0 1 1 2 0v3Zm4 0a1 1 0 1 1-2 0V8a1 1 0 1 1 2 0v8Zm4 0a1 1 0 1 1-2 0v-6a1 1 0 1 1 2 0v6Z"></path>
@@ -13,7 +15,7 @@ const RatingIcon = ({className, active}) => {
     }
 
     return (
-        <svg className={className} fill="currentColor" height="24"
+        <svg className={className} fill={color} height="24"
              role="img" viewBox="0 0 24 24" width="24">
             <path
                 d="M8 12a1 1 0 0 0-1 1v3a1 1 0 1 0 2 0v-3a1 1 0 0 0-1-1Zm8-3a1 1 0 0 0-1 1v6a1 1 0 1 0 2 0v-6a1 1 0 0 0-1-1Zm-4-2a1 1 0 0 0-1 1v8a1 1 0 1 0 2 0V8a1 1 0 0 0-1-1Z"></path>

@@ -5,7 +5,7 @@
     list-style: none;
     /*font-family: Arial, sans-serif;*/
     font-family: var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji");
-    color: var(--text-color, #000);
+    color: var(--text-color);
     box-sizing: border-box;
     user-select: none;
 }
@@ -14,8 +14,45 @@ body, html {
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background: var(--bg-color);
+    background: var(--body-bg-color);
     color: var(--text-color);
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background: #b4adad;
+    margin: 16px 0;
+    opacity: 0.7;
+}
+
+button:hover {
+    background: transparent;
+}
+
+.text-shadow {
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+}
+
+.comfortaa-300 {
+    font-family: "Comfortaa", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.comfortaa-400 {
+    font-family: "Comfortaa", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.comfortaa-500 {
+    font-family: "Comfortaa", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
 }
 
 .MuiInputBase-root {
@@ -89,7 +126,6 @@ a, div, button {
 .btn {
     padding: 7px 15px !important;
     border: 0;
-    color: #000 !important;
     border-radius: 8px !important;
     outline: none !important;
 }
@@ -101,7 +137,12 @@ a, div, button {
 .btn-primary {
     background: var(--primary-color) !important;
     border: 1px solid var(--primary-color) !important;
-    color: #fff !important;
+    color: var(--button-text-color) !important;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-color) var(--bg-color);
 }
 
 .btn-outline-primary {
@@ -132,10 +173,6 @@ a, div, button {
 @media (min-width: 800px) {
     .p-2-phone {
         padding: 0;
-    }
-
-    .MuiButtonBase-root {
-        font-size: 12px !important;
     }
 }
 
@@ -517,11 +554,13 @@ a, div, button {
     padding-top: var(--safeAreaInset-top);
     padding-left: 5px;
     padding-right: 5px;
+    background: var(--body-bg-color);
 }
 
 .globalProfileBlock {
     height: var(--content-height);
     overflow-y: scroll;
+    background: var(--body-bg-color);
 }
 
 .modalContent {
@@ -539,6 +578,32 @@ a, div, button {
     display: block;
 }
 
+#navbarBottom {
+    bottom: 20px;
+}
+
+.mediaModalContent {
+    display: block;
+    width: 100%;
+}
+
+.mediaModalComments {
+    display: none;
+}
+
+.glass-card {
+    padding: 8px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    height: max-content;
+    width: max-content;
+    border-radius: 12px;
+}
+
+.glass-card:hover {
+    background: var(--glass-secondary-bg);
+}
+
 @media(min-width: 800px) {
 
     .d-block-xl {
@@ -551,14 +616,12 @@ a, div, button {
 
     #navbarBottom {
         width: 70px;
-        height: 100vh;
-        left: 0;
+        height: calc(100vh - 20px);
         display: flex;
         justify-content: center;
         align-items: start;
-        background: var(--bg-color);
-        padding-top: var(--safeAreaInset-top);
-        border-right: 1px solid rgb(0,0,0,.1);
+        left: 10px;
+        top: 10px;
     }
 
     .navbar-content {
@@ -600,19 +663,71 @@ a, div, button {
 
     #navbarBottom {
         padding: 5px;
-        width: 300px;
-        height: 100vh;
-        left: 0;
+        width: 280px;
+        height: calc(100vh - 20px);
         display: flex;
         justify-content: center;
         align-items: start;
-        background: var(--bg-color);
     }
 
     .center-content-block {
         margin-left: 300px;
         width: calc(100% - 300px);
         max-width: 900px;
+    }
+
+    .globalBlock {
+        display: block;
+    }
+
+    .p-2 {
+        padding: 1vw;
+    }
+
+    .mediaModalContent {
+        width: 65%;
+    }
+
+    .mediaModalComments {
+        width: 35%;
+        display: block;
+        border-left: 1px solid var(--glass-border);
+        padding-right: 6px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .navbar-content-title {
+        display: block;
+        margin-left: 10px;
+        font-size: 14px;
+    }
+
+    .navbar-content-subtitle {
+        display: block;
+        margin-left: 10px;
+        font-size: 12px;
+    }
+
+    .navbar-content {
+        width: 100%;
+        max-width: 100%;
+        padding-top: calc(var(--safeAreaInset-top-value) * 2 + 5);
+    }
+
+    #navbarBottom {
+        padding: 5px;
+        width: 280px;
+        height: calc(100vh - 20px);
+        display: flex;
+        justify-content: center;
+        align-items: start;
+    }
+
+    .center-content-block {
+        margin-left: 300px;
+        width: calc(100% - 300px);
+        max-width: 1200px;
     }
 
     .globalBlock {

@@ -72,25 +72,6 @@ const Content = () => {
                                 </TableCell>
                             </TableRow>
 
-                            {/* Формат фото */}
-                            <TableRow>
-                                <TableCell>{t('photo_aspect_ratio')}</TableCell>
-                                <TableCell align="right">
-                                    <FormControl>
-                                        <Select
-                                            value={photoFormat}
-                                            onChange={(e) => setPhotoFormat(e.target.value)}
-                                        >
-                                            <MenuItem value="1:1">1:1</MenuItem>
-                                            <MenuItem value="3:4">3:4</MenuItem>
-                                            <MenuItem value="9:16">9:16</MenuItem>
-                                            <MenuItem value="16:9">16:9</MenuItem>
-                                            <MenuItem value="4:5">4:5</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </TableCell>
-                            </TableRow>
-
                             {/* Автовыгрузка */}
                             <TableRow>
                                 <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>

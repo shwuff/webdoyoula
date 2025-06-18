@@ -73,7 +73,7 @@ const EditPost = () => {
         return () => deleteHandler('new_photo_to_post_blank');
     }, []);
 
-    const [photosPage, setPhotosPage] = useState(1);
+    const [photosPage, setPhotosPage] = useState(0);
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);

@@ -19,7 +19,7 @@ const FeedPage = () => {
     const [filter, setFilter] = useState("repeats");
     const [dateRange, setDateRange] = useState("last_1_day");
     const [feed, setFeed] = useState('feed');
-    const [photosPage, setPhotosPage] = useState(1);
+    const [photosPage, setPhotosPage] = useState(0);
     const [isMarket, setIsMarket] = useState(false);
     const [showPaidPrompts, setShowPaidPrompts] = useState(false);
 
