@@ -25,22 +25,6 @@ const SearchInput = ({
         onBlur={onBlur}
         placeholder={collapsed ? '' : t('search')}
         sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-              paddingLeft: "8px",
-              background: "transparent", // 💥 убираем серый фон
-              minHeight: "40px",
-              cursor: collapsed ? "pointer" : "text",
-              "& fieldset": {
-                borderColor: collapsed ? "transparent" : "#ddd",
-              },
-              "&:hover fieldset": {
-                borderColor: collapsed ? "transparent" : "#bbb",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: collapsed ? "transparent" : "var(--primary-color)",
-              },
-            },
             "& .MuiInputBase-input": {
               padding: "10px 0px",
               border: 0,

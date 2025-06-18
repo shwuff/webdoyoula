@@ -6,6 +6,8 @@ import {BrowserRouter as Router} from "react-router-dom";
 import './i18n';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './theme';
 
 const container = document.getElementById('app');
 const root = createRoot(container);
@@ -15,7 +17,10 @@ root.render(
         <Provider store={store}>
             <WebSocketProvider>
                 <Router>
-                    <App />
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <App />
+                    </ThemeProvider>
                 </Router>
             </WebSocketProvider>
         </Provider>

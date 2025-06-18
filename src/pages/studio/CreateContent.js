@@ -12,18 +12,22 @@ import CreateAvatarModal from "../../components/modals/CreateAvatarModal";
 import {useWebSocket} from "../../context/WebSocketContext";
 import {useTranslation} from "react-i18next";
 import animationStarGold from './../../assets/gif/gold_star.gif';
+import {Button} from "@mui/material";
+import FeaturesGrid from "../../components/grid/FeaturesGrid";
 
 const CreateContent = () => {
 
     const navigate = useNavigate();
 
-    const { userData, myModels, myPhotos } = useAuth();
+    const { userData, myModels, token } = useAuth();
+    const { sendData, deleteHandler, addHandler } = useWebSocket();
 
     const {t} = useTranslation();
 
     const [value, setValue] = useState(0);
-    const [photosPage, setPhotosPage] = useState(1);
+    const [photosPage, setPhotosPage] = useState(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
+    const [availableModels, setAvailableModels] = useState([]);
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
@@ -58,13 +62,26 @@ const CreateContent = () => {
         }, 100);
     };
 
-    const handleTabChange = (newValue) => {
-        setValue(newValue);
-    };
+    useEffect(() => {
+        if(token) {
+            sendData({
+                action: "get/models",
+                data: {
+                    jwt: token,
+                }
+            });
+        }
+    }, [token]);
 
-    const features = [
-        { title: t('create_image'), url: "/studio/generate-image-avatar", available: true }
-    ];
+    useEffect(() => {
+        const receiveAvailableModels = (msg) => {
+            setAvailableModels(msg.models);
+        }
+
+        addHandler("receive_available_models", receiveAvailableModels);
+
+        return () => deleteHandler("receive_available_models");
+    }, [addHandler, deleteHandler, setAvailableModels]);
 
     return (
         <div className={"globalBlock"} id={"generatedPhotosList"} onScroll={handleScroll}>
@@ -87,31 +104,8 @@ const CreateContent = () => {
                     </Link>
                 </div>
                 <div className={styles.featuresList}>
-                    {features.map((feature, index) => (
-                        <div
-                            key={index}
-                            onClick={() => navigate(feature.url)}
-                            className={`${styles.featureItem} text-center ${feature.available ? styles.active : styles.disabled}`}
-                        >
-                            {feature.title}
-                        </div>
-                    ))}
+                    <FeaturesGrid features={availableModels} />
                 </div>
-
-                {/*<div className={styles.tabsContainer}>*/}
-                {/*    <button*/}
-                {/*        className={`${styles.tabButton} ${value === 0 ? styles.activeTab : ''}`}*/}
-                {/*        onClick={() => handleTabChange(0)}*/}
-                {/*    >*/}
-                {/*        Мои фото*/}
-                {/*    </button>*/}
-                {/*    <button*/}
-                {/*        className={`${styles.tabButton} ${value === 1 ? styles.activeTab : ''}`}*/}
-                {/*        onClick={() => handleTabChange(1)}*/}
-                {/*    >*/}
-                {/*        Мои модели*/}
-                {/*    </button>*/}
-                {/*</div>*/}
 
                 <div className={styles.tabContent} id={"scrollBlock"}>
                     {value === 0 && (

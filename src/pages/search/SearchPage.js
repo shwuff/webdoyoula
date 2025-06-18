@@ -13,10 +13,9 @@ const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsers
 
     const deleteUserFromHistory = (userId) => {
         sendData({
-            action: "delete_user_from_history",
+            action: "search/delete/user/" + userId,
             data: {
-                jwt: token,
-                userId
+                jwt: token
             }
         });
 
@@ -25,7 +24,7 @@ const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsers
 
     return (
         <>
-            {searchResults.length > 0 && (
+            {Array.isArray(searchResults) && searchResults?.length > 0 && (
                 <ul className="search-results">
                     {searchResults.slice(0, max).map((user, index) => (
                         <li key={index} className="d-flex justify-content-between align-items-center">
@@ -33,8 +32,8 @@ const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsers
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => {
                                     sendData({
-                                        action: "add_user_search_history",
-                                        data: { jwt: token, searchingUserId: user.id }
+                                        action: "search/add/user/" + user.id,
+                                        data: { jwt: token }
                                     });
                                     navigate(`/profile/${user.id}`);
                                 }}
@@ -59,7 +58,7 @@ const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsers
                         </li>
                     ))}
                     {
-                        max === 5 && searchResults.length > 0 && (
+                        max === 5 && Array.isArray(searchResults) && searchResults?.length > 0 && (
                             <div style={{marginBottom: "10px"}} className={"d-flex justify-content-end"}>
                                 <span onClick={showUsersPage} className={"text-muted c-pointer"}>Посмотреть все результаты</span>
                             </div>
@@ -68,7 +67,7 @@ const ShowUsersResult = ({ searchResults, sendData, token, max = 1000, showUsers
                 </ul>
             )}
             {
-                searchResults.length < 1 && max !== 5 && (
+                Array.isArray(searchResults) && searchResults.length < 1 && max !== 5 && (
                     <div className="d-flex justify-content-center w-100">
                         <p className={"text-muted"}>{t("results_not_found")}</p>
                     </div>

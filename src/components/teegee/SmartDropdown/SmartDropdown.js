@@ -114,7 +114,7 @@ export default function SmartDropdown({ options = [], selected, setSelected }) {
                                     className={styles.icon}
                                 />
                             )}
-                            <span className={styles.optionLabel}>{option.label}</span>
+                            <span className={`${styles.optionLabel} text-shadow`}>{option.label}</span>
                             {selected === option.value && <span className={styles.check}>✔</span>}
                         </div>
                     ))}

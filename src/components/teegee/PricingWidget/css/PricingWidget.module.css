@@ -1,5 +1,5 @@
 .container {
-    background-color: #fdfdfd;
+    background-color: var(--glass-bg);
     border-radius: 20px;
     padding: 24px;
     width: 100%;
@@ -12,7 +12,7 @@
 .toggleWrapper {
     position: relative;
     display: flex;
-    background: #f2f2f7;
+    background: var(--glass-bg);
     padding: 4px;
     border-radius: 9999px;
     margin-bottom: 20px;
@@ -25,7 +25,7 @@
     bottom: 4px;
     width: 50%;
     border-radius: 9999px;
-    background-color: white;
+    background-color: var(--glass-bg);
     transition: transform 0.3s ease;
     z-index: 1;
 }
@@ -37,7 +37,7 @@
     padding: 8px 16px;
     font-weight: 500;
     font-size: 14px;
-    color: #444;
+    color: var(--text-color);
     cursor: pointer;
     z-index: 2;
     position: relative;
@@ -45,7 +45,7 @@
 
 .activeToggle {
     font-weight: 600;
-    color: #000;
+    color: var(--text-color);
 }
 
 .plansWrapper {
@@ -61,7 +61,7 @@
     cursor: pointer;
     position: relative;
     transition: border 0.2s, box-shadow 0.2s;
-    border: 3px solid #edeef0;
+    border: 3px solid var(--glass-border);
 }
 
 .activePlanCard {

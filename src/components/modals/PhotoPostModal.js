@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useState} from 'react';
 import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import {Avatar, Box, Typography} from "@mui/material";
 import LikeHeart from "../buttons/LikeHeart";
-import CommentsModal from "./CommentsModal";
 import {useWebSocket} from "../../context/WebSocketContext";
 import {useAuth} from "../../context/UserContext";
 import {useNavigate} from "react-router-dom";
@@ -19,11 +18,14 @@ import PublishToGalleryButton from "../buttons/PublishToGalleryButton";
 import telegramAnimationStar from "../../assets/gif/gold_star.gif";
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import EditIcon from '@mui/icons-material/Edit';
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {getTimeAgo} from "../../App";
 import Video from '../player/Video';
+import CommentIcon from "../../assets/svg/CommentIcon";
+import Modal from "../modal/Modal";
+import CommentsModal from "./CommentsModal";
+import CloseButton from "../buttons/CloseButton";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
@@ -52,19 +54,21 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
 
     const handleLike = (imageId, userId) => {
         sendData({
-            action: "handle_like_post",
-            data: { jwt: token, userId: userId, imageId: imageId }
+            action: "gallery/like/" + imageId,
+            data: { jwt: token }
         });
     };
 
     //handle like post
     useEffect(() => {
         const handleLikes = (msg) => {
-            if (!selectedPhoto || selectedPhoto !== msg.imageId) {
+            if (!selectedPhoto || selectedPhoto !== msg.media_id) {
                 return;
             }
 
-            dispatch(updateImage(msg.imageId, {liked: msg.liked, likes_count: msg.likesCount}));
+            console.log(msg);
+
+            dispatch(updateImage(msg.media_id, {liked: msg.liked, likes_count: msg.likes_count}));
 
             window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         };
@@ -137,262 +141,320 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         });
     };
 
-    const videoUrl = "https://khagwal.com/interactions/static/video/pricing_widget.mp4";
-
     return (
         <AnimatePresence>
             {isModalOpen && (
                 <motion.div
                     className={styles.modalOverlay}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
+                    transition={{duration: 0.2}}
                     onClick={closeModal}
                 >
                     <motion.div
                         className={`${styles.modalContent} ${closingModal ? styles.modalClosing : ''}`}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        initial={{scale: 0.8, opacity: 0}}
+                        animate={{scale: 1, opacity: 1}}
+                        exit={{scale: 0.8, opacity: 0}}
+                        transition={{duration: 0.2}}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {imageSelector[selectedPhoto] && (
-                            <div style={{ overflowY: "auto", paddingTop: "var(--safeAreaInset-top)", minHeight: "100vh" }}>
-                                {
-                                    profileGallery && (
-                                        <div className="p-2 d-flex align-items-center justify-content-between">
-                                            <Box display="flex" alignItems="center" gap={1} onClick={() => navigate(`/profile/${imageSelector[selectedPhoto].author.id}`)}>
-                                                <Avatar
-                                                    src={imageSelector[selectedPhoto].author.photo_url}
-                                                    alt={`${imageSelector[selectedPhoto].author.first_name} ${imageSelector[selectedPhoto].author.last_name}`}
-                                                    sx={{ width: 40, height: 40 }}
-                                                />
+                            <>
+                                <div
+                                    style={{overflowY: "auto", paddingTop: "var(--safeAreaInset-top)", minHeight: "100vh"}}
+                                    className={profileGallery ? 'mediaModalContent' : 'w-100'}
+                                >
+                                    {
+                                        profileGallery && (
+                                            <div className="p-2 d-flex align-items-center justify-content-between">
+                                                <Box display="flex" alignItems="center" gap={1}
+                                                     onClick={() => navigate(`/profile/${imageSelector[selectedPhoto].author.id}`)}>
+                                                    <Avatar
+                                                        src={imageSelector[selectedPhoto].author?.photo_url}
+                                                        alt={`${imageSelector[selectedPhoto].author?.first_name} ${imageSelector[selectedPhoto].author?.last_name}`}
+                                                        sx={{width: 40, height: 40}}
+                                                    />
 
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                                        {imageSelector[selectedPhoto].author.first_name} {imageSelector[selectedPhoto].author.last_name}
-                                                    </Typography>
-                                                    <Typography variant="body2" className={"text-muted"}>
-                                                        {
-                                                            imageSelector[selectedPhoto].author.username && (
-                                                                <>
-                                                                    @{imageSelector[selectedPhoto].author.username}
-                                                                </>
-                                                            )
-                                                        }
-                                                    </Typography>
+                                                    <Box>
+                                                        <Typography variant="body2" sx={{fontWeight: 'bold'}}>
+                                                            {imageSelector[selectedPhoto].author?.first_name} {imageSelector[selectedPhoto].author?.last_name}
+                                                        </Typography>
+                                                        <Typography variant="body2" className={"text-muted"}>
+                                                            {
+                                                                imageSelector[selectedPhoto].author?.username && (
+                                                                    <>
+                                                                        @{imageSelector[selectedPhoto].author?.username}
+                                                                    </>
+                                                                )
+                                                            }
+                                                        </Typography>
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                            <Box sx={{ position: 'relative', display: "flex", width: "max-content", marginRight: "35px", gap: "10px" }}>
-                                                {
-                                                    Number(imageSelector[selectedPhoto].author.id) !== Number(userData.id) && (
-                                                        <SubscribeButton
-                                                            sub={imageSelector[selectedPhoto].author.sub}
-                                                            setSub={(sub) => {
-                                                                dispatch(updateImage(imageSelector[selectedPhoto].id, {
-                                                                    author: { ...imageSelector[selectedPhoto].author, sub: sub }
-                                                                }))
-                                                            }}
-                                                            userId={imageSelector[selectedPhoto].author.id}
-                                                        />
-                                                    )
-                                                }
-
-                                                <IconButton
-                                                    onClick={(e) => setAnchorEl(e.currentTarget)}
-                                                >
-                                                    <MoreVertIcon />
-                                                </IconButton>
-
-                                                <Menu
-                                                    anchorEl={anchorEl}
-                                                    open={Boolean(anchorEl)}
-                                                    onClose={() => setAnchorEl(null)}
-                                                >
-                                                    {/*{*/}
-                                                    {/*    Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (*/}
-                                                    {/*        <MenuItem onClick={handleEdit}>*/}
-                                                    {/*            <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>*/}
-                                                    {/*            <ListItemText primary="Редактировать" />*/}
-                                                    {/*        </MenuItem>*/}
-                                                    {/*    )*/}
-                                                    {/*}*/}
-                                                    {/*<MenuItem onClick={handleViewPrompt}>*/}
-                                                    {/*    <ListItemIcon><VisibilityIcon fontSize="small" /></ListItemIcon>*/}
-                                                    {/*    <ListItemText primary="Посмотреть промт" />*/}
-                                                    {/*</MenuItem>*/}
-                                                    <MenuItem onClick={() => handleShare(selectedPhoto)}>
-                                                        <ListItemIcon><ShareIcon fontSize="small" /></ListItemIcon>
-                                                        <ListItemText primary="Поделиться" />
-                                                    </MenuItem>
+                                                <Box sx={{
+                                                    position: 'relative',
+                                                    display: "flex",
+                                                    width: "max-content",
+                                                    marginRight: "35px",
+                                                    gap: "10px"
+                                                }}>
                                                     {
-                                                        Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (
-                                                            <MenuItem onClick={() => handleHideMedia(imageSelector[selectedPhoto].id)}>
-                                                                <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
-                                                                <ListItemText primary="Скрыть" />
-                                                            </MenuItem>
+                                                        Number(imageSelector[selectedPhoto].author?.id) !== Number(userData.id) && (
+                                                            <SubscribeButton
+                                                                sub={imageSelector[selectedPhoto].author?.sub}
+                                                                setSub={(sub) => {
+                                                                    dispatch(updateImage(imageSelector[selectedPhoto].id, {
+                                                                        author: {...imageSelector[selectedPhoto].author, sub: sub}
+                                                                    }))
+                                                                }}
+                                                                userId={imageSelector[selectedPhoto].author?.id}
+                                                            />
                                                         )
                                                     }
-                                                </Menu>
-                                            </Box>
-                                        </div>
-                                    )
-                                }
-                                <div className={styles.imageBlock} style={{ width: expanded ? "30%" : undefined, transition: "0.5s all", maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
-                                    ?`calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`, position: "relative", textAlign: "center" }}>
-                                    {
-                                        from !== 'notification' && !expanded && (
-                                            <div className={styles.leftNav} onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
-                                                <button
-                                                    className={styles.navButton}
-                                                    style={{ left: 10 }}
-                                                    onClick={() => prevPhoto(imageSelector[selectedPhoto])}
-                                                >
-                                                    <ArrowBackIosNewIcon />
-                                                </button>
+
+                                                    <IconButton
+                                                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                                                    >
+                                                        <MoreVertIcon/>
+                                                    </IconButton>
+
+                                                    <Menu
+                                                        anchorEl={anchorEl}
+                                                        open={Boolean(anchorEl)}
+                                                        onClose={() => setAnchorEl(null)}
+                                                    >
+                                                        {/*{*/}
+                                                        {/*    Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (*/}
+                                                        {/*        <MenuItem onClick={handleEdit}>*/}
+                                                        {/*            <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>*/}
+                                                        {/*            <ListItemText primary="Редактировать" />*/}
+                                                        {/*        </MenuItem>*/}
+                                                        {/*    )*/}
+                                                        {/*}*/}
+                                                        {/*<MenuItem onClick={handleViewPrompt}>*/}
+                                                        {/*    <ListItemIcon><VisibilityIcon fontSize="small" /></ListItemIcon>*/}
+                                                        {/*    <ListItemText primary="Посмотреть промт" />*/}
+                                                        {/*</MenuItem>*/}
+                                                        <MenuItem onClick={() => handleShare(selectedPhoto)}>
+                                                            <ListItemIcon><ShareIcon fontSize="small"/></ListItemIcon>
+                                                            <ListItemText primary="Поделиться"/>
+                                                        </MenuItem>
+                                                        {
+                                                            Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (
+                                                                <MenuItem
+                                                                    onClick={() => handleHideMedia(imageSelector[selectedPhoto].id)}>
+                                                                    <ListItemIcon><DeleteIcon fontSize="small"/></ListItemIcon>
+                                                                    <ListItemText primary="Скрыть"/>
+                                                                </MenuItem>
+                                                            )
+                                                        }
+                                                    </Menu>
+                                                </Box>
                                             </div>
                                         )
                                     }
-
-                                    {
-                                        imageSelector[selectedPhoto].fileType === 'video/mp4' ? (
-                                            <Video videoUrl={videoUrl} />
-                                        )
-                                        : (
-                                            <img
-                                                src={imageSelector[selectedPhoto].blob_url}
-                                                alt={`photo-${imageSelector[selectedPhoto].id}`}
-                                                className={styles.modalImage}
-                                                style={{
-                                                    maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
-                                                        ? `calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)`
-                                                        : `calc(100vh - 200px)`
-                                                }}
-                                            />
-                                        )
-                                    }
-                                        
-                                    
-                                    <span style={{
-                                        position: 'absolute',
-                                        top: 4,
-                                        right: 4,
-                                        borderRadius: "12px",
-                                        padding: "4px 8px",
-                                        border: "1px solid gold",
-                                        color: "gold"
+                                    <div className={styles.imageBlock} style={{
+                                        width: expanded ? "30%" : undefined,
+                                        transition: "0.5s all",
+                                        maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
+                                            ? `calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`,
+                                        position: "relative",
+                                        textAlign: "center"
                                     }}>
-                                        {imageSelector[selectedPhoto].ai_model}
-                                    </span>
-                                    {Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor) && !expanded && (
-                                        <>
-                                            {
-                                                imageSelector[selectedPhoto]?.repeat_price !== null && imageSelector[selectedPhoto]?.repeat_price > 0 ? (
+                                        {
+                                            from !== 'notification' && !expanded && (
+                                                <div className={styles.leftNav}
+                                                     onClick={() => prevPhoto(imageSelector[selectedPhoto])}>
+                                                    <button
+                                                        className={styles.navButton}
+                                                        style={{left: 10}}
+                                                        onClick={() => prevPhoto(imageSelector[selectedPhoto])}
+                                                    >
+                                                        <ArrowBackIosNewIcon/>
+                                                    </button>
+                                                </div>
+                                            )
+                                        }
+
+                                        {
+                                            imageSelector[selectedPhoto].file_type === 'video' ? (
+                                                    <Video videoUrl={imageSelector[selectedPhoto].media_url}/>
+                                                )
+                                                : (
                                                     <img
-                                                        src={telegramAnimationStar}
-                                                        alt="Gold Animation Star"
+                                                        src={imageSelector[selectedPhoto].media_url}
+                                                        alt={`photo-${imageSelector[selectedPhoto].id}`}
+                                                        className={styles.modalImage}
                                                         style={{
-                                                            position: 'absolute',
-                                                            left: '8px',
-                                                            bottom: '8px',
-                                                            width: '40px',
-                                                            height: '40px',
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <img
-                                                        src={telegramStar}
-                                                        alt="Star"
-                                                        style={{
-                                                            position: 'absolute',
-                                                            left: '8px',
-                                                            bottom: '8px',
-                                                            width: '40px',
-                                                            height: '40px',
+                                                            maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
+                                                                ? `calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)`
+                                                                : `calc(100vh - 200px)`
                                                         }}
                                                     />
                                                 )
-                                            }
-                                        </>
-                                    )}
+                                        }
 
-                                    {
-                                        from !== 'notification' && !expanded && (
-                                            <div className={styles.rightNav} onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
-                                                <button
-                                                    className={styles.navButton}
-                                                    style={{ right: 10 }}
-                                                    onClick={() => nextPhoto(imageSelector[selectedPhoto])}
-                                                >
-                                                    <ArrowForwardIosIcon />
-                                                </button>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                                <div className="p-2">
-                                    {
-                                        profileGallery === false ? (
+
+                                        <span style={{
+                                            position: 'absolute',
+                                            top: 4,
+                                            right: 4,
+                                            borderRadius: "12px",
+                                            padding: "4px 8px",
+                                            border: "1px solid gold",
+                                            color: "gold",
+                                            background: "var(--glass-bg)",
+                                            backdropFilter: "blur(10px)",
+                                        }} className={"text-shadow"}>
+                                        {imageSelector[selectedPhoto].model_name}
+                                    </span>
+                                        {Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor) && !expanded && (
                                             <>
-                                                <PublishToGalleryButton
-                                                    photoId={imageSelector[selectedPhoto]}
-                                                    selectedPhoto={selectedPhoto}
-                                                    expanded={expanded}
-                                                    setExpanded={setExpanded}
-                                                    isMyPrompt={Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor)}
-                                                />
-                                                {/*{imageSelector[selectedPhoto].id}*/}
                                                 {
-                                                    !expanded && (
-                                                        <button className={"publish-outline-button iconButton w-100"} style={{}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
-                                                            {t('repeat')}
-                                                        </button>
+                                                    imageSelector[selectedPhoto]?.repeat_price !== null && imageSelector[selectedPhoto]?.repeat_price > 0 ? (
+                                                        <img
+                                                            src={telegramAnimationStar}
+                                                            alt="Gold Animation Star"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                left: '8px',
+                                                                bottom: '8px',
+                                                                width: '40px',
+                                                                height: '40px',
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={telegramStar}
+                                                            alt="Star"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                left: '8px',
+                                                                bottom: '8px',
+                                                                width: '40px',
+                                                                height: '40px',
+                                                            }}
+                                                        />
                                                     )
                                                 }
-                                                {
-                                                    Number(imageSelector[selectedPhoto].ai_id) === 1 || Number(imageSelector[selectedPhoto].ai_id) === 2 ? (
-                                                        <button className={"publish-outline-button iconButton w-100"} style={{ marginTop: "10px" }} onClick={() => navigate(`/studio/edit-image/${imageSelector[selectedPhoto].id}`)}>
-                                                            {t('Edit')}
-                                                        </button>
-                                                    ) : null
-                                                }
-                                                                                           
                                             </>
-                                        ) : (
-                                            <>
-                                                <div className="w-100 d-flex justify-content-between">
-                                                    <div className={"actionBar d-flex align-items-center"}>
-                                                        <div className={"d-flex align-items-center"}>
-                                                            <button
-                                                                className="actionButton d-flex align-items-center"
-                                                                onClick={() => handleLike(imageSelector[selectedPhoto].id, userData.id)}
-                                                            >
-                                                                <LikeHeart liked={imageSelector[selectedPhoto].liked} />
+                                        )}
+
+                                        {
+                                            from !== 'notification' && !expanded && (
+                                                <div className={styles.rightNav}
+                                                     onClick={() => nextPhoto(imageSelector[selectedPhoto])}>
+                                                    <button
+                                                        className={styles.navButton}
+                                                        style={{right: 10}}
+                                                        onClick={() => nextPhoto(imageSelector[selectedPhoto])}
+                                                    >
+                                                        <ArrowForwardIosIcon/>
+                                                    </button>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                    <div className="p-2">
+                                        {
+                                            profileGallery === false ? (
+                                                <>
+                                                    <PublishToGalleryButton
+                                                        photoId={imageSelector[selectedPhoto]}
+                                                        selectedPhoto={selectedPhoto}
+                                                        expanded={expanded}
+                                                        setExpanded={setExpanded}
+                                                        isMyPrompt={Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor)}
+                                                    />
+                                                    {/*{imageSelector[selectedPhoto].id}*/}
+                                                    {
+                                                        !expanded && (
+                                                            <button className={"publish-outline-button iconButton w-100"}
+                                                                    style={{}}
+                                                                    onClick={() => navigate(`/studio/repeat/${imageSelector[selectedPhoto].prompt_id}`)}>
+                                                                {t('repeat')}
                                                             </button>
-                                                            <p style={{marginLeft: "5px"}}>
-                                                                {imageSelector[selectedPhoto].likes_count}
-                                                            </p>
-                                                        </div>
-                                                        <div className={"d-flex align-items-center"}>
-                                                            <CommentsModal photoGallery={imageSelector[selectedPhoto]} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />
-                                                            <p style={{marginLeft: "8px"}}>
-                                                                {imageSelector[selectedPhoto].comments_count}
-                                                            </p>
-                                                        </div>
-                                                        <div className={"d-flex align-items-center"} style={{marginLeft: 3}}>
-                                                            <VisibilityIcon sx={{width: 24, height: 24}} />
-                                                            <p style={{marginLeft: "8px"}}>
-                                                                {imageSelector[selectedPhoto].count_views}
-                                                            </p>
-                                                        </div>
-                                                        {/*{imageSelector[selectedPhoto].prompt_id}*/}
-                                                        <button className={"btn iconButton"} style={{margin: 0, marginLeft: 5, display: "flex", alignItems: "center"}} onClick={() => navigate(`/studio/generate-image-avatar/${imageSelector[selectedPhoto].prompt_id}`)}>
-                                                            {t('repeat')}
-                                                            {
-                                                                imageSelector[selectedPhoto].repeat_price && imageSelector[selectedPhoto].repeat_price > 0 ? (
-                                                                    <span style={{ marginLeft: "5px" }}>
+                                                        )
+                                                    }
+                                                    {
+                                                        Number(imageSelector[selectedPhoto].ai_id) === 1 || Number(imageSelector[selectedPhoto].ai_id) === 2 ? (
+                                                            <button className={"publish-outline-button iconButton w-100"}
+                                                                    style={{marginTop: "10px"}}
+                                                                    onClick={() => navigate(`/studio/edit-image/${imageSelector[selectedPhoto].id}`)}>
+                                                                {t('Edit')}
+                                                            </button>
+                                                        ) : null
+                                                    }
+
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="w-100 d-flex justify-content-between">
+                                                        <div className={"actionBar d-flex align-items-center"}>
+                                                            <div className={"d-flex align-items-center"}>
+                                                                <button
+                                                                    className="actionButton d-flex align-items-center"
+                                                                    onClick={() => handleLike(imageSelector[selectedPhoto].id, userData.id)}
+                                                                >
+                                                                    <LikeHeart key={imageSelector[selectedPhoto].id}
+                                                                               liked={imageSelector[selectedPhoto].liked}/>
+                                                                </button>
+                                                                <p style={{marginLeft: "5px"}}>
+                                                                    {imageSelector[selectedPhoto].likes_count}
+                                                                </p>
+                                                            </div>
+                                                            <div className={"d-flex align-items-center"}>
+                                                                {/*<CommentsModal photoGallery={imageSelector[selectedPhoto]} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />*/}
+                                                                <button className="actionButton d-flex align-items-center">
+                                                                    <CommentIcon onClick={() => {
+                                                                        if (window.innerWidth < 1200) {
+                                                                            setIsCommentModalOpen(true);
+                                                                        }
+                                                                    }}
+                                                                                 style={{width: 24, height: 24}}/>
+                                                                </button>
+                                                                <Modal isOpen={isCommentModalOpen}
+                                                                       onClose={() => setIsCommentModalOpen(false)} style={{
+                                                                    overflowY: "auto",
+                                                                    height: "80vh",
+                                                                    borderRadius: "20px 20px 0 0"
+                                                                }} isFirst={false}>
+                                                                    <div className={'w-100 d-flex justify-content-between'} style={{ paddingRight: "10px" }}>
+                                                                        <Typography variant="h6" style={{ marginTop: '16px', padding: 5 }}>
+                                                                            {t('comments')}
+                                                                        </Typography>
+                                                                        {
+                                                                            !userData.isTelegram && (
+                                                                                <CloseButton onClick={() => setIsCommentModalOpen(false)} />
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                    <CommentsModal photoGallery={imageSelector[selectedPhoto]} />
+                                                                </Modal>
+                                                                <p style={{marginLeft: "8px"}}>
+                                                                    {imageSelector[selectedPhoto].comments_count}
+                                                                </p>
+                                                            </div>
+                                                            <div className={"d-flex align-items-center"}
+                                                                 style={{marginLeft: 3}}>
+                                                                <VisibilityIcon sx={{width: 24, height: 24}}/>
+                                                                <p style={{marginLeft: "8px"}}>
+                                                                    {imageSelector[selectedPhoto].count_views}
+                                                                </p>
+                                                            </div>
+                                                            {/*{imageSelector[selectedPhoto].prompt_id}*/}
+                                                            <button className={"btn iconButton"} style={{
+                                                                margin: 0,
+                                                                marginLeft: 5,
+                                                                display: "flex",
+                                                                alignItems: "center"
+                                                            }}
+                                                                    onClick={() => navigate(`/studio/repeat/${imageSelector[selectedPhoto].prompt_id}`)}>
+                                                                {t('repeat')}
+                                                                {
+                                                                    imageSelector[selectedPhoto].repeat_price && imageSelector[selectedPhoto].repeat_price > 0 ? (
+                                                                        <span style={{marginLeft: "5px"}}>
                                                                         <img
                                                                             src={telegramAnimationStar}
                                                                             alt={"Animation Gold Star"}
@@ -401,32 +463,57 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                                 height: "8px"
                                                                             }}
                                                                         />
-                                                                        {imageSelector[selectedPhoto].repeat_price}
+                                                                            {imageSelector[selectedPhoto].repeat_price}
                                                                     </span>
+                                                                    ) : null
+                                                                }
+                                                            </button>
+                                                            <span
+                                                                style={{fontSize: 18}}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
+                                                            {
+                                                                imageSelector[selectedPhoto].count_generated_with_prompt_today && imageSelector[selectedPhoto].count_generated_with_prompt_today > 0 ? (
+                                                                    <span style={{
+                                                                        color: "#008000",
+                                                                        fontWeight: 800,
+                                                                        fontSize: 12,
+                                                                        marginTop: -8,
+                                                                        marginLeft: -4
+                                                                    }}>+{imageSelector[selectedPhoto].count_generated_with_prompt_today}</span>
                                                                 ) : null
                                                             }
-                                                        </button>
-                                                        <span style={{ fontSize: 18 }}>{imageSelector[selectedPhoto].count_generated_with_prompt}</span>
-                                                        {
-                                                            imageSelector[selectedPhoto].count_generated_with_prompt_today && imageSelector[selectedPhoto].count_generated_with_prompt_today > 0 ? (
-                                                                <span style={{ color: "#008000", fontWeight: 800, fontSize: 12, marginTop: -8, marginLeft: -4 }}>+{imageSelector[selectedPhoto].count_generated_with_prompt_today}</span>
-                                                            ) : null
-                                                        }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <p style={{margin: "5px 0"}}>
-                                                    {imageSelector[selectedPhoto]?.caption}
-                                                </p>
-                                                <span className={"caption no-wrap"} style={{ marginTop: "10px" }}>
+                                                    <p style={{margin: "5px 0"}}>
+                                                        {imageSelector[selectedPhoto]?.caption}
+                                                    </p>
+                                                    <span className={"caption no-wrap"} style={{marginTop: "10px"}}>
                                                     {
                                                         getTimeAgo(imageSelector[selectedPhoto].posted_at)
                                                     }
                                                 </span>
-                                            </>
-                                        )
-                                    }
+                                                </>
+                                            )
+                                        }
+                                    </div>
                                 </div>
-                            </div>
+                                {
+                                    window.innerWidth >= 1200 && profileGallery && (
+                                        <div className={"mediaModalComments"}>
+                                            <div className={'w-100 d-flex justify-content-between align-items-center'} style={{ paddingRight: "10px" }}>
+                                                <Typography variant="h6" style={{ marginTop: '16px', padding: 5 }}>
+                                                    {t('comments')}
+                                                </Typography>
+                                                {
+                                                    !userData.isTelegram && (
+                                                        <CloseButton onClick={closeModal} />
+                                                    )
+                                                }
+                                            </div>
+                                            <CommentsModal photoGallery={imageSelector[selectedPhoto]} />
+                                        </div>
+                                    )
+                                }
+                            </>
                         )}
                     </motion.div>
                 </motion.div>

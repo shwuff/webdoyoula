@@ -35,7 +35,8 @@ const Modal = ({ isOpen, onClose, children, style, isFirst = true }) => {
                 >
                     <motion.div
                         style={{
-                            paddingTop: "var(--safeAreaInset-top)"
+                            paddingTop: "var(--safeAreaInset-top)",
+                            ...style
                         }}
                         className={styles.modalContent}
                         initial={{ scale: 0.8, opacity: 0 }}

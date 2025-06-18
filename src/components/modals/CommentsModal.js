@@ -3,11 +3,23 @@ import { FaComment } from 'react-icons/fa';
 import { useWebSocket } from "../../context/WebSocketContext";
 import { useAuth } from "../../context/UserContext";
 import Modal from "../modal/Modal";
-import { Avatar, List, ListItem, ListItemText, Divider, TextField, Button, Typography } from '@mui/material';
+import {
+    Avatar,
+    List,
+    ListItem,
+    ListItemText,
+    Divider,
+    TextField,
+    Button,
+    Typography,
+    TextareaAutosize
+} from '@mui/material';
 import {useNavigate} from "react-router-dom";
-import CommentIcon from './../../assets/icons/chat.png';
+import CommentIcon from './../../assets/svg/CommentIcon';
 import CloseButton from "../buttons/CloseButton";
 import {useTranslation} from "react-i18next";
+import StyledTextarea from "../input/StyledTextarea";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const getTimeAgo = (timestamp) => {
     const date = new Date(timestamp);
@@ -33,44 +45,62 @@ const getTimeAgo = (timestamp) => {
 };
 
 
-const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
+const CommentsModal = ({ photoGallery }) => {
     const [comments, setComments] = useState([]);
     const [textComment, setTextComment] = useState('');
+    const [attachedFile, setAttachedFile] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const { addHandler, deleteHandler, sendData } = useWebSocket();
     const { token, userData } = useAuth();
     const navigate = useNavigate();
     const {t} = useTranslation();
 
+    //receive new comments
     useEffect(() => {
         const handleReceiveNewComment = (msg) => {
             setComments((prev) => {
                 if (!prev.some(comment => comment.id === msg.id)) {
                     return [{
-                        id: msg.id,
-                        imageId: msg.imageId,
-                        userId: msg.userId,
-                        text: msg.text,
-                        commentUser: msg.comment_user
+                        ...msg.comment
                     }, ...prev];
                 }
                 return prev;
             });
+            setLoading(false);
+            setTextComment('');
+            setAttachedFile(null);
         };
 
         addHandler('receive_new_comment', handleReceiveNewComment);
 
         return () => deleteHandler('receive_new_comment');
-    }, [userData, textComment]);
+    }, [userData, setComments]);
 
+    useEffect(() => {
+        const handleReceiveComments = (msg) => {
+            setComments((prev) => {
+                const existingIds = new Set(prev.map(comment => comment.id));
+                const newComments = msg.comments.filter(comment => !existingIds.has(comment.id));
+                return [...prev, ...newComments];
+            });
+        };
+
+        addHandler('receive_comments', handleReceiveComments);
+
+        return () => deleteHandler('receive_comments');
+    }, [setComments]);
+
+    //request for create comment
     const handleCreateComment = (imageId, userId) => {
         sendData({
-            action: "create_comment",
-            data: { jwt: token, userId: userId, imageId: imageId, text: textComment }
+            action: "gallery/comment/create/" + imageId,
+            data: { jwt: token, text_comment: textComment, attached_file: attachedFile },
         });
-        setTextComment('');
+        setLoading(true);
     };
 
+    //receive post comments
     useEffect(() => {
         const handleComments = (msg) => {
             setComments((prev) => {
@@ -86,81 +116,130 @@ const CommentsModal = ({ photoGallery, isOpen, setOpen }) => {
         return () => deleteHandler('receive_post_comments');
     }, [userData, comments]);
 
+    //get all comments
     useEffect(() => {
         sendData({
-            action: "get_comments",
-            data: { jwt: token, userId: userData.id, imageId: photoGallery.id }
+            action: "gallery/get/comments/" + photoGallery.id,
+            data: { jwt: token }
         });
     }, [photoGallery]);
 
+    console.log(comments);
+
     return (
-        <div>
-            <button className="actionButton d-flex align-items-center">
-                <img src={CommentIcon} className="comment"  onClick={() => setOpen(true)} alt={"Comment icon"} style={{width: 24, height: 24}} />
-            </button>
-            <Modal isOpen={isOpen} onClose={() => setOpen(false)} style={{ overflowY: "auto" }} isFirst={false}>
-                <div className={'w-100 d-flex justify-content-between'}>
-                    <Typography variant="h6" style={{ marginTop: '16px', padding: 5 }}>
-                        {t('comments')}
-                    </Typography>
+        <>
+            <div className="w-100 mt-2" style={{padding: 5}}>
+                <StyledTextarea
+                    minRows={1}
+                    maxRows={6}
+                    value={textComment}
+                    placeholder={t('Write a comment...')}
+                    onChange={(e) => setTextComment(e.target.value)}
+                    maxLength={255}
+                />
+                <div className={"w-100 d-flex justify-content-end"}>
+                    <span className={"text-muted"}>
+                        {textComment.length} / 255
+                    </span>
+                </div>
+
+                <div style={{ marginTop: 10 }}>
+                    <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/gif"
+                        onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                                const fileData = {
+                                    name: file.name,
+                                    size: file.size,
+                                    extension: file.name.split('.').pop().toLowerCase(),
+                                    base64: reader.result
+                                };
+                                setAttachedFile(fileData);
+                            };
+                            reader.readAsDataURL(file);
+                        }}
+                        style={{ display: 'none' }}
+                        id="upload-comment-file"
+                    />
+                    <label htmlFor="upload-comment-file">
+                        <Button
+                            variant="outlined"
+                            component="span"
+                            style={{ width: "100%", textTransform: "none" }}
+                        >
+                            {attachedFile ? attachedFile.name : t('Attach image or GIF')}
+                        </Button>
+                    </label>
                     {
-                        !userData.isTelegram && (
-                            <CloseButton onClick={() => setOpen(false)} />
+                        attachedFile !== null && (
+                            <img src={attachedFile.base64} style={{ borderRadius: "12px", width: "200px", marginTop: "8px" }} alt={"Comment Image"} />
                         )
                     }
                 </div>
-                <div className="w-100 mt-2" style={{padding: 5}}>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        value={textComment}
-                        onChange={(e) => setTextComment(e.target.value)}
-                        className={"searchInput"}
-                    />
 
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleCreateComment(photoGallery.id, userData.id)}
-                        style={{ marginTop: '16px' }}
-                    >
-                        {t('to_publish')}
-                    </Button>
-                </div>
-                <List>
-                    {comments.map((comment, index) => (
-                        <div key={index}>
-                            <ListItem alignItems="flex-start">
-                                <Avatar
-                                    alt={comment.commentUser.first_name}
-                                    src={comment.commentUser.photo_url}
-                                    style={{ marginRight: '16px' }}
-                                    onClick={() => {
-                                        window.location.href = (`/profile/${comment.commentUser.id}`);
-                                    }}
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2" style={{ fontSize: "12px" }}>
-                                            {`${comment.commentUser.first_name} ${comment.commentUser.last_name}`}
-                                        </Typography>
-                                    }
-                                    secondary={
-                                        <Typography style={{ fontSize: "14px", color: "var(--text-color)" }}>
+                <Button
+                    variant="action"
+                    color="primary"
+                    disabled={loading}
+                    sx={{ opacity: loading ? 0.6 : 1 }}
+                    onClick={() => handleCreateComment(photoGallery.id, userData.id)}
+                    style={{ marginTop: '16px', width: "100%" }}
+                >
+                    {
+                        loading ? <CircularProgress size={20} sx={{ color: 'var(--text-color)' }} /> : <span>{t('to_publish')}</span>
+                    }
+                </Button>
+            </div>
+            <List>
+                {comments.map((comment, index) => (
+                    <div key={index}>
+                        <ListItem alignItems="flex-start" sx={{padding: "6px 12px 0 12px"}}>
+                            <Avatar
+                                alt={comment.comment_user?.first_name}
+                                src={comment.comment_user?.photo_url}
+                                style={{ marginRight: '16px' }}
+                                onClick={() => {
+                                    window.location.href = (`/profile/${comment.comment_user?.id}`);
+                                }}
+                            />
+                            <ListItemText
+                                primary={
+                                    <Typography variant="body2" style={{ fontSize: "12px" }}>
+                                        {`${comment.comment_user?.first_name} ${comment.comment_user?.last_name}`}
+                                    </Typography>
+                                }
+                                secondary={
+                                    <div>
+                                        <Typography sx={{ fontSize: "14px", marginBottom: 0, color: "var(--text-color)" }}>
+                                            {
+                                                comment.files && (
+                                                    <div className={"w-100"}>
+                                                        <img src={comment.files.base64} style={{ width: "250px", borderRadius: "12px" }} />
+                                                    </div>
+                                                )
+                                            }
                                             {comment.text}
                                         </Typography>
-                                    }
-                                />
-                                <p className="text-muted" style={{fontSize: 12}}>
-                                    {getTimeAgo(comment.createdAt)}
-                                </p>
-                            </ListItem>
-                            {index < comments.length - 1 && <Divider />}
+
+                                    </div>
+                                }
+                            />
+                        </ListItem>
+                        <div className="d-flex justify-content-end">
+                            <p className="text-muted" style={{fontSize: 12, marginRight: "10px", marginTop: 0}}>
+                                {getTimeAgo(comment.created_at)}
+                            </p>
                         </div>
-                    ))}
-                </List>
-            </Modal>
-        </div>
+                        {index < comments.length - 1 && <hr style={{ margin: "0 10px" }} />}
+                    </div>
+                ))}
+            </List>
+        </>
     );
 };
 

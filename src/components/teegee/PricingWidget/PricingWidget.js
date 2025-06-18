@@ -3,6 +3,7 @@ import styles from './css/PricingWidget.module.css';
 import gsap from 'gsap';
 import {useTranslation} from 'react-i18next';
 import GoldStarIcon from './../../../assets/images/gold_star.png';
+import {Button} from "@mui/material";
 
 export default function PricingWidget({ billingOptions = [], plansByCycle = {}, currency, selectedOption, setSelectedOption, billingVoid = () => {}, afterBillingButton = () => {} }) {
     const [billingCycle, setBillingCycle] = useState(billingOptions[0]);
@@ -56,7 +57,7 @@ export default function PricingWidget({ billingOptions = [], plansByCycle = {}, 
                                         setSelectedPlan(newPlans[0].id);
                                     }
                                 }}
-                                className={`${styles.toggleButton} ${billingCycle === label ? styles.activeToggle : ''}`}
+                                className={`${styles.toggleButton} ${billingCycle === label ? styles.activeToggle : ''} text-shadow`}
                             >
                                 {t(label)}
                             </button>
@@ -79,7 +80,7 @@ export default function PricingWidget({ billingOptions = [], plansByCycle = {}, 
                         }}
                     >
                         <div className={styles.cardHeader}>
-                            <span className={styles.planName}>{plan.name}</span>
+                            <span className={`${styles.planName} text-shadow`}>{plan.name}</span>
                             {plan.popular && <span className={styles.popularTag}>Popular</span>}
                             <span className={`${styles.radio}${selectedPlan === plan.id ? ` ${styles.activeRadio}` : ''}`}>
                                 {selectedPlan === plan.id && (
@@ -98,12 +99,12 @@ export default function PricingWidget({ billingOptions = [], plansByCycle = {}, 
                                 )}
                             </span>
                         </div>
-                        <div className={styles.price}>{currency !== 'RUB' && currency !== "XTR" && currency} { currency === "XTR" && <img src={GoldStarIcon} width={20}  height={20}/> } {plan.price} <span className={styles.price}>{currency === 'RUB' && "₽"}</span></div>
+                        <div className={`${styles.price} text-shadow`}>{currency !== 'RUB' && currency !== "XTR" && currency} { currency === "XTR" && <img src={GoldStarIcon} width={20}  height={20}/> } {plan.price} <span className={styles.price}>{currency === 'RUB' && "₽"}</span></div>
                     </div>
                 ))}
             </div>
 
-            <button onClick={billingVoid} className={styles.ctaButton}>{t('Pay')} {activePlan.price} {currency === 'RUB' ? "₽" : currency === "XTR" ? "Telegram Stars" : ""}</button>
+            <Button variant={"action"} onClick={billingVoid} className={styles.ctaButton}>{t('Pay')} {activePlan.price} {currency === 'RUB' ? "₽" : currency === "XTR" ? "Telegram Stars" : ""}</Button>
 
             {afterBillingButton()}
 

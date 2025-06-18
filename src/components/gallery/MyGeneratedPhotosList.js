@@ -20,13 +20,13 @@ import telegramStar from "../../assets/icons/telegramStar.png";
 import telegramAnimationStar from "../../assets/gif/gold_star.gif";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import PhotoMarketModal from '../modals/PhotoMarketModal';
-import SearchInput from '../input/SearchInput';
-import SearchIcon from "@mui/icons-material/Search";
+import {useNavigate} from "react-router-dom";
 
 Modal.setAppElement('#app');
 
 const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected, profileGallery }) => {
     const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
+    const navigate = useNavigate();
 
     const style = useSpring({
         opacity: inView ? 1 : 0,
@@ -42,10 +42,12 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
     const imageSelector = useSelector((state) => state.image.images);
 
+    console.log(imageSelector[photo.id]);
+
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
-            {photo.blob_url && photo.status !== 'processing' ? (
-                <img src={photo.blob_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
+            {photo.media_url && photo.status !== 'processing' ? (
+                <img src={photo.file_type === 'image' ? photo.media_url : photo.video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
@@ -113,16 +115,28 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                         className={`${styles.selectCircle} ${isSelected ? styles.selected : ''}`}
                         onClick={handleCircleClick}
                     >
+                        {/*<span style={{ color: "purple" }}>{ imageSelector[photo.id].id }</span>*/}
                         {isSelected && <FaCheck className={styles.checkIconSelected}/>}
                     </div>
                 )
             }
 
             {
-                photo.fileType === 'video/mp4' && (
+                photo.file_type === 'video' && (
                     <button className={styles.playButton}>
                         <BiPlay className={styles.playButtonIcon} />
                     </button>
+                )
+            }
+            {
+                profileGallery === true && (
+                    <div className={styles.authorWrapper} onClick={() => navigate('/profile/' + imageSelector[photo.id].author.id)}>
+                        <img src={imageSelector[photo.id].author.photo_url} className={styles.authorAvatar} alt={imageSelector[photo.id].author.username} />
+                        <div className={styles.authorName}>
+                            <span className={"text-shadow"} style={{ fontSize: 14 }}>{imageSelector[photo.id].author.first_name} {imageSelector[photo.id].author.last_name}</span>
+                            <span className={"text-shadow"} style={{ fontSize: 10 }}>{imageSelector[photo.id].author.username ? "@" : ""}{imageSelector[photo.id].author.username}</span>
+                        </div>
+                    </div>
                 )
             }
         </animated.div>
@@ -149,8 +163,8 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
     return (
         <animated.div ref={ref} style={style} className={styles.photoMarketCard} onClick={() => openModal(photo.id)}>
             <img src={TShirtMask} style={{maxWidth: "100%", position: "absolute", aspectRatio: "4/5"}} />
-            {photo.blob_url && photo.status !== 'processing' ? (
-                <img src={photo.blob_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
+            {photo.media_url && photo.status !== 'processing' ? (
+                <img src={photo.media_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
@@ -256,8 +270,6 @@ const MyGeneratedPhotosList = ({
 
     const dispatch = useDispatch();
 
-    
-
     const [searchExpanded, setSearchExpanded] = useState(false);
     const [searchText, setSearchText] = useState('');
     
@@ -275,8 +287,6 @@ const MyGeneratedPhotosList = ({
     useEffect(() => {
         setSearchText('');
     }, []);
-      
-
 
     const photosRef = useRef([]);
     const isLoadingRef = useRef(false);
@@ -302,10 +312,9 @@ const MyGeneratedPhotosList = ({
         setIsModalOpen(true);
 
         sendData({
-            action: "get_photo",
+            action: "get/media/" + photoId,
             data: {
                 jwt: token,
-                photoId: photoId,
                 answerAction: "photo_modal_studio",
                 userIdLoaded: userIdLoaded
             }
@@ -476,13 +485,12 @@ const MyGeneratedPhotosList = ({
         } else {
             const nextPg = photosPage + 1;
             setPhotosPage(nextPg);
-            const requestUUID = generateUUID();
-            setRequestId(requestUUID);
+            const requestUUID = requestId;
             sendData({
-                action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
+                action: from === "feedPage" ? "v2/get/feed" : "v2/get/media/all",
                 data: {
                     jwt: token,
-                    photosPage: nextPg,
+                    offset: nextPg,
                     photosSortModel,
                     userIdLoaded,
                     requestId: requestUUID,
@@ -526,19 +534,19 @@ const MyGeneratedPhotosList = ({
     useEffect(() => {
         if(searchQuery.length > 1) {
             setPhotosList([]);
-            setPhotosPage(1);
+            setPhotosPage(0);
         }
     }, [searchQuery]);
 
     useEffect(() => {
         setPhotosList([]);
-        setPhotosPage(1);
+        setPhotosPage(0);
     }, [filter, dateRange, feed, showPaidPrompts]);
 
     //clean photos ref
     useEffect(() => {
         setPhotosList([]);
-        setPhotosPage(1);
+        setPhotosPage(0);
         resetLastPageRef();
         resetFetchingRef();
         isLoadingRef.current = false;
@@ -566,17 +574,14 @@ const MyGeneratedPhotosList = ({
         if(token === null) return;
         isLoadingRef.current = true;
 
-        const requestUUID = generateUUID();
-        setRequestId(requestUUID);
-
         sendData({
-            action: from === "feedPage" ? "load_feed_page" : "get_generated_photos",
+            action: from === "feedPage" ? "v2/get/feed" : "v2/get/media/all",
             data: {
                 jwt: token,
-                photosPage,
+                offset: photosPage,
                 photosSortModel,
                 userIdLoaded,
-                requestId: requestUUID,
+                requestId: requestId,
                 ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
                 ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
                 ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
@@ -688,8 +693,7 @@ const MyGeneratedPhotosList = ({
     //generated photos append
     useEffect(() => {
         const handleAppend = async (msg) => {
-
-            if (msg.media && msg.media.length > 0 && (photosSortModel === msg.photosSortModel || msg.photosSortModel === undefined) && (userIdLoaded === msg.userIdLoaded || from === 'feedPage') && requestId === msg.requestId) {
+            if (msg.media && msg.media.length > 0 && (photosSortModel === msg.photosSortModel || msg.photosSortModel === undefined) && requestId === msg.requestId) {
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
                 } else {
@@ -699,15 +703,19 @@ const MyGeneratedPhotosList = ({
                         setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
                     }
                 }
+
+                if(msg.last === true) {
+                    setPhotosPage(photosPage += 1);
+                }
             }
 
             resetFetchingRef();
             isLoadingRef.current = false;
         };
 
-        addHandler('generated_photos_append', handleAppend);
-        return () => deleteHandler('generated_photos_append');
-    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, userIdLoaded, from, requestId, setPhotosList, filter, dateRange]);
+        addHandler('generated_media_append', handleAppend);
+        return () => deleteHandler('generated_media_append');
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, photosList, userIdLoaded, from, requestId, setPhotosList, filter, dateRange]);
 
     //generated photos
     useEffect(() => {
@@ -762,7 +770,7 @@ const MyGeneratedPhotosList = ({
     const handleChangePhotosSortModel = useCallback((value, myLoras) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         setPhotosList([]);
-        setPhotosPage(1);
+        setPhotosPage(0);
         setPhotosSortModel(value);
         for (let i = 0; i < myLoras.length; i++) {
             if (myLoras[i].id === value) {
@@ -836,36 +844,6 @@ const MyGeneratedPhotosList = ({
                             {model.name}
                             </button>
                         ))}
-
-                        {/* Поисковое поле */}
-                        {/*<div className={styles.searchWrapper}>*/}
-                        {/*/!* Иконка поиска — кликабельная *!/*/}
-                        {/*    {!searchExpanded && (*/}
-                        {/*        <div*/}
-                        {/*        className={styles.searchIcon}*/}
-                        {/*        onClick={() => {*/}
-                        {/*            setSearchExpanded(true);*/}
-                        {/*            setTimeout(() => {*/}
-                        {/*            searchInputRef.current?.focus();*/}
-                        {/*            }, 10);*/}
-                        {/*        }}*/}
-                        {/*        >*/}
-                        {/*        <SearchIcon sx={{ fontSize: 22 }} />*/}
-                        {/*        </div>*/}
-                        {/*    )}*/}
-
-                        {/*    /!* Анимируемое поле *!/*/}
-                        {/*    <div className={`${styles.searchFieldWrapper} ${searchExpanded ? styles.expanded : ''}`}>*/}
-                        {/*        <SearchInput*/}
-                        {/*        value={searchText}*/}
-                        {/*        onChange={(e) => setSearchText(e.target.value)}*/}
-                        {/*        onFocus={handleSearchFocus}*/}
-                        {/*        onBlur={handleSearchBlur}*/}
-                        {/*        inputRef={searchInputRef}*/}
-                        {/*        collapsed={!searchExpanded}*/}
-                        {/*        />*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
                     </div>
 
                 )
@@ -928,7 +906,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCardMarket
-                                    key={photo.blob_url}
+                                    key={photo.media_url}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}
@@ -942,7 +920,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCard
-                                    key={photo.blob_url}
+                                    key={photo.media_url}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}

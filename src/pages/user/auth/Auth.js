@@ -9,27 +9,24 @@ const Auth = () => {
     const [page, setPage] = useState('enterEmail');
     const [email, setEmail] = useState('');
     const [confirmationCode, setConfirmationCode] = useState('');
-    const [loading, setLoading] = useState(false);
 
     const handleSendEmailAuthorization = () => {
         sendData({
-            action: "emailAuthorization",
+            action: "oauth/email",
             data: {
                 email: email
             }
         });
-        setLoading(true);
     }
 
     const handleSendConfirmationCode = () => {
         sendData({
-            action: "send_verification_code",
+            action: "oauth/confirm",
             data: {
                 code: confirmationCode,
                 email: email
             }
         });
-        setLoading(true);
     }
 
     useEffect(() => {
