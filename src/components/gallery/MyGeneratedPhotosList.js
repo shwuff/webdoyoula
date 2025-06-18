@@ -46,7 +46,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
-            {photo.media_url && photo.status !== 'processing' ? (
+            {photo.media_url && photo.status !== 'creating' ? (
                 <img src={photo.file_type === 'image' ? photo.media_url : photo.video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
             ) : (
                 <div className={styles.loadingPlaceholder}>
@@ -110,7 +110,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             )}
 
             {
-                photo.status !== 'processing' && profileGallery === false && (
+                photo.status !== 'creating' && profileGallery === false && (
                     <div
                         className={`${styles.selectCircle} ${isSelected ? styles.selected : ''}`}
                         onClick={handleCircleClick}
