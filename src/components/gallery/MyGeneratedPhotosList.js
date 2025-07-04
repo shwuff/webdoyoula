@@ -45,13 +45,9 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
-<<<<<<< Updated upstream
-            {photo.media_url && photo.status !== 'creating' ? (
-                <img src={photo.file_type === 'image' ? photo.media_url : photo.video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
-=======
-            {photo.media_url && photo.status !== 'processing' ? (
+
+            { photo.media_url && photo.status !== 'processing' ? (
                 <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
->>>>>>> Stashed changes
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
