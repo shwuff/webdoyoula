@@ -74,6 +74,21 @@ const App = () => {
 
     useEffect(() => {
         if(isConnected) {
+            addHandler('unauthorization', (msg) => {
+                const token = localStorage.getItem('auth_token');
+                if(token) {
+                    localStorage.removeItem('auth_token');
+                }
+            });
+
+            return () => {
+                deleteHandler('unauthorization');
+            }
+        }
+    }, [isConnected]);
+
+    useEffect(() => {
+        if(isConnected) {
             addHandler('get/my', (msg) => {
                 const token = localStorage.getItem('auth_token');
                 login(token);

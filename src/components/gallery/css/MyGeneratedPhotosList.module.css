@@ -429,3 +429,14 @@
     margin: 0 !important;
     padding: 0 !important;
 }
+
+@media (max-width: 800px) {
+    .authorAvatar {
+        height: 20px;
+        border-radius: 50%;
+    }
+
+    .authorName p, .authorName span {
+        font-size: 2px;
+    }
+}

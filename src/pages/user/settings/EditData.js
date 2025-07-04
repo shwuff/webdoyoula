@@ -71,14 +71,14 @@ const EditData = () => {
         e.preventDefault();
 
         sendData({
-            action: "update_personal_data",
+            action: "user/update/personal_info",
             data: {
                 jwt: token,
                 username,
                 first_name: name,
                 last_name: surname,
-                selectedProfileColor: selectedProfileColor.id,
-                selectedMiniIconProfile
+                selected_profile_color: selectedProfileColor.id,
+                selected_mini_icon_profile: selectedMiniIconProfile
             }
         });
 
@@ -294,6 +294,7 @@ const EditData = () => {
 
                         <Button
                             variant="action"
+                            // sx={{ width: "100%", opacity: loading ? 0.6 : 1 }}
                             fullWidth
                         >
                             {t('save')}

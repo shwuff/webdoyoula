@@ -21,6 +21,7 @@ import telegramAnimationStar from "../../assets/gif/gold_star.gif";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import PhotoMarketModal from '../modals/PhotoMarketModal';
 import {useNavigate} from "react-router-dom";
+import imageReducer from "../../redux/reducers/imageReducer";
 
 Modal.setAppElement('#app');
 
@@ -42,12 +43,15 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
     const imageSelector = useSelector((state) => state.image.images);
 
-    console.log(imageSelector[photo.id]);
-
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
+<<<<<<< Updated upstream
             {photo.media_url && photo.status !== 'creating' ? (
                 <img src={photo.file_type === 'image' ? photo.media_url : photo.video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
+=======
+            {photo.media_url && photo.status !== 'processing' ? (
+                <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
+>>>>>>> Stashed changes
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
@@ -164,7 +168,7 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
         <animated.div ref={ref} style={style} className={styles.photoMarketCard} onClick={() => openModal(photo.id)}>
             <img src={TShirtMask} style={{maxWidth: "100%", position: "absolute", aspectRatio: "4/5"}} />
             {photo.media_url && photo.status !== 'processing' ? (
-                <img src={photo.media_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
+                <img src={imageSelector[photo.id].media_url} alt={`photo-${photo.id}`} className={styles.photoImage} />
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
@@ -267,6 +271,7 @@ const MyGeneratedPhotosList = ({
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
     const { token, myLoras, setMyLoras } = useAuth();
     const {t} = useTranslation();
+    const imageSelector = useSelector((state) => state.image.images);
 
     const dispatch = useDispatch();
 
@@ -491,7 +496,7 @@ const MyGeneratedPhotosList = ({
                 data: {
                     jwt: token,
                     offset: nextPg,
-                    photosSortModel,
+                    loraId: photosSortModel,
                     userIdLoaded,
                     requestId: requestUUID,
                     ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
@@ -579,7 +584,7 @@ const MyGeneratedPhotosList = ({
             data: {
                 jwt: token,
                 offset: photosPage,
-                photosSortModel,
+                loraId: photosSortModel,
                 userIdLoaded,
                 requestId: requestId,
                 ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
@@ -704,9 +709,7 @@ const MyGeneratedPhotosList = ({
                     }
                 }
 
-                if(msg.last === true) {
-                    setPhotosPage(photosPage += 1);
-                }
+                // setPhotosPage(photosPage += 1);
             }
 
             resetFetchingRef();
@@ -906,7 +909,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCardMarket
-                                    key={photo.media_url}
+                                    key={imageSelector[photo.id].id}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}
@@ -920,7 +923,7 @@ const MyGeneratedPhotosList = ({
                         <>
                             {validPhotos.map((photo, index) => (
                                 <PhotoCard
-                                    key={photo.media_url}
+                                    key={imageSelector[photo.id].id}
                                     photo={photo}
                                     index={index}
                                     openModal={openModal}

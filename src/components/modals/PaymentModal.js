@@ -53,7 +53,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
     const handleConfirmPurchase = () => {
         if (!selectedOption) return;
         sendData({
-            action: "purchase_generates",
+            action: "payment/buy/stars",
             data: {
                 jwt: token,
                 optionId: selectedOption,
