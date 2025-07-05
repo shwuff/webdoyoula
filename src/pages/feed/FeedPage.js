@@ -84,7 +84,7 @@ const FeedPage = () => {
                 />
 
                 <div style={{ position: "absolute", bottom: "100px", right: "20px", padding: "10px", borderRadius: "50%", cursor: "pointer" }} onClick={() => window.location.href = 'https://t.me/doyoulachat'}>
-                    <img src={ChatPng} width={52} />
+                    <img src={ChatPng} width={100} />
                 </div>
             </div>
 
