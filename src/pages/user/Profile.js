@@ -386,11 +386,11 @@ const Profile = () => {
                                         });
                                     }}
                                     userId={tempUserData.id}
-                                    setFollowersCount={(followersCount) => {
+                                    setFollowersCount={(followers_count) => {
                                         setTempUserData((prev) => {
                                             return {
                                                 ...prev,
-                                                followersCount: followersCount
+                                                followers_count: followers_count
                                             }
                                         });
                                     }}

@@ -13,29 +13,7 @@ const Settings = () => {
 
     return (
         <div className={styles.container}>
-            <div className="center-content-block">
-                <h2 className="pageTitle">{t('settings')}</h2>
 
-                <div className={styles.block}>
-                    <div className={`${styles.item} ${styles.firstItem}`} onClick={() => navigate('/profile/settings/blanks')}>
-                        <span className={styles.leftIcon}>
-                            <FontAwesomeIcon icon={faFileAlt} />
-                        </span>
-                        <span className={styles.itemText}>Черновики</span>
-                        <span className={styles.rightIcon}>
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </span>
-                    </div>
-                </div>
-
-                <div
-                    style={{
-                        height: window.Telegram.WebApp?.safeAreaInset?.top
-                            ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
-                            : '0px'
-                    }}
-                />
-            </div>
         </div>
     );
 };

@@ -12,18 +12,18 @@ const SubscribeButton = ({ sub, setSub, userId, style = {}, setFollowersCount = 
 
     const handleSub = () => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        sendData({ action: 'subscribe', data: { jwt: token, toUserId: userId } })
+        sendData({ action: 'user/subscribe/' + userId, data: { jwt: token } })
     }
 
     useEffect(() => {
         const handleInviteSub = (msg) => {
             setSub(msg.sub);
-            setFollowersCount(msg.followersCount);
+            setFollowersCount(msg.followers_count);
         }
 
-        addHandler('to_subscribe', handleInviteSub);
+        addHandler('subscribe_handler', handleInviteSub);
 
-        return () => deleteHandler('to_subscribe');
+        return () => deleteHandler('subscribe_handler');
 
     }, []);
 

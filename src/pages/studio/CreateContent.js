@@ -107,20 +107,20 @@ const CreateContent = () => {
                     <FeaturesGrid features={availableModels} />
                 </div>
 
-                <div className={styles.tabContent} id={"scrollBlock"}>
-                    {value === 0 && (
-                        <MyGeneratedPhotosList
-                            resetLastPageRef={resetLastPageRef}
-                            resetFetchingRef={resetFetchingRef}
-                            photosPage={photosPage}
-                            setPhotosPage={setPhotosPage}
-                            from={'createContent'}
-                        />
-                    )}
-                    {value === 1 && (
-                        <MyModels myModels={myModels}/>
-                    )}
-                </div>
+                {/*<div className={styles.tabContent} id={"scrollBlock"}>*/}
+                {/*    {value === 0 && (*/}
+                {/*        <MyGeneratedPhotosList*/}
+                {/*            resetLastPageRef={resetLastPageRef}*/}
+                {/*            resetFetchingRef={resetFetchingRef}*/}
+                {/*            photosPage={photosPage}*/}
+                {/*            setPhotosPage={setPhotosPage}*/}
+                {/*            from={'createContent'}*/}
+                {/*        />*/}
+                {/*    )}*/}
+                {/*    {value === 1 && (*/}
+                {/*        <MyModels myModels={myModels}/>*/}
+                {/*    )}*/}
+                {/*</div>*/}
             </div>
         </div>
     );

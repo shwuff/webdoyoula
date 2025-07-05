@@ -83,8 +83,8 @@ const NavbarBottom = () => {
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                navigate(`/profile/${userData.id}`);
-                            }} className={`${styles.navItem} ${location.pathname.startsWith('/profile/') ? styles.active : ''}`}>
+                                navigate(`/settings`);
+                            }} className={`${styles.navItem} ${location.pathname.startsWith('/profile/') || location.pathname.startsWith('/settings') ? styles.active : ''}`}>
                                 <div className={`${styles.navIcon} ${styles.profileIcon}`}>
                                     <img src={userData.photo_url} alt=""/>
                                 </div>
