@@ -82,16 +82,21 @@ a, div, button {
 }
 
 .publish-button {
+    gap: 10px;
     padding: 8px 12px;
     font-size: 14px;
     font-weight: 500;
     border: none;
     border-radius: 16px;
-    background: var(--button-color);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     color: white;
     cursor: pointer;
     transition: all 0.4s ease;
-    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
     flex-shrink: 0;
     width: 100%;
     display: flex;
@@ -138,6 +143,28 @@ a, div, button {
     background: var(--primary-color) !important;
     border: 1px solid var(--primary-color) !important;
     color: var(--button-text-color) !important;
+}
+
+.btn-glass {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    flex-shrink: 0;
+}
+
+.btn-glass:hover {
+    background: var(--button-color);
 }
 
 * {
@@ -632,6 +659,7 @@ a, div, button {
         height: 100vh;
         overflow-y: auto;
         padding-bottom: 5px;
+        
     }
 }
 
@@ -727,7 +755,7 @@ a, div, button {
     .center-content-block {
         margin-left: 300px;
         width: calc(100% - 300px);
-        max-width: 1200px;
+        max-width: 100%;
     }
 
     .globalBlock {

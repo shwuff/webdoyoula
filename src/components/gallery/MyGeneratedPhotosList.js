@@ -818,7 +818,7 @@ const MyGeneratedPhotosList = ({
                         {(searchText.length === 0 || photosSortModel === 0) && (
                             <button
                                 onClick={() => handleChangePhotosSortModel(0, myLoras)}
-                                className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-outline-primary'}`}
+                                className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-glass'}`}
                             >
                                 {t('all')}
                             </button>
@@ -835,12 +835,12 @@ const MyGeneratedPhotosList = ({
                             : [])
                         ])].map((model, idx) => (
                             <button
-                            key={model.id}
-                            onClick={() => handleChangePhotosSortModel(model.id, myLoras)}
-                            className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-outline-primary'}`}
-                            style={{ animationDelay: `${idx * 0.05}s` }}
+                                key={model.id}
+                                onClick={() => handleChangePhotosSortModel(model.id, myLoras)}
+                                className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-glass'}`}
+                                style={{ animationDelay: `${idx * 0.05}s` }}
                             >
-                            {model.name}
+                                {model.name}
                             </button>
                         ))}
                     </div>
@@ -863,14 +863,14 @@ const MyGeneratedPhotosList = ({
                             from === 'createContent' ? (
                                 <>
                                     <button
-                                        className="btn btn-outline-primary no-wrap"
+                                        className="btn btn-glass no-wrap"
                                         onClick={handleUploadToBot}
                                     >
                                         {t('upload_to_bot')}
                                     </button>
 
                                     <button
-                                        className="btn btn-outline-primary no-wrap"
+                                        className="btn btn-glass no-wrap"
                                         onClick={handlePublishToGallery}
                                     >
                                         {t('to_publish')}
