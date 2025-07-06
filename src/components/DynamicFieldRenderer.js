@@ -9,13 +9,32 @@ import {
 import StyledTextarea from "./input/StyledTextarea";
 import {useTranslation} from "react-i18next";
 
-const DynamicFieldRenderer = ({ name, config, value, onChange }) => {
+const DynamicFieldRenderer = ({ name, config, value, onChange, isRepeat = false }) => {
 
     const { t } = useTranslation();
 
     if (!config || typeof config !== 'object') return null;
 
     const label = name.charAt(0) + name.slice(1).replaceAll('_', ' ');
+
+    if(isRepeat && name === 'prompt') {
+        return (
+            <>
+                <div className={"d-flex align-items-center"} style={{ gap: "10px" }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M208,56V88a8,8,0,0,1-16,0V64H136V192h24a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h24V64H64V88a8,8,0,0,1-16,0V56a8,8,0,0,1,8-8H200A8,8,0,0,1,208,56Z"></path>
+                    </svg> <span className={"comfortaa-500"}>{t(`${label}`)} {config.required ? "*" : ""}</span>
+                </div>
+                <StyledTextarea
+                    minRows={1}
+                    maxRows={6}
+                    value={''}
+                    placeholder={"Hided"}
+                    required={config.required}
+                    disabled
+                />
+            </>
+        );
+    }
 
     switch (config.type) {
         case 'text':
@@ -25,15 +44,6 @@ const DynamicFieldRenderer = ({ name, config, value, onChange }) => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M208,56V88a8,8,0,0,1-16,0V64H136V192h24a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h24V64H64V88a8,8,0,0,1-16,0V56a8,8,0,0,1,8-8H200A8,8,0,0,1,208,56Z"></path>
                         </svg> <span className={"comfortaa-500"}>{t(`${label}`)} {config.required ? "*" : ""}</span>
                     </div>
-                    {/*<TextField*/}
-                    {/*    fullWidth*/}
-                    {/*    value={value}*/}
-                    {/*    required={config.required}*/}
-                    {/*    onChange={(e) => onChange(name, e.target.value)}*/}
-                    {/*    margin="normal"*/}
-                    {/*    size="small"*/}
-                    {/*    sx={{padding: 0}}*/}
-                    {/*/>*/}
                     <StyledTextarea
                         minRows={1}
                         maxRows={6}

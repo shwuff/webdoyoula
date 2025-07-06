@@ -168,7 +168,7 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                                         }
                                     </div>
                                     <Tooltip title={t("Prompt's author")}>
-                                        <div className={`glass-card ${styles.promptAuthor}`}>
+                                        <div className={`glass-card ${styles.promptAuthor}`} onClick={() => navigate(`/profile/${promptData.author?.id}`)}>
                                             <img src={promptData.author?.photo_url} className={styles.authorAvatar} alt={promptData.author?.first_name} />
                                             <div className={styles.authorInfo}>
                                                 <p>{promptData.author.first_name} {promptData.author.last_name}</p>
@@ -193,6 +193,7 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                         onChange={(name, val) => {
                             setDynamicFieldValues(prev => ({ ...prev, [name]: val }));
                         }}
+                        isRepeat={promptData?.media_id ? true : false}
                     />
                 ))}
 

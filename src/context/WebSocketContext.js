@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 import config from "../config";
 import { useDispatch, useSelector } from 'react-redux';
 import {addImage, setCurrentImageSelected, updateImage} from '../redux/actions/imageActions';
+import { decode as msgpackDecode } from "@msgpack/msgpack";
 
 const WebSocketContext = createContext();
 
@@ -35,73 +36,60 @@ export const WebSocketProvider = ({ children }) => {
 
             socket.onmessage = async (event) => {
                 try {
-                    if (!(event.data instanceof Blob)) {
-                        return;
-                    }
+                    if (!(event.data instanceof Blob)) return;
 
-                    const arrayBuffer = await event.data.arrayBuffer();
-                    const dataView = new DataView(arrayBuffer);
+                    const buffer = await event.data.arrayBuffer();
+                    const dv     = new DataView(buffer);
 
-                    const jsonLength = dataView.getUint32(0, true);
+                    const metaLength = dv.getUint32(0, true);
 
-                    const jsonBuffer = new Uint8Array(arrayBuffer, 4, jsonLength);
-                    const jsonString = new TextDecoder().decode(jsonBuffer);
-                    const metaData = JSON.parse(jsonString);
+                    const metaBin  = new Uint8Array(buffer, 4, metaLength);
+                    const metaData = msgpackDecode(metaBin);
 
-                    let images = [];
-                    let offset = 4 + jsonLength;
+                    let offset = 4 + metaLength;
+                    const images = [];
 
-                    if(metaData.action === 'normal_quality_append') {
-
-                        if(metaData.id in imagesSelectorRef.current) {
-                            // console.log(metaData.id, imagesSelectorRef.current);
-
-                            const blob = new Blob([new Uint8Array(arrayBuffer, offset, metaData.size)], { type: "image/webp" });
-                            dispatch(updateImage(metaData.id, {
+                    if (metaData.action === "normal_quality_append") {
+                        const { id, size } = metaData;
+                        if (imagesSelectorRef.current.hasOwnProperty(id)) {
+                            const imgSlice = buffer.slice(offset, offset + size);
+                            const blob     = new Blob([imgSlice], { type: "image/webp" });
+                            dispatch(updateImage(id, {
                                 media_url: URL.createObjectURL(blob),
                             }));
                         }
-
+                        return;
                     }
 
-                    if (metaData.media && metaData.media.length > 0) {
-
-                        let i = 0;
-
-                        for (let photo of metaData.media) {
-
-                            const blob = new Blob([new Uint8Array(arrayBuffer, offset, photo.size)], { type: photo.file_type === 'video' ? "video/mp4" : "image/webp" });
+                    if (Array.isArray(metaData.media) && metaData.media.length) {
+                        for (const photo of metaData.media) {
+                            const { id, size, file_type } = photo;
+                            const slice = buffer.slice(offset, offset + size);
+                            const mime  = file_type === "video"
+                                ? "video/mp4"
+                                : "image/webp";
+                            const blob  = new Blob([slice], { type: mime });
 
                             const imageData = {
                                 ...photo,
                                 media_url: URL.createObjectURL(blob),
-                                size: photo.size
                             };
 
-                            console.log(imageData.id);
+                            console.log(imageData);
 
-                            offset += photo.size;
-
-                            if(!(photo.id in imagesSelectorRef.current)) {
-                                dispatch(addImage(photo.id, imageData));
+                            if (!imagesSelectorRef.current.hasOwnProperty(id)) {
+                                dispatch(addImage(id, imageData));
                             }
-
-                            dispatch(updateImage(photo.id, {...imageData}));
-
+                            dispatch(updateImage(id, imageData));
                             images.push(imageData);
 
-                            i++;
+                            offset += size;
                         }
                     }
 
-                    const payload = {
-                        ...metaData,
-                        media: images.length > 0 ? images : []
-                    };
-
-                    if (handlersRef.current[metaData.action]) {
-                        handlersRef.current[metaData.action]?.(payload);
-                    }
+                    const payload = { ...metaData, media: images };
+                    const handler = handlersRef.current[metaData.action];
+                    if (handler) handler(payload);
                 } catch (error) {
                     console.error("❌ Error message:", error);
                 }

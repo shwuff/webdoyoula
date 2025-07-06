@@ -56,7 +56,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </div>
             )}
 
-            {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.promptAuthor) ? (
+            {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.prompt_author) ? (
                 <div className={styles.publishedBadge} style={{ left: 0 }}>
                     {
                         imageSelector[photo.id]?.repeat_price !== null && imageSelector[photo.id]?.repeat_price > 0 ? (
@@ -128,17 +128,17 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                     </button>
                 )
             }
-            {
-                profileGallery === true && (
-                    <div className={styles.authorWrapper} onClick={() => navigate('/profile/' + imageSelector[photo.id].author.id)}>
-                        <img src={imageSelector[photo.id].author.photo_url} className={styles.authorAvatar} alt={imageSelector[photo.id].author.username} />
-                        <div className={styles.authorName}>
-                            <span className={"text-shadow"} style={{ fontSize: 14 }}>{imageSelector[photo.id].author.first_name} {imageSelector[photo.id].author.last_name}</span>
-                            <span className={"text-shadow"} style={{ fontSize: 10 }}>{imageSelector[photo.id].author.username ? "@" : ""}{imageSelector[photo.id].author.username}</span>
-                        </div>
-                    </div>
-                )
-            }
+            {/*{*/}
+            {/*    profileGallery === true && (*/}
+            {/*        <div className={styles.authorWrapper} onClick={() => navigate('/profile/' + imageSelector[photo.id].author.id)}>*/}
+            {/*            <img src={imageSelector[photo.id].author.photo_url} className={styles.authorAvatar} alt={imageSelector[photo.id].author.username} />*/}
+            {/*            <div className={styles.authorName}>*/}
+            {/*                <span className={"text-shadow"} style={{ fontSize: 14 }}>{imageSelector[photo.id].author.first_name} {imageSelector[photo.id].author.last_name}</span>*/}
+            {/*                <span className={"text-shadow"} style={{ fontSize: 10 }}>{imageSelector[photo.id].author.username ? "@" : ""}{imageSelector[photo.id].author.username}</span>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    )*/}
+            {/*}*/}
         </animated.div>
     );
 };
