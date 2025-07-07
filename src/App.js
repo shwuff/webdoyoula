@@ -173,18 +173,19 @@ const App = () => {
         const handleUpdatePhotosLeft = (msg) => {
             setUserData(prev => ({
                 ...prev,
-                photos_left: msg.photos_left
+                photos_left: msg.stars_count
             }));
         }
 
-        addHandler('update_photos_left_count', handleUpdatePhotosLeft);
+        addHandler('update_stars_count', handleUpdatePhotosLeft);
 
-        return () => deleteHandler('update_photos_left_count');
+        return () => deleteHandler('update_stars_count');
     }, []);
 
     useEffect(() => {
         const handleInvoice = (msg) => {
             if(msg.platform === 'telegram') {
+                console.log(msg.link);
                 try {
                     window.Telegram.WebApp.openInvoice(msg.link);
                 } catch (error) {

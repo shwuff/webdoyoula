@@ -47,10 +47,34 @@
 
 .featuresList {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 2fr));
     gap: 20px;
     align-items: start;
     transition: all 0.3s ease;
+}
+
+.runsIcon {
+    width: 15px;
+    height: 15px;
+}
+
+@media (max-width: 600px) {
+    .featuresList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .featureName {
+        font-size: 12px !important;
+    }
+
+    .runs {
+        font-size: 12px !important;
+    }
+
+    .runsIcon {
+        width: 12px;
+        height: 12px;
+    }
 }
 
 .featureItem {

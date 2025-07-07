@@ -33,12 +33,12 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
         }
 
         scrollTimeoutRef.current = setTimeout(() => {
+            const { scrollHeight, scrollTop, clientHeight } = e.target;
 
-            const bottom = e.target.scrollHeight < e.target.scrollTop + e.target.clientHeight + 600;
+            const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
 
-            if (bottom && !isFetchingRef.current) {
+            if (distanceToBottom <= 1500 && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);

@@ -41,18 +41,17 @@ const CreateContent = () => {
     }
 
     const handleScroll = (e) => {
-
         if (scrollTimeoutRef.current) {
             clearTimeout(scrollTimeoutRef.current);
         }
 
         scrollTimeoutRef.current = setTimeout(() => {
+            const { scrollHeight, scrollTop, clientHeight } = e.target;
 
-            const bottom = e.target.scrollHeight < e.target.scrollTop + e.target.clientHeight + 600;
+            const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
 
-            if (bottom && !isFetchingRef.current) {
+            if (distanceToBottom <= 1500 && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
@@ -103,16 +102,6 @@ const CreateContent = () => {
                 </div>
                 <div className={styles.featuresList}>
                     <FeaturesGrid features={availableModels} />
-                </div>
-
-                <div className={styles.tabContent} id={"scrollBlock"}>
-                    <MyGeneratedPhotosList
-                        resetLastPageRef={resetLastPageRef}
-                        resetFetchingRef={resetFetchingRef}
-                        photosPage={photosPage}
-                        setPhotosPage={setPhotosPage}
-                        from={'createContent'}
-                    />
                 </div>
             </div>
         </div>

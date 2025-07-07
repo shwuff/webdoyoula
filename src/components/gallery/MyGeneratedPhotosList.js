@@ -22,6 +22,7 @@ import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import PhotoMarketModal from '../modals/PhotoMarketModal';
 import {useNavigate} from "react-router-dom";
 import imageReducer from "../../redux/reducers/imageReducer";
+import Image from "./Image";
 
 Modal.setAppElement('#app');
 
@@ -47,7 +48,8 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
 
             { photo.media_url && photo.status !== 'processing' ? (
-                <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
+                // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
+                <Image mediaId={imageSelector[photo.id].id} className={styles.photoImage} />
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
@@ -695,6 +697,7 @@ const MyGeneratedPhotosList = ({
     useEffect(() => {
         const handleAppend = async (msg) => {
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
+                console.log(msg.media);
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
                 } else {

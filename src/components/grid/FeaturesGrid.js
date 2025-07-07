@@ -82,7 +82,7 @@ const FeaturesGrid = ({ features }) => {
                                 <div className={styles.featureName}>
                                     <p>{feature.name}</p>
                                     <span className={styles.runs}>
-                                        <RunsIcon />
+                                        <RunsIcon className={styles.runsIcon} />
                                         {feature.runs}
                                     </span>
                                 </div>

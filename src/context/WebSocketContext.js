@@ -61,6 +61,8 @@ export const WebSocketProvider = ({ children }) => {
                         return;
                     }
 
+                    console.log(metaData.media?.length)
+
                     if (Array.isArray(metaData.media) && metaData.media.length) {
                         for (const photo of metaData.media) {
                             const { id, size, file_type } = photo;
@@ -74,8 +76,6 @@ export const WebSocketProvider = ({ children }) => {
                                 ...photo,
                                 media_url: URL.createObjectURL(blob),
                             };
-
-                            console.log(imageData);
 
                             if (!imagesSelectorRef.current.hasOwnProperty(id)) {
                                 dispatch(addImage(id, imageData));

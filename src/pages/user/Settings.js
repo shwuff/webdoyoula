@@ -56,18 +56,17 @@ const Settings = () => {
     const [miniIconsCoordinates, setMiniIconsCoordinates] = useState(initialMiniProfileIconsCoordinates);
 
     const handleScroll = (e) => {
-
         if (scrollTimeoutRef.current) {
             clearTimeout(scrollTimeoutRef.current);
         }
 
         scrollTimeoutRef.current = setTimeout(() => {
+            const { scrollHeight, scrollTop, clientHeight } = e.target;
 
-            const bottom = e.target.scrollHeight < e.target.scrollTop + e.target.clientHeight + 600;
+            const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
 
-            if (bottom && !isFetchingRef.current) {
+            if (distanceToBottom <= 1500 && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
@@ -76,86 +75,88 @@ const Settings = () => {
     };
 
     return (
-        <div className={styles.container} onScroll={handleScroll}>
-            <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
-                            ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: userData.profile_color.second_color_full}}>
-                <div className={styles.miniProfileIconWrapper}>
-                    <img
-                        src={userData.photo_url}
-                        alt={userData.first_name}
-                        className={styles.profileAvatar}
-                        style={{ boxShadow: `0px 0px 200px 20px ${userData.profile_color.first_color}` }}
-                    />
-                    <div className={styles.starWrapper}>
-                        {[...Array(18)].map((_, index) => (
-                            <img
-                                key={index}
-                                src={userData.mini_icon_name === 'star' ? TelegramStar : userData.mini_icon_name === 'zzz' ? zzzIcon : userData.mini_icon_name === 'hi' ? hiIcon : userData.mini_icon_name === 'palm' ? palmIcon : TelegramStar}
-                                className={styles.miniProfileIcon}
-                                style={{
-                                    left: `${miniIconsCoordinates[index].x}px`,
-                                    top: `${miniIconsCoordinates[index].y}px`,
-                                    opacity: miniIconsCoordinates[index].opacity,
-                                    width: `${miniIconsCoordinates[index].size}px`,
-                                    height: `${miniIconsCoordinates[index].size}px`,
-                                }}
-                            />
-                        ))}
+        <div className={'globalProfileBlock'} onScroll={handleScroll}>
+            <div className="center-content-block">
+                <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
+                        ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: userData.profile_color.second_color_full}}>
+                    <div className={styles.miniProfileIconWrapper}>
+                        <img
+                            src={userData.photo_url}
+                            alt={userData.first_name}
+                            className={styles.profileAvatar}
+                            style={{ boxShadow: `0px 0px 200px 20px ${userData.profile_color.first_color}` }}
+                        />
+                        <div className={styles.starWrapper}>
+                            {[...Array(18)].map((_, index) => (
+                                <img
+                                    key={index}
+                                    src={userData.mini_icon_name === 'star' ? TelegramStar : userData.mini_icon_name === 'zzz' ? zzzIcon : userData.mini_icon_name === 'hi' ? hiIcon : userData.mini_icon_name === 'palm' ? palmIcon : TelegramStar}
+                                    className={styles.miniProfileIcon}
+                                    style={{
+                                        left: `${miniIconsCoordinates[index].x}px`,
+                                        top: `${miniIconsCoordinates[index].y}px`,
+                                        opacity: miniIconsCoordinates[index].opacity,
+                                        width: `${miniIconsCoordinates[index].size}px`,
+                                        height: `${miniIconsCoordinates[index].size}px`,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                    <div className={styles.profileUserInfo}>
+                        <h2 style={{ color: "white", zIndex: 5 }} className={`no-wrap ${styles.profileName}`}>{userData.first_name?.substring(0, 24)} {userData.last_name?.substring(0, 24)}</h2>
+                        {
+                            userData?.username?.length > 0 && (
+                                <p style={{ color: "white", zIndex: 5 }} className={styles.profileUsername}>@{userData.username}</p>
+                            )
+                        }
+
+                    </div>
+
+
+                </div>
+                <div className={styles.profileButton}>
+                    <div className={styles.editPhotoButton}>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            fill="#4EA5F7"
+                        >
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M20 5h-3.17l-1.84-2H8.99L7.17 5H4a2 2 0 00-2 2v11a2 2 0 002 2h7v-2H4V7h16v4h2V7a2 2 0 00-2-2zm-5 7a4 4 0 11-8 0 4 4 0 018 0zm5 6v-2h-2v-2h-2v2h-2v2h2v2h2v-2h2z"/>
+                        </svg>
+                        <span>Изменить фотографию</span>
+                    </div>
+
+                    <div className={styles.editPhotoButton}>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            fill="#4EA5F7"
+                        >
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span>Мой профиль</span>
+                    </div>
+
+                    <div className={styles.editButton}>
+                        <EditData />
                     </div>
                 </div>
-                <div className={styles.profileUserInfo}>
-                    <h2 style={{ color: "white", zIndex: 5 }} className={`no-wrap ${styles.profileName}`}>{userData.first_name?.substring(0, 24)} {userData.last_name?.substring(0, 24)}</h2>
-                    {
-                        userData?.username?.length > 0 && (
-                            <p style={{ color: "white", zIndex: 5 }} className={styles.profileUsername}>@{userData.username}</p>
-                        )
-                    }
-
+                <div className={styles.genPhoto}>
+                    <MyGeneratedPhotosList
+                        resetLastPageRef={resetLastPageRef}
+                        resetFetchingRef={resetFetchingRef}
+                        photosPage={photosPage}
+                        setPhotosPage={setPhotosPage}
+                        from={'createContent'}
+                    />
                 </div>
-
-                
-            </div>
-            <div className={styles.profileButton}>
-                <div className={styles.editPhotoButton}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        width="20"
-                        fill="#4EA5F7"
-                    >
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M20 5h-3.17l-1.84-2H8.99L7.17 5H4a2 2 0 00-2 2v11a2 2 0 002 2h7v-2H4V7h16v4h2V7a2 2 0 00-2-2zm-5 7a4 4 0 11-8 0 4 4 0 018 0zm5 6v-2h-2v-2h-2v2h-2v2h2v2h2v-2h2z"/>
-                    </svg>
-                    <span>Изменить фотографию</span>
-                </div>
-                
-                <div className={styles.editPhotoButton}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        width="20"
-                        fill="#4EA5F7"
-                    >
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    <span>Мой профиль</span>
-                </div>
-
-                <div className={styles.editButton}>
-                    <EditData />
-                </div>
-            </div>
-            <div className={styles.genPhoto}>
-                <MyGeneratedPhotosList
-                    resetLastPageRef={resetLastPageRef}
-                    resetFetchingRef={resetFetchingRef}
-                    photosPage={photosPage}
-                    setPhotosPage={setPhotosPage}
-                    from={'createContent'}
-                />
             </div>
         </div>
     );
