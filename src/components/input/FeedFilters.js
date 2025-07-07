@@ -11,6 +11,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import gsap from "gsap";
 import Button from "../teegee/Button/Button";
 import animationGoldStar from './../../assets/gif/gold_star.gif';
+import CustomSwitch from "./CustomSwitch";
 
 const FeedFilters = ({
                          filter, setFilter, dateRange, setDateRange,
@@ -99,18 +100,16 @@ const FeedFilters = ({
                     <div className={"d-flex align-items-center"}>
                         <FormControlLabel
                             control={
-                                <Switch
+                                <CustomSwitch
                                     checked={isMarket}
                                     onChange={(e) => {
                                         setIsMarket(e.target.checked);
                                         setPhotosPage(0);
                                     }}
-                                    size="small"
                                 />
                             }
                             sx={{mr: 0, mb: 0, ml: 1, fontSize: '0.8rem'}}
                         />
-                        <img src={animationGoldStar} width={18} />
                         {/*<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none">*/}
                         {/*    <path fill="var(--text-color)" fillRule="evenodd"*/}
                         {/*          d="M9.522 14.866a1 1 0 0 0 1.1.653l12.766-2.036a1 1 0 0 0 .823-.792l1.355-6.792a1 1 0 0 0-.964-1.196l-17.36-.28a1 1 0 0 0-.958 1.335l3.238 9.108ZM10.326 23.052a2.326 2.326 0 1 0 0-4.652 2.326 2.326 0 0 0 0 4.652ZM21.957 23.052a2.326 2.326 0 1 0 0-4.652 2.326 2.326 0 0 0 0 4.652Z"*/}

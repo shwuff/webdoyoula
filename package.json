@@ -13,6 +13,7 @@
     "@mui/icons-material": "^6.4.8",
     "@mui/material": "^6.4.8",
     "@react-spring/web": "^9.7.5",
+    "caniuse-lite": "^1.0.30001727",
     "cra-template": "1.2.0",
     "framer-motion": "^12.4.3",
     "gsap": "^3.12.7",
