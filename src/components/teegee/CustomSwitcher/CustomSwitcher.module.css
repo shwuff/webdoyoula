@@ -1,0 +1,69 @@
+.glassCard {
+    width: 60px;
+    height: 30px;
+    background-color: rgba(200, 200, 200, 0.15);
+    border: 1px solid rgba(150, 150, 150, 0.4);
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    overflow: hidden; 
+    transition: background-color 0.3s ease;
+}
+
+.switcherKnob {
+    position: absolute;
+    top: -0.5px;
+    left: 0px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.2),
+        inset 0 0 3px rgba(255, 255, 255, 0.4);
+    transition: transform 0.3s ease; /* 🆕 плавное перемещение */
+    transform: translateX(0);
+    display: flex; /* 🆕 для выравнивания звезды */
+    align-items: center; /* 🆕 по вертикали */
+    justify-content: center; /* 🆕 по горизонтали */
+
+}
+
+.enabled {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+.knobEnabled {
+    transform: translateX(30px); 
+}
+
+.star {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+
+
+@keyframes squashBounce {
+    0% {
+        transform: translateX(0) scale(1);
+    }
+    50% {
+        transform: translateX(0) scale(0.75);
+    }
+    100% {
+        transform: translateX(0) scale(1);
+    }
+}
+.knobAnimate {
+    animation: squashBounce 0.3s ease;
+}
