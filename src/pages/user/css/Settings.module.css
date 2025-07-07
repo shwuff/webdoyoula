@@ -474,7 +474,7 @@
     justify-content: center;
     gap: 10px;
 
-    max-width: 80%;
+    max-width: 75%;
 }
 
 @media (max-width: 600px) {
