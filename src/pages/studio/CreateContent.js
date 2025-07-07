@@ -19,12 +19,11 @@ const CreateContent = () => {
 
     const navigate = useNavigate();
 
-    const { userData, myModels, token } = useAuth();
+    const { userData, token } = useAuth();
     const { sendData, deleteHandler, addHandler } = useWebSocket();
 
     const {t} = useTranslation();
 
-    const [value, setValue] = useState(0);
     const [photosPage, setPhotosPage] = useState(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [availableModels, setAvailableModels] = useState([]);
@@ -42,7 +41,6 @@ const CreateContent = () => {
     }
 
     const handleScroll = (e) => {
-        if (value !== 0) return;
 
         if (scrollTimeoutRef.current) {
             clearTimeout(scrollTimeoutRef.current);
@@ -108,18 +106,13 @@ const CreateContent = () => {
                 </div>
 
                 <div className={styles.tabContent} id={"scrollBlock"}>
-                    {value === 0 && (
-                        <MyGeneratedPhotosList
-                            resetLastPageRef={resetLastPageRef}
-                            resetFetchingRef={resetFetchingRef}
-                            photosPage={photosPage}
-                            setPhotosPage={setPhotosPage}
-                            from={'createContent'}
-                        />
-                    )}
-                    {value === 1 && (
-                        <MyModels myModels={myModels}/>
-                    )}
+                    <MyGeneratedPhotosList
+                        resetLastPageRef={resetLastPageRef}
+                        resetFetchingRef={resetFetchingRef}
+                        photosPage={photosPage}
+                        setPhotosPage={setPhotosPage}
+                        from={'createContent'}
+                    />
                 </div>
             </div>
         </div>

@@ -694,7 +694,7 @@ const MyGeneratedPhotosList = ({
     //generated photos append
     useEffect(() => {
         const handleAppend = async (msg) => {
-            if (msg.media && msg.media.length > 0 && (photosSortModel === msg.photosSortModel || msg.photosSortModel === undefined) && requestId === msg.requestId) {
+            if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
                 } else {

@@ -2,40 +2,23 @@ import React, {useState, useEffect, useRef} from 'react';
 import { useAuth } from "../../context/UserContext";
 import styles from './css/Settings.module.css';
 import {useNavigate, useParams} from "react-router-dom";
-import { useWebSocket } from "../../context/WebSocketContext";
-import CircularProgress from '@mui/material/CircularProgress';
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
-import Modal from "../../components/modal/Modal";
-import SubscribeButton from "../../components/buttons/SubscribeButton";
-import CloseButton from "../../components/buttons/CloseButton";
 import EditData from './settings/EditData';
-import {Box, Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import TelegramStar from './../../assets/icons/profileIcons/telegram-star.png';
 import zzzIcon from './../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../assets/icons/profileIcons/hi.png';
-import FeedFilters from "../../components/input/FeedFilters";
-import {faGift} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import GiftIcon from "../../assets/svg/GiftIcon";
-import PaymentModal from "../../components/modals/PaymentModal";
 
 
 const Settings = () => {
 
-    const navigate = useNavigate();
     const {userData} = useAuth();
 
     const {t} = useTranslation();
-    
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+
 
     const [photosPage, setPhotosPage] = useState(0);
-    const [openPaymentModal, setOpenPaymentModal] = useState(false);
-    const [availableModels, setAvailableModels] = useState([]);
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(1);
@@ -48,9 +31,6 @@ const Settings = () => {
     const resetFetchingRef = () => {
         isFetchingRef.current = false;
     }
-
-    
-
 
     const initialMiniProfileIconsCoordinates = [
         { x: -40, y: 40, opacity: 0.9, size: 25 },
@@ -75,8 +55,28 @@ const Settings = () => {
 
     const [miniIconsCoordinates, setMiniIconsCoordinates] = useState(initialMiniProfileIconsCoordinates);
 
+    const handleScroll = (e) => {
+
+        if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+        }
+
+        scrollTimeoutRef.current = setTimeout(() => {
+
+            const bottom = e.target.scrollHeight < e.target.scrollTop + e.target.clientHeight + 600;
+
+            if (bottom && !isFetchingRef.current) {
+                const nextPage = lastPageRef.current + 1;
+
+                isFetchingRef.current = true;
+                lastPageRef.current = nextPage;
+                setPhotosPage(nextPage);
+            }
+        }, 100);
+    };
+
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onScroll={handleScroll}>
             <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
                             ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: userData.profile_color.second_color_full}}>
                 <div className={styles.miniProfileIconWrapper}>
