@@ -185,11 +185,10 @@ const App = () => {
     useEffect(() => {
         const handleInvoice = (msg) => {
             if(msg.platform === 'telegram') {
-                console.log(msg.link);
                 try {
-                    window.Telegram.WebApp.openInvoice(msg.link);
+                    window.Telegram.WebApp.openInvoice(msg.link.invoice_link);
                 } catch (error) {
-                    window.open(msg.link);
+                    window.open(msg.link.invoice_link);
                 }
             }
         }
@@ -427,13 +426,13 @@ const App = () => {
     return (
         <div className="App">
             {
-                window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && !window.location.pathname.startsWith("/profile/") && !window.location.pathname.startsWith("/rating") && (
+                window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen && !window.location.pathname.startsWith("/profile/") && !window.location.pathname.startsWith("/rating") && window.location.pathname !== '/' && window.location.pathname !== '/settings' ? (
                     <div style={{width: "100%", height: window.Telegram.WebApp?.safeAreaInset?.top
                                  ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px`
                                  : '0', background: "var(--bg-color)", display: "block", position: "fixed", zIndex: 500}}>
 
                     </div>
-                )
+                ) : null
             }
             <Routes>
                 <Route path="/" element={<FeedPage />} />

@@ -38,33 +38,33 @@ export default function PricingWidget({ billingOptions = [], plansByCycle = {}, 
 
     return (
         <div className={styles.container}>
-            {
-                billingOptions.length > 0 && (
-                    <div className={styles.toggleWrapper}>
-                        <div
-                            className={styles.toggleSlider}
-                            style={{
-                                transform: billingCycle === billingOptions[0] ? 'translateX(0%)' : 'translateX(calc(100% - 8px))',
-                            }}
-                        />
-                        {billingOptions.map((label) => (
-                            <button
-                                key={label}
-                                onClick={() => {
-                                    setBillingCycle(label);
-                                    const newPlans = plansByCycle[label] || [];
-                                    if (newPlans.length > 0) {
-                                        setSelectedPlan(newPlans[0].id);
-                                    }
-                                }}
-                                className={`${styles.toggleButton} ${billingCycle === label ? styles.activeToggle : ''} text-shadow`}
-                            >
-                                {t(label)}
-                            </button>
-                        ))}
-                    </div>
-                )
-            }
+            {/*{*/}
+            {/*    billingOptions.length > 0 && (*/}
+            {/*        <div className={styles.toggleWrapper}>*/}
+            {/*            <div*/}
+            {/*                className={styles.toggleSlider}*/}
+            {/*                style={{*/}
+            {/*                    transform: billingCycle === billingOptions[0] ? 'translateX(0%)' : 'translateX(calc(100% - 8px))',*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*            {billingOptions.map((label) => (*/}
+            {/*                <button*/}
+            {/*                    key={label}*/}
+            {/*                    onClick={() => {*/}
+            {/*                        setBillingCycle(label);*/}
+            {/*                        const newPlans = plansByCycle[label] || [];*/}
+            {/*                        if (newPlans.length > 0) {*/}
+            {/*                            setSelectedPlan(newPlans[0].id);*/}
+            {/*                        }*/}
+            {/*                    }}*/}
+            {/*                    className={`${styles.toggleButton} ${billingCycle === label ? styles.activeToggle : ''} text-shadow`}*/}
+            {/*                >*/}
+            {/*                    {t(label)}*/}
+            {/*                </button>*/}
+            {/*            ))}*/}
+            {/*        </div>*/}
+            {/*    )*/}
+            {/*}*/}
 
             <div className={styles.plansWrapper} style={{ position: 'relative' }}>
                 <div ref={highlightRef} className={styles.movingHighlight}></div>

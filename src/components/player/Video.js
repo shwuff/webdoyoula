@@ -3,10 +3,13 @@ import './Video.css';
 import ReactPlayer from 'react-player'
 
 const Video = ({ videoUrl, style }) => {
-    return <ReactPlayer
-        url={videoUrl}
+    return <video
+        src={videoUrl}
         controls
-        playing={true}
+        autoPlay
+        muted
+        loop
+        controlsList="nodownload"
         width="100%"
         height="100%"
         style={style}

@@ -16,6 +16,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import AllPage from "../../../components/loading/AllPage";
 import {useSelector} from "react-redux";
 import Video from "../../../components/player/Video";
+import Image from "../../../components/gallery/Image";
 
 const GenerateImageAvatar = ({ editImage = false }) => {
 
@@ -126,7 +127,12 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     return (
         <div className={`globalBlock`} style={{ paddingTop: "var(--safeAreaInset-top)" }}>
 
-            <div className={"center-content-block"}>
+            <div className={"center-content-block"} style={{
+                /* либо auto+padding, либо calc от %: */
+                height: 'auto',
+                paddingBottom: '100px',
+                boxSizing: 'border-box',
+            }}>
 
                 <div className={styles.modelPreview}>
 
@@ -159,13 +165,14 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                                     <div className={styles.exampleMedia}>
                                         {
                                             imageSelector[promptData.media_id].file_type === 'image' ? (
-                                                <img src={imageSelector[promptData.media_id].media_url} style={{ borderRadius: "12px", height: "80%" }} alt={"Prompt example"} />
+                                                <img src={imageSelector[promptData.media_id].media_url} style={{ borderRadius: "12px", height: "200px" }} alt={"Prompt example"} />
                                             ) : (
                                                 <div style={{ width: "220px" }}>
                                                     <Video videoUrl={imageSelector[promptData.media_id].media_url} style={{ borderRadius: "12px" }} />
                                                 </div>
                                             )
                                         }
+                                        {/*<Image mediaId={promptData.media_id} style={{ borderRadius: "12px", height: "200px" }} />*/}
                                     </div>
                                     <Tooltip title={t("Prompt's author")}>
                                         <div className={`glass-card ${styles.promptAuthor}`} onClick={() => navigate(`/profile/${promptData.author?.id}`)}>
@@ -211,7 +218,10 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                             data: {
                                 jwt: token,
                                 slug: slug,
-                                input_data: dynamicFieldValues,
+                                input_data: {
+                                    ...dynamicFieldValues,
+                                    ...(prompt_id !== undefined && prompt_id !== null ? {prompt: prompt_id} : {}),
+                                },
                             }
                         });
 

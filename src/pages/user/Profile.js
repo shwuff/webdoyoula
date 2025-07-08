@@ -277,6 +277,8 @@ const Profile = () => {
         );
     }
 
+    console.log(followUsers);
+
     return (
         <div className={"globalProfileBlock"} onScroll={(e) => {
             handleScroll(e);
@@ -399,14 +401,12 @@ const Profile = () => {
                         )
                     }
                     <Box sx={{ width: '50%' }}>
-                        <button
-                            className={"publish-button"}
-                            // variant="contained"
+                        <Button
+                            className={"publish-outline-button"}
                             onClick={() => window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=userId${userId}AAAfrom${userId}`}
-                            // s={{ bgcolor: 'var(--button-color)', fontSize: '8px', width: "100%", borderRadius: '8px' }}
                         >
                             {t('share_profile')}
-                        </button>
+                        </Button>
                     </Box>
                 </Box>
                 <div className="w-100" style={{padding: 3}}>
@@ -475,20 +475,20 @@ const Profile = () => {
                                             setIsModalOpen(false);
                                         }} className={styles.userItem}>
                                             <div onClick={() => navigate(`/profile/${user.subscriber?.id || user.subscribedTo?.id}`)} >
-                                                <img src={user?.subscriber?.photo_url || user.subscribedTo?.photo_url}
-                                                     alt={user.subscriber?.first_name || user.subscribedTo?.first_name}
+                                                <img src={user?.photo_url}
+                                                     alt={user?.first_name}
                                                      style={{ width: 52, height: 52, borderRadius: "50%" }} />
                                             </div>
                                             <div onClick={() => navigate(`/profile/${user.subscriber?.id || user.subscribedTo?.id}`)} className={styles.userInfo} >
                                                 <span
                                                     className={`no-wrap ${styles.profileName}`}>
-                                                    {user.subscriber?.first_name?.substring(0, 24) || user.subscribedTo?.first_name?.substring(0, 24)} {user.subscriber?.last_name?.substring(0, 24) || user.subscribedTo?.last_name?.substring(0, 24)}
+                                                    {user?.first_name?.substring(0, 24)} {user.last_name?.substring(0, 24)}
                                                 </span>
                                                 {
-                                                    user.subscriber?.username?.length > 0 || user.subscribedTo?.username?.length > 0 ? (
+                                                    user?.username?.length > 0? (
                                                         <span
                                                             className={styles.profileUsername}>
-                                                            @{user.subscriber?.username || user.subscribedTo?.username}
+                                                            @{user.username}
                                                         </span>
                                                     ) : null
                                                 }

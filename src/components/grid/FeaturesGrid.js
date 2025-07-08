@@ -15,9 +15,10 @@ const FeaturesGrid = ({ features }) => {
     const [query, setQuery] = useState("");
     const inputRef = useRef(null);
 
-    const filtered = features.filter(f =>
-        f.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const filtered = features
+        .filter(f => f.runs != null)
+        .slice()
+        .sort((a, b) => b.runs - a.runs).reverse();
 
     useEffect(() => {
         const handleKey = (e) => {

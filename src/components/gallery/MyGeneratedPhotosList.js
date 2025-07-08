@@ -23,6 +23,7 @@ import PhotoMarketModal from '../modals/PhotoMarketModal';
 import {useNavigate} from "react-router-dom";
 import imageReducer from "../../redux/reducers/imageReducer";
 import Image from "./Image";
+import Video from "../player/Video";
 
 Modal.setAppElement('#app');
 
@@ -47,9 +48,17 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
 
-            { photo.media_url && photo.status !== 'processing' ? (
+            { photo.media_url && photo.status !== 'creating' ? (
                 // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
-                <Image mediaId={imageSelector[photo.id].id} className={styles.photoImage} />
+                <>
+                    {
+                        imageSelector[photo.id].file_type === 'video' ? (
+                            <img src={imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
+                        ) : (
+                            <Image mediaId={imageSelector[photo.id].id} className={styles.photoImage} />
+                        )
+                    }
+                </>
             ) : (
                 <div className={styles.loadingPlaceholder}>
                     <svg className="spinner" viewBox="25 25 50 50">
@@ -123,13 +132,13 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 )
             }
 
-            {
-                photo.file_type === 'video' && (
-                    <button className={styles.playButton}>
-                        <BiPlay className={styles.playButtonIcon} />
-                    </button>
-                )
-            }
+            {/*{*/}
+            {/*    photo.file_type === 'video' && (*/}
+            {/*        <button className={styles.playButton}>*/}
+            {/*            <BiPlay className={styles.playButtonIcon} />*/}
+            {/*        </button>*/}
+            {/*    )*/}
+            {/*}*/}
             {/*{*/}
             {/*    profileGallery === true && (*/}
             {/*        <div className={styles.authorWrapper} onClick={() => navigate('/profile/' + imageSelector[photo.id].author.id)}>*/}
@@ -371,8 +380,8 @@ const MyGeneratedPhotosList = ({
     const handleUploadToBot = () => {
         setIsActionsModalOpen(false);
         sendData({
-            action: "upload_photos_to_bot",
-            data: { jwt: token, photosIds: selectedImages }
+            action: "bot/upload",
+            data: { jwt: token, media_ids: selectedImages }
         });
         setSelectedImages([]);
     };

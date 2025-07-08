@@ -59,9 +59,17 @@ export const WebSocketProvider = ({ children }) => {
                             }));
                         }
                         return;
+                    } else if(metaData.action === "video_preview") {
+                        const { id, size } = metaData;
+                        if (imagesSelectorRef.current.hasOwnProperty(id)) {
+                            const imgSlice = buffer.slice(offset, offset + size);
+                            const blob     = new Blob([imgSlice], { type: "image/webp" });
+                            dispatch(updateImage(id, {
+                                video_preview: URL.createObjectURL(blob),
+                            }));
+                        }
+                        return;
                     }
-
-                    console.log(metaData.media?.length)
 
                     if (Array.isArray(metaData.media) && metaData.media.length) {
                         for (const photo of metaData.media) {

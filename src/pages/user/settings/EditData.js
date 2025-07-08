@@ -21,7 +21,7 @@ import zzzIcon from './../../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../../assets/icons/profileIcons/hi.png';
 
-const EditData = () => {
+const EditData = ({ buttonStyle = {} }) => {
     const {userData, token} = useAuth();
     const { isConnected, sendData, addHandler, deleteHandler } = useWebSocket();
 
@@ -138,17 +138,17 @@ const EditData = () => {
 
     return (
         <>
-            <button
+            <Button
                 onClick={() => setIsOpen(true)}
-                className={"publish-button"}
-                
+                className={'publish-outline-button'}
+                style={buttonStyle}
             >
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
-                        fill="#4EA5F7"
+                        fill="#fffC"
                     >
 
                         <circle cx="12" cy="9" r="3" />
@@ -159,7 +159,7 @@ const EditData = () => {
                         </g>
                     </svg>
                     <span>Изменить профиль</span>
-            </button>
+            </Button>
 
             <RightModal
                 isOpen={isOpen}

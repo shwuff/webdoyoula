@@ -26,6 +26,7 @@ import CommentIcon from "../../assets/svg/CommentIcon";
 import Modal from "../modal/Modal";
 import CommentsModal from "./CommentsModal";
 import CloseButton from "../buttons/CloseButton";
+import Image from "../gallery/Image";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
@@ -282,16 +283,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     <Video videoUrl={imageSelector[selectedPhoto].media_url}/>
                                                 )
                                                 : (
-                                                    <img
-                                                        src={imageSelector[selectedPhoto].media_url}
-                                                        alt={`photo-${imageSelector[selectedPhoto].id}`}
-                                                        className={styles.modalImage}
-                                                        style={{
-                                                            maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
-                                                                ? `calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)`
-                                                                : `calc(100vh - 200px)`
-                                                        }}
-                                                    />
+                                                    <Image mediaId={imageSelector[selectedPhoto].id} className={styles.modalImage} />
                                                 )
                                         }
 

@@ -6,6 +6,7 @@ import { useAuth } from "../../context/UserContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
+import starAnimation from './../../assets/gif/gold_star.gif';
 
 const MAX_PHOTOS = 15;
 
@@ -99,6 +100,8 @@ export default function CreateAvatarModal() {
                         sx={{ mb: 2 }}
                     />
 
+                    <hr />
+
                     <Button
                         variant="outlined"
                         component="label"
@@ -147,12 +150,16 @@ export default function CreateAvatarModal() {
                         ))}
                     </Box>
 
+                    <hr />
+
+                    <p>Стоимость обучения: 50 <img src={starAnimation} width={15} /></p>
+
                     <Button
                         fullWidth
                         variant="contained"
                         onClick={handleCreateAvatar}
                         disabled={!avatarName || photos.length === 0}
-                        sx={{ background: "var(--button-color)", borderRadius: "12px" }}
+                        sx={{ background: "var(--button-color)", borderRadius: "12px", marginTop: "10px" }}
                     >
                         {t("create")}
                     </Button>

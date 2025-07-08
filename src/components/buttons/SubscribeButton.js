@@ -28,11 +28,11 @@ const SubscribeButton = ({ sub, setSub, userId, style = {}, setFollowersCount = 
     }, []);
 
     return (
-        <button className={sub ? "publish-outline-button" : "publish-button"}
+        <Button className={sub ? "publish-outline-button" : "publish-button"}
                 style={{ ...style }}
                 onClick={handleSub}>
             {sub ? t('unfollow') : t('follow')}
-        </button>
+        </Button>
     );
 };
 

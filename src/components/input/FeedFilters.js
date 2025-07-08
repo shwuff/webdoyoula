@@ -9,7 +9,7 @@ import SearchIcon from "../../assets/svg/SearchIcon";
 import { useNavigate } from "react-router-dom";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import gsap from "gsap";
-import Button from "../teegee/Button/Button";
+import Button from "@mui/material/Button";
 import animationGoldStar from './../../assets/gif/gold_star.gif';
 
 const FeedFilters = ({
@@ -121,10 +121,10 @@ const FeedFilters = ({
                     </div>
 
                     <div className={"w-100"}>
-                        <button className={"publish-button"} style={{ marginBottom: "10px" }} onClick={toggleFilters}>
+                        <Button className={"publish-outline-button"} style={{ marginBottom: "10px" }} onClick={toggleFilters}>
                             <FilterAltIcon style={{ fill: "white", width: "14px", marginRight: "2px" }} />
                             {t('Open filters')}
-                        </button>
+                        </Button>
                     </div>
                     {
                         !fromProfile && (

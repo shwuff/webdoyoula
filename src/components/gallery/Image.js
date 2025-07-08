@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../context/UserContext";
 
-const Image = ({ mediaId, className }) => {
+const Image = ({ mediaId, className, style }) => {
     const { token } = useAuth();
     const [src, setSrc] = useState(null);
     const [error, setError] = useState(null);
@@ -50,7 +50,7 @@ const Image = ({ mediaId, className }) => {
         return <div></div>;
     }
 
-    return <img src={src} className={className} alt={`media ${mediaId}`} />;
+    return <img src={src} style={style} className={className} alt={`media ${mediaId}`} />;
 };
 
 export default Image;

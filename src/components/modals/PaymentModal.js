@@ -130,8 +130,7 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
                                 <PricingWidget
                                     billingOptions={['photos_filter', 'avatar_filter']}
                                     plansByCycle={{
-                                        photos_filter: paymentOptions,
-                                        avatar_filter: [modelOption]
+                                        photos_filter: paymentOptions
                                     }}
                                     selectedOption={selectedOption}
                                     setSelectedOption={setSelectedOption}
