@@ -470,16 +470,16 @@ const Profile = () => {
                                 followUsers.map((user) => {
 
                                     return (
-                                        <li key={user.subscriber?.id || user.subscribedTo?.id} onClick={() => {
-                                            navigate(`/profile/${user?.subscriber?.id || user.subscribedTo?.id}`);
+                                        <li key={user?.id } onClick={() => {
+                                            navigate(`/profile/${user?.id}`);
                                             setIsModalOpen(false);
                                         }} className={styles.userItem}>
-                                            <div onClick={() => navigate(`/profile/${user.subscriber?.id || user.subscribedTo?.id}`)} >
+                                            <div onClick={() => navigate(`/profile/${user?.id }`)} >
                                                 <img src={user?.photo_url}
                                                      alt={user?.first_name}
                                                      style={{ width: 52, height: 52, borderRadius: "50%" }} />
                                             </div>
-                                            <div onClick={() => navigate(`/profile/${user.subscriber?.id || user.subscribedTo?.id}`)} className={styles.userInfo} >
+                                            <div onClick={() => navigate(`/profile/${user?.id }`)} className={styles.userInfo} >
                                                 <span
                                                     className={`no-wrap ${styles.profileName}`}>
                                                     {user?.first_name?.substring(0, 24)} {user.last_name?.substring(0, 24)}

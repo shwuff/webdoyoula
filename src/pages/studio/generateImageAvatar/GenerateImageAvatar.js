@@ -17,6 +17,7 @@ import AllPage from "../../../components/loading/AllPage";
 import {useSelector} from "react-redux";
 import Video from "../../../components/player/Video";
 import Image from "../../../components/gallery/Image";
+import ErrorList from "../../../components/list/ErrorList";
 
 const GenerateImageAvatar = ({ editImage = false }) => {
 
@@ -37,6 +38,8 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     const [availableModels, setAvailableModels] = useState([]);
     const [loading, setLoading] = useState(false);
     const [promptData, setPromptData] = useState({});
+
+    const [error, setError] = useState([]);
 
     const [dynamicFieldValues, setDynamicFieldValues] = useState({});
 
@@ -106,6 +109,25 @@ const GenerateImageAvatar = ({ editImage = false }) => {
         addHandler("receive_prompt_data", handleReceivePromptData);
 
         return () => addHandler("receive_prompt_data", handleReceivePromptData);
+
+    }, [addHandler, deleteHandler, setPromptData]);
+
+    useEffect(() => {
+
+        const handleError = (msg) => {
+            console.log(msg);
+            if(msg.message !== undefined) {
+                setError([msg.message]);
+                setLoading(false);
+            } else if(msg.messages !== undefined) {
+                setError(Object.values(msg.messages));
+                setLoading(false);
+            }
+        }
+
+        addHandler("error_during_generation", handleError);
+
+        return () => addHandler("error_during_generation", handleError);
 
     }, [addHandler, deleteHandler, setPromptData]);
 
@@ -205,6 +227,8 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                 ))}
 
                 <hr />
+
+                <ErrorList error={error} />
 
                 <Button
                     variant="action"

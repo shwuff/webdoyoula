@@ -133,6 +133,13 @@
 
 }
 
+@media(max-width: 800px) {
+    .myCreationsMobile {
+        margin-top: -10px;
+        transform: scale(1.5);
+    }
+}
+
 /*.navItem:hover .navText {*/
 /*    opacity: 1;*/
 /*}*/

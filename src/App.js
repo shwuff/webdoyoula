@@ -232,6 +232,15 @@ const App = () => {
             });
 
             params.some(param => {
+                const match = param.match(/promptId(\w+)/);
+                if (match) {
+                    navigate(`/studio/repeat/${match[1]}`);
+                    return true;
+                }
+                return false;
+            });
+
+            params.some(param => {
                 const match = param.match(/photoId(\w+)/);
                 if (match && window.location.pathname === "/") {
                     setOpenedPhotoId(match[1]);

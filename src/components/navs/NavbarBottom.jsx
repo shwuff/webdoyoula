@@ -51,21 +51,21 @@ const NavbarBottom = () => {
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                navigate("/studio/create");
-                            }} className={`${styles.navItem} ${location.pathname.startsWith('/studio') ? styles.active : ''}`}>
-                                <div className={styles.navIcon}>
-                                    <PlusIcon className={location.pathname.startsWith('/studio') ? styles.activeIcon : ''} active={location.pathname.startsWith('/studio')} />
-                                </div>
-                                <span className={"navbar-content-title"}>{t('my_creations')}</span>
-                            </div>
-                            <div onClick={() => {
-                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
                                 navigate("/rating");
                             }} className={`${styles.navItem} ${location.pathname.startsWith('/rating') ? styles.active : ''}`}>
                                 <div className={styles.navIcon}>
                                     <RatingIcon className={location.pathname.startsWith('/rating') ? styles.activeIcon : ''} active={location.pathname.startsWith('/rating')} />
                                 </div>
                                 <span className={"navbar-content-title"}>{t('rating')}</span>
+                            </div>
+                            <div onClick={() => {
+                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                                navigate("/studio/create");
+                            }} className={`${styles.navItem} ${styles.myCreationsMobile} ${location.pathname.startsWith('/studio') ? styles.active : ''}`}>
+                                <div className={styles.navIcon}>
+                                    <PlusIcon className={location.pathname.startsWith('/studio') ? styles.activeIcon : ''} active={location.pathname.startsWith('/studio')} />
+                                </div>
+                                <span className={"navbar-content-title"}>{t('my_creations')}</span>
                             </div>
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');

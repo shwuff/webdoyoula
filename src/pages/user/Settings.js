@@ -67,7 +67,7 @@ const Settings = () => {
 
             const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
 
-            if (distanceToBottom <= 1500 && !isFetchingRef.current) {
+            if (distanceToBottom <= 2500 && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;

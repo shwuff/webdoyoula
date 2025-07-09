@@ -131,5 +131,12 @@
   "Attach image or GIF": "Выберите фото или GIF",
   "Example prompt's": "Пример промта",
   "Prompt's author": "Автор промта",
-  "Upload photos": "Загрузить фотографии"
+  "Upload photos": "Загрузить фотографии",
+  "Field prompt is required": "Поле \"Промт\" является обязательным!",
+  "Invalid option selected in field aspect_ratio": "В поле \"Соотношение сторон\" выбран неверный параметр",
+  "Field start_image is required": "Поле \"Стартовое изображение\" является обязательным!",
+  "Model not found": "Модель не найдена",
+  "You can only publish once every 10 minutes": "Публиковать можно только раз в 10 минут!",
+  "Post to group": "Опубликовать в группе",
+  "A maximum of 10 media can be published": "Можно опубликовать максимум 10 генераций!"
 }

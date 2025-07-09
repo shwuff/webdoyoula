@@ -132,13 +132,14 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 )
             }
 
-            {/*{*/}
-            {/*    photo.file_type === 'video' && (*/}
-            {/*        <button className={styles.playButton}>*/}
-            {/*            <BiPlay className={styles.playButtonIcon} />*/}
-            {/*        </button>*/}
-            {/*    )*/}
-            {/*}*/}
+            {
+                photo.file_type === 'video' && (
+                    <button className={styles.playButton}>
+                        <BiPlay className={styles.playButtonIcon} />
+                    </button>
+                )
+            }
+
             {/*{*/}
             {/*    profileGallery === true && (*/}
             {/*        <div className={styles.authorWrapper} onClick={() => navigate('/profile/' + imageSelector[photo.id].author.id)}>*/}
@@ -381,6 +382,15 @@ const MyGeneratedPhotosList = ({
         setIsActionsModalOpen(false);
         sendData({
             action: "bot/upload",
+            data: { jwt: token, media_ids: selectedImages }
+        });
+        setSelectedImages([]);
+    };
+
+    const handlePostToGroup = () => {
+        setIsActionsModalOpen(false);
+        sendData({
+            action: "bot/post_to_group",
             data: { jwt: token, media_ids: selectedImages }
         });
         setSelectedImages([]);
@@ -708,7 +718,7 @@ const MyGeneratedPhotosList = ({
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
                 console.log(msg.media);
                 if(userIdLoaded < 1 && from !== 'feedPage') {
-                    setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.media]));
+                    setPhotosList((prev) => ([...prev, ...msg.media]));
                 } else {
                     if(filter === 'repeats1' && dateRange === 'last_1_day1') {
                         setPhotosList((prev) => sortAndUniquePhotosWithRepeats([...prev, ...msg.media]));
@@ -879,6 +889,13 @@ const MyGeneratedPhotosList = ({
                                         onClick={handleUploadToBot}
                                     >
                                         {t('upload_to_bot')}
+                                    </button>
+
+                                    <button
+                                        className="btn btn-glass no-wrap"
+                                        onClick={handlePostToGroup}
+                                    >
+                                        {t('Post to group')}
                                     </button>
 
                                     <button

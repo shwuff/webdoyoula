@@ -71,6 +71,8 @@ export const WebSocketProvider = ({ children }) => {
                         return;
                     }
 
+                    console.log("Media length: ", metaData.media);
+
                     if (Array.isArray(metaData.media) && metaData.media.length) {
                         for (const photo of metaData.media) {
                             const { id, size, file_type } = photo;

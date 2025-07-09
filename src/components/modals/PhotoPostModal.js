@@ -241,6 +241,10 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                             <ListItemIcon><ShareIcon fontSize="small"/></ListItemIcon>
                                                             <ListItemText primary="Поделиться"/>
                                                         </MenuItem>
+                                                        <MenuItem onClick={() => handleShare(selectedPhoto)}>
+                                                            <ListItemIcon><ShareIcon fontSize="small"/></ListItemIcon>
+                                                            <ListItemText primary="Сохранить в галерею"/>
+                                                        </MenuItem>
                                                         {
                                                             Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (
                                                                 <MenuItem
