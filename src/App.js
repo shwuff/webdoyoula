@@ -184,6 +184,7 @@ const App = () => {
 
     useEffect(() => {
         const handleInvoice = (msg) => {
+            console.log(msg);
             if(msg.platform === 'telegram') {
                 try {
                     window.Telegram.WebApp.openInvoice(msg.link.invoice_link);
@@ -220,7 +221,7 @@ const App = () => {
 
     useEffect(() => {
         if (window?.Telegram?.WebApp?.initDataUnsafe?.start_param !== undefined) {
-            const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split('AAA');
+            const params = window?.Telegram?.WebApp?.initDataUnsafe?.start_param.split(/AAA(?!A)/);
 
             params.some(param => {
                 const match = param.match(/userId(\w+)/);
@@ -232,7 +233,7 @@ const App = () => {
             });
 
             params.some(param => {
-                const match = param.match(/promptId(\w+)/);
+                const match = param.match(/promptId([A-Za-z0-9-]+)/);
                 if (match) {
                     navigate(`/studio/repeat/${match[1]}`);
                     return true;
@@ -428,8 +429,10 @@ const App = () => {
         )
     }
 
-    if(!token) {
+    if(!token && window?.Telegram?.WebApp?.initDataUnsafe === undefined) {
         return <Auth />;
+    } else if(!token) {
+        return <></>;
     }
 
     return (
@@ -476,7 +479,7 @@ const App = () => {
                 )
             }
             {
-                (userData.count_goods_in_cart && userData.count_goods_in_cart > 0) ? (
+                (userData?.count_goods_in_cart && userData?.count_goods_in_cart > 0) ? (
                     <div className='cartButton' onClick={() => setOpenCart(true)}>
                         <span className={"cart-count"}>{userData.count_goods_in_cart}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none">

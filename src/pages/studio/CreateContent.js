@@ -56,7 +56,7 @@ const CreateContent = () => {
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
             }
-        }, 100);
+        }, 0);
     };
 
     useEffect(() => {
@@ -85,10 +85,9 @@ const CreateContent = () => {
             <PaymentModal openPaymentModal={openPaymentModal} setOpenPaymentModal={setOpenPaymentModal} isRubles={userData.language_code === 'ru'} />
             <div className="center-content-block">
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
-                    <div className={"p-2-phone d-flex"}>
+                    <div className={"p-2-phone d-flex align-items-center justify-content-center"}>
                         <div>
                             <p>{t('Balance')}: {userData.photos_left} <img src={animationStarGold} width={14}/></p>
-                            <p>{t('Educations')}: {userData.models_left} {t('pcs')}</p>
                         </div>
                         <div>
                             <button className={"publish-button"} style={{marginTop: 4, marginLeft: 8}} onClick={() => setOpenPaymentModal(true)}>

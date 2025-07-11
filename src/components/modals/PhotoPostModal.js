@@ -134,10 +134,14 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         window.location.href = `https://t.me/share/url?url=https://t.me/doyoulabot/app?startapp=photoId${photoId}AAAfrom${userData.id}`;
     };
 
+    const handleSave = (photoId) => {
+
+    }
+
     const handleHideMedia = (photoId) => {
         setAnchorEl(null);
         sendData({
-            action: "delete_from_gallery",
+            action: "gallery/delete/" + photoId,
             data: { jwt: token, photoId }
         });
     };
@@ -241,7 +245,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                             <ListItemIcon><ShareIcon fontSize="small"/></ListItemIcon>
                                                             <ListItemText primary="Поделиться"/>
                                                         </MenuItem>
-                                                        <MenuItem onClick={() => handleShare(selectedPhoto)}>
+                                                        <MenuItem onClick={() => handleSave(selectedPhoto)}>
                                                             <ListItemIcon><ShareIcon fontSize="small"/></ListItemIcon>
                                                             <ListItemText primary="Сохранить в галерею"/>
                                                         </MenuItem>
@@ -262,8 +266,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                     <div className={styles.imageBlock} style={{
                                         width: expanded ? "30%" : undefined,
                                         transition: "0.5s all",
-                                        maxHeight: window.Telegram.WebApp?.safeAreaInset?.top
-                                            ? `calc(100vh - ${window.Telegram.WebApp.safeAreaInset.top * 2 + 200}px)` : `calc(100vh - 200px)`,
                                         position: "relative",
                                         textAlign: "center"
                                     }}>
@@ -407,8 +409,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                         if (window.innerWidth < 1200) {
                                                                             setIsCommentModalOpen(true);
                                                                         }
-                                                                    }}
-                                                                                 style={{width: 24, height: 24}}/>
+                                                                    }} style={{width: 24, height: 24}}/>
                                                                 </button>
                                                                 <Modal isOpen={isCommentModalOpen}
                                                                        onClose={() => setIsCommentModalOpen(false)} style={{

@@ -43,7 +43,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
             }
-        }, 100);
+        }, 0);
     };
 
     const handleOnChangeSearch = (textSearch) => {

@@ -73,7 +73,7 @@ const Settings = () => {
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
             }
-        }, 100);
+        }, 0);
     };
 
     const handleScrollMiniIcon = (e) => {

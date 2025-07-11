@@ -112,7 +112,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </>
             )}
 
-            {imageSelector[photo.id] !== undefined && imageSelector[photo.id].hided === false && profileGallery === false && (
+            {imageSelector[photo.id] !== undefined && imageSelector[photo.id].posted_at !== null && profileGallery === false && (
                 <div className={styles.publishedBadge} style={{ right: 0 }}>
                      <div className={styles.doubleCheck}>
                          <TaskAltIcon className={styles.checkIcon} sx={{ fill: "#fff" }} />
@@ -135,7 +135,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             {
                 photo.file_type === 'video' && (
                     <button className={styles.playButton}>
-                        <BiPlay className={styles.playButtonIcon} />
+                        <BiPlay style={{background: "var(--secondary-bg-color)"}} className={styles.playButtonIcon} />
                     </button>
                 )
             }
@@ -716,7 +716,6 @@ const MyGeneratedPhotosList = ({
     useEffect(() => {
         const handleAppend = async (msg) => {
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
-                console.log(msg.media);
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => ([...prev, ...msg.media]));
                 } else {
@@ -811,7 +810,7 @@ const MyGeneratedPhotosList = ({
         for (let i=0; i < selectedImages.length; i++){
             
             sendData({
-                action: "publish_to_gallery",
+                action: "gallery/add/" + selectedImages[i],
                 data: { jwt: token, photoId: selectedImages[i] }
             });
 

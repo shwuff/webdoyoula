@@ -58,14 +58,14 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
 
     const handleDeleteFromGallery = (photoId) => {
         sendData({
-            action: "delete_from_gallery",
+            action: "gallery/delete/" + photoId,
             data: { jwt: token, photoId }
         });
     };
 
     const handlePublishToGallery = (photoId) => {
         sendData({
-            action: "publish_to_gallery",
+            action: "gallery/add/" + photoId,
             data: { jwt: token, photoId }
         });
     };
@@ -128,7 +128,7 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
     useEffect(() => {
         const handleMessage = async (msg) => {
             if(selectedPhoto !== null && selectedPhoto === msg.photoId) {
-                dispatch(updateImage(msg.photoId, {hided: msg.hided}));
+                dispatch(updateImage(msg.photoId, {posted_at: msg.posted_at}));
             }
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         };

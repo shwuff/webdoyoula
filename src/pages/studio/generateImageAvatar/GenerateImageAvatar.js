@@ -88,7 +88,7 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     useEffect(() => {
         const onPredictionCreated = (msg) => {
             setLoading(false);
-            navigate('/studio/create');
+            navigate('/settings');
         };
 
         addHandler("prediction/created", onPredictionCreated);

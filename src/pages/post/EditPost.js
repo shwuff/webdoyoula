@@ -101,7 +101,7 @@ const EditPost = () => {
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
             }
-        }, 100);
+        }, 0);
     };
 
     const handleRemoveImage = (index) => {

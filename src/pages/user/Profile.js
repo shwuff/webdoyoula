@@ -66,6 +66,7 @@ const Profile = () => {
 
     useEffect(() => {
         const handleFollowing = (msg) => {
+            console.log(msg);
             setIsFollowLoading(false);
             setFollowUsers(msg.followings);
         };
@@ -196,7 +197,7 @@ const Profile = () => {
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
             }
-        }, 100);
+        }, 0);
     };
 
     const resetLastPageRef = () => {
@@ -276,8 +277,6 @@ const Profile = () => {
             </div>
         );
     }
-
-    console.log(followUsers);
 
     return (
         <div className={"globalProfileBlock"} onScroll={(e) => {

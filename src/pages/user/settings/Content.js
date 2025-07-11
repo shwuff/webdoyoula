@@ -34,11 +34,10 @@ const Content = () => {
 
     useEffect(() => {
         if(uploadType !== userData?.send_bot_media_type || photoFormat !== userData?.aspect_ratio || autoUpload !== userData?.auto_upload_gallery) {
-            sendData({action: "update_content_settings", data: {jwt: token, uploadType, photoFormat, autoUpload }});
+            sendData({action: "user/update/upload_settings", data: {jwt: token, send_bot_media_type: uploadType, auto_upload_gallery: autoUpload }});
             setUserData({
                 ...userData,
                 send_bot_media_type: uploadType,
-                aspect_ratio: photoFormat,
                 auto_upload_gallery: autoUpload
             });
         }
@@ -72,16 +71,15 @@ const Content = () => {
                                 </TableCell>
                             </TableRow>
 
-                            {/* Автовыгрузка */}
-                            <TableRow>
-                                <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>
-                                <TableCell align="right">
-                                    <Switch
-                                        checked={autoUpload}
-                                        onChange={() => setAutoUpload(!autoUpload)}
-                                    />
-                                </TableCell>
-                            </TableRow>
+                            {/*<TableRow>*/}
+                            {/*    <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>*/}
+                            {/*    <TableCell align="right">*/}
+                            {/*        <Switch*/}
+                            {/*            checked={autoUpload}*/}
+                            {/*            onChange={() => setAutoUpload(!autoUpload)}*/}
+                            {/*        />*/}
+                            {/*    </TableCell>*/}
+                            {/*</TableRow>*/}
                         </TableBody>
                     </Table>
                 </TableContainer>

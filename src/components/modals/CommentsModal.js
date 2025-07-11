@@ -124,8 +124,6 @@ const CommentsModal = ({ photoGallery }) => {
         });
     }, [photoGallery]);
 
-    console.log(comments);
-
     return (
         <>
             <div className="w-100 mt-2" style={{padding: 5}}>
