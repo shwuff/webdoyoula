@@ -24,12 +24,17 @@ import {useNavigate} from "react-router-dom";
 import imageReducer from "../../redux/reducers/imageReducer";
 import Image from "./Image";
 import Video from "../player/Video";
+import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
+
 
 Modal.setAppElement('#app');
 
 const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected, profileGallery }) => {
     const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
     const navigate = useNavigate();
+
+    const [animatingId, setAnimatingId] = useState(null);
+
 
     const style = useSpring({
         opacity: inView ? 1 : 0,
@@ -43,7 +48,24 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         toggleSelectPhoto(photo.id);
     };
 
+    const [favoritePhotos, setFavoritePhotos] = useState({});
+
     const imageSelector = useSelector((state) => state.image.images);
+
+    const toggleFavorite = (photoId) => {
+        const isAdding = !favoritePhotos[photoId]; // true, если добавляем
+
+        setFavoritePhotos((prev) => ({
+            ...prev,
+            [photoId]: isAdding,
+        }));
+
+        if (isAdding) {
+            setAnimatingId(photoId);
+            setTimeout(() => setAnimatingId(null), 400); // сброс после анимации
+        }
+
+};
 
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
@@ -64,6 +86,22 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                     <svg className="spinner" viewBox="25 25 50 50">
                         <circle cx="50" cy="50" r="20"></circle>
                     </svg>
+                </div>
+            )}
+
+            { profileGallery !== false && (
+                <div
+                    className={`${styles.favoriteBookmark} ${animatingId === photo.id ? styles.animate : ''}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(photo.id);
+                    }}
+                >
+                    {favoritePhotos[photo.id] ? (
+                        <BsBookmarkFill className={styles.bookmarkIcon} />
+                    ) : (
+                        <BsBookmark className={styles.bookmarkIcon} />
+                    )}
                 </div>
             )}
 
@@ -90,8 +128,11 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                                     height: '25px',
                                 }}
                             />
+
+                            
                         )
                     }
+
                 </div>
             ) : (
                 <>
@@ -119,6 +160,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                      </div>
                 </div>
             )}
+
 
             {
                 photo.status !== 'creating' && profileGallery === false && (
@@ -184,6 +226,7 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
                     </svg>
                 </div>
             )}
+
 
             <span>1 ₽</span>
 
