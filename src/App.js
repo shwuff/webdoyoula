@@ -429,7 +429,9 @@ const App = () => {
         )
     }
 
-    if(!token && window?.Telegram?.WebApp?.initDataUnsafe === undefined) {
+    console.log(window.Telegram.WebApp);
+
+    if(!token && window?.Telegram?.WebApp?.initData === "") {
         return <Auth />;
     } else if(!token) {
         return <></>;
