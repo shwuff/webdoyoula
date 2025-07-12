@@ -107,7 +107,7 @@ const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPh
     };
 
     const resetLastPageRef = () => {
-        lastPageRef.current = 1;
+        lastPageRef.current = 0;
     };
 
     const resetFetchingRef = () => {

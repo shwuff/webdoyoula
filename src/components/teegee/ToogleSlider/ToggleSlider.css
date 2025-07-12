@@ -1,0 +1,28 @@
+.toggle-container {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 16px 16px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.toggle-btn.active {
+    color: var(--primary-color);
+}
+
+.toggle-slider {
+    position: absolute;
+    bottom: 0;
+    height: 3px;
+    background: var(--primary-color);
+    transition: left 0.3s ease;
+    border-radius: 4px;
+}

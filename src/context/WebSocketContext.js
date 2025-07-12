@@ -49,6 +49,8 @@ export const WebSocketProvider = ({ children }) => {
                     let offset = 4 + metaLength;
                     const images = [];
 
+                    console.log(metaData);
+
                     if (metaData.action === "normal_quality_append") {
                         const { id, size } = metaData;
                         if (imagesSelectorRef.current.hasOwnProperty(id)) {
@@ -66,6 +68,15 @@ export const WebSocketProvider = ({ children }) => {
                             const blob     = new Blob([imgSlice], { type: "image/webp" });
                             dispatch(updateImage(id, {
                                 video_preview: URL.createObjectURL(blob),
+                            }));
+                        }
+                        return;
+                    } else if(metaData.action === 'update_media_field') {
+                        const { mediaId, update } = metaData;
+                        console.log(mediaId, update);
+                        if (imagesSelectorRef.current.hasOwnProperty(mediaId)) {
+                            dispatch(updateImage(mediaId, {
+                                ...update
                             }));
                         }
                         return;

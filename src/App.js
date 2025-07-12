@@ -429,8 +429,6 @@ const App = () => {
         )
     }
 
-    console.log(window.Telegram.WebApp);
-
     if(!token && window?.Telegram?.WebApp?.initData === "") {
         return <Auth />;
     } else if(!token) {

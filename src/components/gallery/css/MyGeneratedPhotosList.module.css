@@ -489,6 +489,16 @@
     }
 }
 
-.animate {
+@keyframes popOut {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(0.6); }
+    100% { transform: scale(1); }
+}
+
+.animateIn {
     animation: popIn 0.4s ease-in-out;
+}
+
+.animateOut {
+    animation: popOut 0.4s ease-in-out;
 }

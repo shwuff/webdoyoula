@@ -76,11 +76,11 @@ const EditPost = () => {
     const [photosPage, setPhotosPage] = useState(0);
 
     const isFetchingRef = useRef(false);
-    const lastPageRef = useRef(1);
+    const lastPageRef = useRef(0);
     const scrollTimeoutRef = useRef(null);
 
     const resetLastPageRef = () => {
-        lastPageRef.current = 1;
+        lastPageRef.current = 0;
     }; // Функция сброса последней страницы
 
     const resetFetchingRef = () => {

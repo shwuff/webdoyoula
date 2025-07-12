@@ -29,11 +29,11 @@ const CreateContent = () => {
     const [availableModels, setAvailableModels] = useState([]);
 
     const isFetchingRef = useRef(false);
-    const lastPageRef = useRef(1);
+    const lastPageRef = useRef(0);
     const scrollTimeoutRef = useRef(null);
 
     const resetLastPageRef = () => {
-        lastPageRef.current = 1;
+        lastPageRef.current = 0;
     }
 
     const resetFetchingRef = () => {

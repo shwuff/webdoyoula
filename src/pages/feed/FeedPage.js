@@ -24,7 +24,7 @@ const FeedPage = () => {
     const [showPaidPrompts, setShowPaidPrompts] = useState(false);
 
     const isFetchingRef = useRef(false);
-    const lastPageRef = useRef(1);
+    const lastPageRef = useRef(0);
     const scrollTimeoutRef = useRef(null);
 
     const handleScroll = (e) => {
@@ -47,7 +47,7 @@ const FeedPage = () => {
     };
 
     const resetLastPageRef = () => {
-        lastPageRef.current = 1;
+        lastPageRef.current = 0;
     };
 
     const resetFetchingRef = () => {

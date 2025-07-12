@@ -81,6 +81,7 @@ const FeaturesGrid = ({ features }) => {
                                     />
                                 )}
                                 <div className={styles.featureName}>
+                                    {/*<p><span className={"text-muted"}>{feature.owner}</span>/{feature.name}</p>*/}
                                     <p>{feature.name}</p>
                                     <span className={styles.runs}>
                                         <RunsIcon className={styles.runsIcon} />

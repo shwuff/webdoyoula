@@ -10,6 +10,7 @@ import zzzIcon from './../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../assets/icons/profileIcons/hi.png';
 import {Button} from "@mui/material";
+import ToggleSlider from "../../components/teegee/ToogleSlider/ToggleSlider";
 
 
 const Settings = () => {
@@ -23,11 +24,12 @@ const Settings = () => {
     const [photosPage, setPhotosPage] = useState(0);
 
     const isFetchingRef = useRef(false);
-    const lastPageRef = useRef(1);
+    const lastPageRef = useRef(0);
     const scrollTimeoutRef = useRef(null);
+    const [showSaved, setShowSaved] = useState(false);
 
     const resetLastPageRef = () => {
-        lastPageRef.current = 1;
+        lastPageRef.current = 0;
     }
 
     const resetFetchingRef = () => {
@@ -69,6 +71,7 @@ const Settings = () => {
 
             if (distanceToBottom <= 2500 && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
+                console.log("nextPage: ", nextPage);
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
@@ -100,15 +103,19 @@ const Settings = () => {
         );
     };
 
+    const toggleShowSaved = () => {
+        setShowSaved(!showSaved);
+    }
+
     return (
         <div className={'globalProfileBlock'} onScroll={(e) => {
             handleScroll(e);
             handleScrollMiniIcon(e);
         }}>
             <div className="center-content-block">
-                <div className={styles.profileBackgroundBlock} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
+                <div className={`${styles.profileBackgroundBlock}`} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
                         ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: userData.profile_color.second_color_full}}>
-                    <div className={styles.miniProfileIconWrapper}>
+                    <div className={`p-2-phone ${styles.miniProfileIconWrapper}`}>
                         <img
                             src={userData.photo_url}
                             alt={userData.first_name}
@@ -144,7 +151,7 @@ const Settings = () => {
 
 
                 </div>
-                <div className={styles.profileButton}>
+                <div className={`p-2-phone ${styles.profileButton}`}>
 
                     <Button onClick={() => navigate(`/profile/${userData.id}`)} className={'publish-outline-button'}>
                         <svg
@@ -175,13 +182,19 @@ const Settings = () => {
                     </Button>
 
                     <EditData buttonStyle={{ marginTop: "15px" }} />
+                    <ToggleSlider
+                        options={[t('My Generations'), t('Saved')]}
+                        onChange={toggleShowSaved}
+                    />
                 </div>
                 <MyGeneratedPhotosList
                     resetLastPageRef={resetLastPageRef}
                     resetFetchingRef={resetFetchingRef}
                     photosPage={photosPage}
+                    showSaved={showSaved}
+                    profileGallery={showSaved ? true : false}
                     setPhotosPage={setPhotosPage}
-                    from={'createContent'}
+                    from={showSaved ? 'viewGallery' : 'createContent'}
                 />
             </div>
         </div>

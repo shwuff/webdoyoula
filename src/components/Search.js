@@ -23,7 +23,7 @@ const Search = ({ from = 'page', setHideMenu = () => {} }) => {
     const navigate = useNavigate();
 
     const isFetchingRef = useRef(false);
-    const lastPageRef = useRef(1);
+    const lastPageRef = useRef(0);
     const scrollTimeoutRef = useRef(null);
     const [photosPage, setPhotosPage] = useState(0);
 

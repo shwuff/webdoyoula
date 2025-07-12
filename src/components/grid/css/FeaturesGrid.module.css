@@ -112,7 +112,7 @@
 }
 
 .featureName {
-    font-size: 1.1rem;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-color);
     position: absolute;

@@ -32,9 +32,8 @@ Modal.setAppElement('#app');
 const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected, profileGallery }) => {
     const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
     const navigate = useNavigate();
-
-    const [animatingId, setAnimatingId] = useState(null);
-
+    const {sendData} = useWebSocket();
+    const {token} = useAuth();
 
     const style = useSpring({
         opacity: inView ? 1 : 0,
@@ -52,20 +51,39 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
     const imageSelector = useSelector((state) => state.image.images);
 
-    const toggleFavorite = (photoId) => {
-        const isAdding = !favoritePhotos[photoId]; // true, если добавляем
+    const [animatingInId, setAnimatingInId] = useState(null);
+    const [animatingOutId, setAnimatingOutId] = useState(null);
 
-        setFavoritePhotos((prev) => ({
+    const toggleFavorite = (photoId, isAdding) => {
+
+        setFavoritePhotos(prev => ({
             ...prev,
             [photoId]: isAdding,
         }));
 
         if (isAdding) {
-            setAnimatingId(photoId);
-            setTimeout(() => setAnimatingId(null), 400); // сброс после анимации
-        }
+            setAnimatingInId(photoId);
+            setTimeout(() => setAnimatingInId(null), 400);
 
-};
+            sendData({
+                action: "gallery/favourites/add/" + photoId,
+                data: {
+                    jwt: token
+                }
+            });
+        } else {
+            setAnimatingOutId(photoId);
+            setTimeout(() => setAnimatingOutId(null), 400);
+
+            sendData({
+                action: "gallery/favourites/delete/" + photoId,
+                data: {
+                    jwt: token
+                }
+            });
+        }
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+    };
 
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
@@ -89,19 +107,21 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 </div>
             )}
 
-            { profileGallery !== false && (
+            {profileGallery !== false && (
                 <div
-                    className={`${styles.favoriteBookmark} ${animatingId === photo.id ? styles.animate : ''}`}
-                    onClick={(e) => {
+                    className={[
+                        styles.favoriteBookmark,
+                        animatingInId === photo.id ? styles.animateIn : '',
+                        animatingOutId === photo.id ? styles.animateOut : '',
+                    ].join(' ')}
+                    onClick={e => {
                         e.stopPropagation();
-                        toggleFavorite(photo.id);
+                        toggleFavorite(photo.id, !imageSelector[photo.id].isFavourite);
                     }}
                 >
-                    {favoritePhotos[photo.id] ? (
-                        <BsBookmarkFill className={styles.bookmarkIcon} />
-                    ) : (
-                        <BsBookmark className={styles.bookmarkIcon} />
-                    )}
+                    {imageSelector[photo.id].isFavourite
+                        ? <BsBookmarkFill className={styles.bookmarkIcon} />
+                        : <BsBookmark     className={styles.bookmarkIcon} />}
                 </div>
             )}
 
@@ -297,6 +317,7 @@ const MyGeneratedPhotosList = ({
     resetFetchingRef,
     from,
     postId,
+    showSaved = false,
     userIdLoaded = 0,
     searchQuery = '',
     filter = '',
@@ -559,6 +580,7 @@ const MyGeneratedPhotosList = ({
                     loraId: photosSortModel,
                     userIdLoaded,
                     requestId: requestUUID,
+                    ...(showSaved ? {showSaved} : {}),
                     ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
                     ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
                     ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
@@ -582,6 +604,7 @@ const MyGeneratedPhotosList = ({
             filter,
             dateRange,
             showPaidPrompts,
+            showSaved
         ]
     );
 
@@ -600,13 +623,17 @@ const MyGeneratedPhotosList = ({
         if(searchQuery.length > 1) {
             setPhotosList([]);
             setPhotosPage(0);
+            resetFetchingRef();
+            resetLastPageRef();
         }
     }, [searchQuery]);
 
     useEffect(() => {
         setPhotosList([]);
         setPhotosPage(0);
-    }, [filter, dateRange, feed, showPaidPrompts]);
+        resetFetchingRef();
+        resetLastPageRef();
+    }, [filter, dateRange, feed, showPaidPrompts, showSaved]);
 
     //clean photos ref
     useEffect(() => {
@@ -647,13 +674,14 @@ const MyGeneratedPhotosList = ({
                 loraId: photosSortModel,
                 userIdLoaded,
                 requestId: requestId,
+                ...(showSaved ? {showSaved} : {}),
                 ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
                 ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
                 ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
                 ...(from === 'feedPage' ? {feed} : {})
             }
         });
-    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed, showPaidPrompts]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed, showPaidPrompts, showSaved]);
 
     //start generating image
     useEffect(() => {
@@ -768,8 +796,6 @@ const MyGeneratedPhotosList = ({
                         setPhotosList((prev) => uniquePhotos([...prev, ...msg.media]));
                     }
                 }
-
-                // setPhotosPage(photosPage += 1);
             }
 
             resetFetchingRef();
