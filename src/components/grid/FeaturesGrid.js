@@ -8,6 +8,7 @@ import KeyHintSearch from "../input/KeyHintSearch";
 import SearchIcon from "../../assets/svg/SearchIcon";
 import {useTranslation} from "react-i18next";
 import {Input, TextField} from "@mui/material";
+import telegramStar from "../../assets/gif/gold_star.gif";
 
 const FeaturesGrid = ({ features }) => {
     const navigate = useNavigate();
@@ -79,8 +80,17 @@ const FeaturesGrid = ({ features }) => {
                                     {/*<p><span className={"text-muted"}>{feature.owner}</span>/{feature.name}</p>*/}
                                     <p>{feature.name}</p>
                                     <span className={styles.runs}>
+                                    </span>
+                                </div>
+                                <div className={styles.featureNameDown}>
+                                    {/*<p><span className={"text-muted"}>{feature.owner}</span>/{feature.name}</p>*/}
+                                    <span className={styles.runs}>
                                         <RunsIcon className={styles.runsIcon} />
                                         {feature.runs}
+                                    </span>
+                                    <span className={styles.telegramStarIcon}>
+                                        <img src={telegramStar} className={styles.telegramStar} />
+                                        {parseInt(feature.price)}
                                     </span>
                                 </div>
                             </div>
