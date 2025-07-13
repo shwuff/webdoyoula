@@ -150,5 +150,10 @@
   "Confirmation": "Подтверждение",
   "Username is selected": "Имя пользователя уже занято",
   "Username is invalid": "Некорректное имя пользователя",
-  "Media not found": "Медиа файлы не найдены"
+  "Media not found": "Медиа файлы не найдены",
+  "model_filters": {
+    "Create Image": "Создание изображений",
+    "Edit image": "Редактирование изображений",
+    "Create video": "Создание видео"
+  }
 }
