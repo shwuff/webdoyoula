@@ -164,3 +164,37 @@
     gap: 6px;
 
 }
+
+.filterDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    z-index: 1000;
+    padding: 6px 0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.filterItem {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.filterItem:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.selected {
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+

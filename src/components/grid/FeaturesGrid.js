@@ -15,6 +15,35 @@ const FeaturesGrid = ({ features }) => {
     const {t} = useTranslation();
     const [query, setQuery] = useState("");
     const inputRef = useRef(null);
+    const [filterOpen, setFilterOpen] = useState(false);
+    const [selectedFilters, setSelectedFilters] = useState([]);
+    const modelFilters = {
+        "Create Image": "Создание изображений",
+        "Edit image": "Редактирование изображений",
+        "Create video": "Создание видео"
+    };
+    const filterRef = useRef(null);
+
+
+    const toggleFilter = (key) => {
+        setSelectedFilters((prev) =>
+            prev.includes(key)
+            ? prev.filter((f) => f !== key)
+            : [...prev, key]
+        );
+    };
+
+    const filteredFeatures = features.filter((feature) => {
+        const matchesQuery = feature.name.toLowerCase().includes(query.toLowerCase());
+
+        const matchesFilters =
+            selectedFilters.length === 0 || // если фильтры не выбраны — пропускаем всех
+            selectedFilters.some((filter) =>
+            feature.tags?.includes(filter) // предполагается, что feature.tags — массив строк типа 'edit_image'
+            );
+
+        return matchesQuery && matchesFilters;
+    });
 
     useEffect(() => {
         const handleKey = (e) => {
@@ -31,10 +60,24 @@ const FeaturesGrid = ({ features }) => {
         return () => window.removeEventListener("keydown", handleKey);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (filterRef.current && !filterRef.current.contains(e.target)) {
+            setFilterOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+
     return (
         <>
             <div className={styles.searchBar}>
-                <div className={styles.searchInputWrapper}>
+                <div className={styles.searchInputWrapper} ref={filterRef}>
                     <span className={styles.searchIcon}>
                         <SearchIcon width={18} />
                     </span>
@@ -51,14 +94,30 @@ const FeaturesGrid = ({ features }) => {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className={styles.searchInput}
+                        onFocus={() => setFilterOpen(true)}
                     />
+                    {filterOpen && (
+                        <div className={styles.filterDropdown}>
+                            {Object.entries(modelFilters).map(([key, label]) => (
+                            <div
+                                key={key}
+                                className={`${styles.filterItem} ${selectedFilters.includes(key) ? styles.selected : ''}`}
+                                onClick={() => toggleFilter(key)}
+                            >
+                                {label}
+                            </div>
+                            ))}
+                        </div>
+                    )}
+
+
                     <KeyHintSearch />
                 </div>
             </div>
 
             <div className={styles.featuresList}>
                 <AnimatePresence>
-                    {features.map((feature) => (
+                    {filteredFeatures.map((feature) => (
                         <motion.div
                             key={feature.slug}
                             initial={{ opacity: 0, scale: 0.95 }}
