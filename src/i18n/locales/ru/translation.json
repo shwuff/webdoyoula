@@ -151,8 +151,8 @@
   "Username is selected": "Имя пользователя уже занято",
   "Username is invalid": "Некорректное имя пользователя",
   "Media not found": "Медиа файлы не найдены",
-  "Create Image": "Создание изображений",
-  "Edit image": "Редактирование изображений",
-  "Create video": "Создание видео",
-  "Animate Image": "Оживить фотографию"
+  "creating_image": "Создание изображений",
+  "edit_image": "Редактирование изображений",
+  "create_video": "Создание видео",
+  "animate_image": "Оживить фотографию"
 }

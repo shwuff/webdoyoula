@@ -1,6 +1,8 @@
 .searchBar {
     padding: 10px 0;
     text-align: end;
+    display: block;
+    justify-content: space-between;
 }
 
 .searchInputWrapper {
@@ -16,7 +18,17 @@
 
 @media (max-width: 1200px) {
     .searchInputWrapper {
-        max-width: 100%;
+        max-width: calc(100% - 46px);
+    }
+
+    .searchBar {
+        display: flex;
+    }
+}
+
+@media (min-width: 1200px) {
+    .searchInputWrapper {
+        margin-right: 10px;
     }
 }
 
@@ -196,5 +208,14 @@
     font-weight: bold;
     background: rgba(255, 255, 255, 0.15);
     color: #fff;
+}
+
+.filterIcon {
+    background: var(--glass-bg) !important;
+    border-radius: 8px !important;
+    width: 42px;
+    height: 42px;
+    margin: -5px !important;
+    border: 1px solid var(--glass-border) !important;
 }
 

@@ -7,23 +7,22 @@ import styles from './css/FeaturesGrid.module.css';
 import KeyHintSearch from "../input/KeyHintSearch";
 import SearchIcon from "../../assets/svg/SearchIcon";
 import {useTranslation} from "react-i18next";
-import {Input, TextField} from "@mui/material";
+import {Checkbox, IconButton, Input, ListItemText, Menu, MenuItem, TextField} from "@mui/material";
 import telegramStar from "../../assets/gif/gold_star.gif";
+import {FilterList} from "@mui/icons-material";
+
 
 const FeaturesGrid = ({ features }) => {
     const navigate = useNavigate();
     const {t} = useTranslation();
     const [query, setQuery] = useState("");
     const inputRef = useRef(null);
-    const [filterOpen, setFilterOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [selectedFilters, setSelectedFilters] = useState([]);
-    const modelFilters = {
-        "Create Image": "Создание изображений",
-        "Edit image": "Редактирование изображений",
-        "Create video": "Создание видео"
-    };
+    const modelFilters = [
+        'edit_image', 'creating_image', 'animate_image'
+    ];
     const filterRef = useRef(null);
-
 
     const toggleFilter = (key) => {
         setSelectedFilters((prev) =>
@@ -37,9 +36,9 @@ const FeaturesGrid = ({ features }) => {
         const matchesQuery = feature.name.toLowerCase().includes(query.toLowerCase());
 
         const matchesFilters =
-            selectedFilters.length === 0 || // если фильтры не выбраны — пропускаем всех
+            selectedFilters.length === 0 ||
             selectedFilters.some((filter) =>
-            feature.tags?.includes(filter) // предполагается, что feature.tags — массив строк типа 'edit_image'
+                feature.filter?.includes(filter)
             );
 
         return matchesQuery && matchesFilters;
@@ -58,19 +57,6 @@ const FeaturesGrid = ({ features }) => {
 
         window.addEventListener("keydown", handleKey);
         return () => window.removeEventListener("keydown", handleKey);
-    }, []);
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (filterRef.current && !filterRef.current.contains(e.target)) {
-            setFilterOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
     }, []);
 
 
@@ -94,25 +80,42 @@ const FeaturesGrid = ({ features }) => {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className={styles.searchInput}
-                        onFocus={() => setFilterOpen(true)}
                     />
-                    {filterOpen && (
-                        <div className={styles.filterDropdown}>
-                            {Object.entries(modelFilters).map(([key, label]) => (
-                            <div
-                                key={key}
-                                className={`${styles.filterItem} ${selectedFilters.includes(key) ? styles.selected : ''}`}
-                                onClick={() => toggleFilter(key)}
-                            >
-                                {label}
-                            </div>
-                            ))}
-                        </div>
-                    )}
 
 
                     <KeyHintSearch />
                 </div>
+
+                <IconButton
+                    className={styles.filterIcon}
+                    size="small"
+                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                >
+                    <FilterList fontSize="small" />
+                </IconButton>
+
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={() => setAnchorEl(null)}
+                >
+                    {Object.entries(modelFilters).map(([key, label]) => (
+                        <MenuItem
+                            key={label}
+                            onClick={() => toggleFilter(label)}
+                        >
+                            <Checkbox
+                                edge="start"
+                                checked={selectedFilters.includes(label)}
+                                tabIndex={-1}
+                                disableRipple
+                                size="small"
+                            />
+                            <ListItemText primary={t(label)} />
+                        </MenuItem>
+                    ))}
+                </Menu>
+
             </div>
 
             <div className={styles.featuresList}>
