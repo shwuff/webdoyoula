@@ -82,6 +82,22 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
 
+            { profileGallery === true && imageSelector[photo.id]?.author && (
+                <div
+                    className={styles.authorAvatarWrapper}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/profile/' + imageSelector[photo.id].author.id);
+                    }}
+                >
+                    <img
+                        src={imageSelector[photo.id].author.photo_url}
+                        alt={imageSelector[photo.id].author.username}
+                        className={styles.authorAvatar}
+                    />
+                </div>
+            )}
+
             { imageSelector[photo.id].media_url && imageSelector[photo.id].status !== 'creating' ? (
                 // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
                 <>
