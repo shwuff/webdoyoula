@@ -66,7 +66,6 @@ const Profile = () => {
 
     useEffect(() => {
         const handleFollowing = (msg) => {
-            console.log(msg);
             setIsFollowLoading(false);
             setFollowUsers(msg.followings);
         };
@@ -127,7 +126,6 @@ const Profile = () => {
 
     useEffect(() => {
         const handleGetPosts = (msg) => {
-            // console.log(msg.post)
             // setPosts((prev) => [
             //     ...prev,
             //     msg.post
@@ -191,7 +189,6 @@ const Profile = () => {
 
             if (bottom && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-                // console.log(`📸 Следующая страница: ${nextPage}`);
 
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;

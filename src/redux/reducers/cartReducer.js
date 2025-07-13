@@ -8,7 +8,6 @@ const cartReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_GOOD: {
             const cartData = action.payload.cartData;
-            console.log(cartData);
             return {
                 ...state,
                 cartList: [...state.cartList, cartData],

@@ -59,7 +59,7 @@ const EditData = ({ buttonStyle = {} }) => {
 
     const handleUploadNewPic = (base64) => {
         sendData({
-            action: "handle_update_user_pic",
+            action: "user/update/pic",
             data: {
                 jwt: token,
                 image: base64
@@ -87,7 +87,7 @@ const EditData = ({ buttonStyle = {} }) => {
     };
 
     useEffect(() => {
-        if(isConnected && token && availableSettings === []) {
+        if(isConnected && token && availableSettings.length === 0) {
 
             sendData({
                 action: "get/settings/profile",
@@ -311,6 +311,7 @@ const EditData = ({ buttonStyle = {} }) => {
                             variant="action"
                             // sx={{ width: "100%", opacity: loading ? 0.6 : 1 }}
                             fullWidth
+                            onClick={handleSubmit}
                         >
                             {t('save')}
                         </Button>

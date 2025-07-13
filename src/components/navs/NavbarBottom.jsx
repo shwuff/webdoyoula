@@ -73,7 +73,7 @@ const NavbarBottom = () => {
                             }} className={`${styles.navItem} ${location.pathname.startsWith('/notifications') ? styles.active : ''}`}>
                                 <div className={styles.navIcon}>
                                     {
-                                        userData?.has_new_notify !== 0 && (
+                                        userData?.has_new_notify === true && (
                                             <div className='new-notify-bounce'></div>
                                         )
                                     }

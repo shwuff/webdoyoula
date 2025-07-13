@@ -32,8 +32,6 @@ const Blanks = () => {
 
     }, []);
 
-    // console.log(blanks.posts !== undefined && blanks?.posts[0].id);
-
     return (
         <div className={"container"}>
             <div className="center-content-block">

@@ -27,6 +27,7 @@ import Modal from "../modal/Modal";
 import CommentsModal from "./CommentsModal";
 import CloseButton from "../buttons/CloseButton";
 import Image from "../gallery/Image";
+import {BsBookmark, BsBookmarkFill} from "react-icons/bs";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
@@ -66,8 +67,6 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
             if (!selectedPhoto || selectedPhoto !== msg.media_id) {
                 return;
             }
-
-            console.log(msg);
 
             dispatch(updateImage(msg.media_id, {liked: msg.liked, likes_count: msg.likes_count}));
 
@@ -144,6 +143,35 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
             action: "gallery/delete/" + photoId,
             data: { jwt: token, photoId }
         });
+    };
+
+    const [animatingInId, setAnimatingInId] = useState(null);
+    const [animatingOutId, setAnimatingOutId] = useState(null);
+
+    const toggleFavorite = (photoId, isAdding) => {
+
+        if (isAdding) {
+            setAnimatingInId(photoId);
+            setTimeout(() => setAnimatingInId(null), 400);
+
+            sendData({
+                action: "gallery/favourites/add/" + photoId,
+                data: {
+                    jwt: token
+                }
+            });
+        } else {
+            setAnimatingOutId(photoId);
+            setTimeout(() => setAnimatingOutId(null), 400);
+
+            sendData({
+                action: "gallery/favourites/delete/" + photoId,
+                data: {
+                    jwt: token
+                }
+            });
+        }
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     };
 
     return (
@@ -293,6 +321,72 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                 )
                                         }
 
+                                        {profileGallery !== false && (
+                                            <div
+                                                className={[
+                                                    styles.favoriteBookmarkModal,
+                                                    animatingInId === selectedPhoto ? styles.animateIn : '',
+                                                    animatingOutId === selectedPhoto ? styles.animateOut : '',
+                                                ].join(' ')}
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    toggleFavorite(selectedPhoto, !imageSelector[selectedPhoto].isFavourite);
+                                                }}
+                                            >
+                                                {imageSelector[selectedPhoto].isFavourite
+                                                    ? <BsBookmarkFill className={styles.bookmarkIcon} />
+                                                    : <BsBookmark     className={styles.bookmarkIcon} />}
+                                            </div>
+                                        )}
+
+                                        {Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto]?.prompt_author) ? (
+                                            <div className={styles.publishedBadge} style={{ left: 0 }}>
+                                                {
+                                                    imageSelector[selectedPhoto]?.repeat_price !== null && imageSelector[selectedPhoto]?.repeat_price > 0 ? (
+                                                        <img
+                                                            src={telegramAnimationStar}
+                                                            alt="Gold Animation Star"
+                                                            style={{
+
+                                                                width: '25px',
+                                                                height: '25px',
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={telegramStar}
+                                                            alt="Star"
+                                                            style={{
+
+                                                                width: '25px',
+                                                                height: '25px',
+                                                            }}
+                                                        />
+
+
+                                                    )
+                                                }
+
+                                            </div>
+                                        ) : (
+                                            <>
+                                                { imageSelector[selectedPhoto]?.repeat_price !== null && imageSelector[selectedPhoto]?.repeat_price > 0 && (
+                                                    <div className={styles.publishedBadge} style={{ left: 0 }}>
+                                                        <img
+                                                            src={telegramAnimationStar}
+                                                            alt="Gold Animation Star"
+                                                            style={{
+
+                                                                width: '25px',
+                                                                height: '25px',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                )
+                                                }
+                                            </>
+                                        )}
+
 
                                         <span style={{
                                             position: 'absolute',
@@ -363,7 +457,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                         selectedPhoto={selectedPhoto}
                                                         expanded={expanded}
                                                         setExpanded={setExpanded}
-                                                        isMyPrompt={Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].promptAuthor)}
+                                                        isMyPrompt={Number(imageSelector[selectedPhoto]?.author?.id) === Number(imageSelector[selectedPhoto].prompt_author)}
                                                     />
                                                     {/*{imageSelector[selectedPhoto].id}*/}
                                                     {

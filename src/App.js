@@ -152,15 +152,12 @@ const App = () => {
 
     useEffect(() => {
         const handleNotification = (msg) => {
-            // setNotification(msg);
+            setNotification(msg);
             if(msg.type === 'like' || msg.type === 'comment' || msg.type === 'subscribe') {
                 setUserData((prev) => ({
                     ...prev,
-                    has_new_notify: 1
+                    has_new_notify: true
                 }));
-                console.log(msg.type);
-            } else {
-                setNotification(msg);
             }
         }
 
@@ -184,7 +181,6 @@ const App = () => {
 
     useEffect(() => {
         const handleInvoice = (msg) => {
-            console.log(msg);
             if(msg.platform === 'telegram') {
                 try {
                     window.Telegram.WebApp.openInvoice(msg.link.invoice_link);
@@ -230,6 +226,12 @@ const App = () => {
                     return true;
                 }
                 return false;
+            });
+
+            params.some(param => {
+                if(param === 'selectModel') {
+                    navigate('/studio/create');
+                }
             });
 
             params.some(param => {
@@ -325,7 +327,6 @@ const App = () => {
 
     useEffect(() => {
         const receiveCart = (msg) => {
-            console.log(msg.data);
             dispatch(addGood(msg.data));
         }
 
@@ -336,7 +337,6 @@ const App = () => {
 
     useEffect(() => {
         const receiveCart = (msg) => {
-            console.log(msg.data);
             dispatch(updateCount(msg.data.id, msg.data.count));
         }
 
@@ -347,7 +347,6 @@ const App = () => {
 
     useEffect(() => {
         const receiveCart = (msg) => {
-            console.log(msg.data);
             dispatch(deleteGood(msg.data.id));
         }
 
@@ -384,7 +383,7 @@ const App = () => {
 
     useEffect(() => {
         const updateRepeatPrice = (msg) => {
-            dispatch(updateImage(msg.photo_id, {repeat_price: msg.repeat_price}))
+            dispatch(updateImage(msg.media_id, {repeat_price: msg.repeat_price}))
         }
 
         addHandler("update_repeat_price", updateRepeatPrice);
@@ -405,6 +404,19 @@ const App = () => {
         addHandler("update_count_images_generate", handleUpdateCountImagesGenerate);
 
         return () => deleteHandler("update_count_images_generate");
+    }, [addHandler, deleteHandler]);
+
+    useEffect(() => {
+        const handleUpdateUserData = (msg) => {
+            setUserData(prev => {
+                const next = { ...prev, ...msg.user };
+                return next;
+            });
+        }
+
+        addHandler("update_user_data", handleUpdateUserData);
+
+        return () => deleteHandler("update_user_data");
     }, [addHandler, deleteHandler]);
 
     // useEffect(() => {
@@ -536,12 +548,13 @@ const App = () => {
                     //     />
                     // }
                 >
-                    {t(notification?.message)}
                     {
                         notification?.from && (
                             <> {notification.from.first_name} {notification.from.last_name}</>
                         )
                     }
+                    {t(notification?.message)}
+                    {notification?.add}
                 </Alert>
             </Snackbar>
         </div>

@@ -15,11 +15,6 @@ const FeaturesGrid = ({ features }) => {
     const [query, setQuery] = useState("");
     const inputRef = useRef(null);
 
-    const filtered = features
-        .filter(f => f.runs != null)
-        .slice()
-        .sort((a, b) => b.runs - a.runs).reverse();
-
     useEffect(() => {
         const handleKey = (e) => {
             const isMac = navigator.platform.toUpperCase().includes("MAC");
@@ -62,7 +57,7 @@ const FeaturesGrid = ({ features }) => {
 
             <div className={styles.featuresList}>
                 <AnimatePresence>
-                    {filtered.map((feature) => (
+                    {features.map((feature) => (
                         <motion.div
                             key={feature.slug}
                             initial={{ opacity: 0, scale: 0.95 }}

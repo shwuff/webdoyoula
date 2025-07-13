@@ -12,8 +12,6 @@ const BasketButton = ({ photo_id, addToCart, deleteFromCart, selectedSize }) => 
     const cart = useSelector(state => state.cart.cartList);
     const good = Array.isArray(cart) ? cart.find(item => item.photo_id === photo_id && item.size === selectedSize) : null;
 
-    console.log(selectedSize, cart, good, photo_id);
-
     return (
         <>
             {

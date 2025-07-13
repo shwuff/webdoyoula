@@ -22,8 +22,6 @@ const Cart = () => {
 
     const deleteFromCart = (photoId, selectedSize) => {
 
-        console.log("photoId", photoId);
-
         sendData({
             action: "delete_from_cart",
             data: { jwt: token, photoId, size: selectedSize }

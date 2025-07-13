@@ -140,5 +140,13 @@
   "Post to group": "Опубликовать в группе",
   "A maximum of 10 media can be published": "Можно опубликовать максимум 10 генераций!",
   "My Generations": "Мои генерации",
-  "Saved": "Сохраненные"
+  "Saved": "Сохраненные",
+  "liked your post": "поставил(а) лайк на Ваш пост",
+  "has subscribed to you": "подписался(-ась) на Вас",
+  "To post a paid prompt, you must have at least 1,000 impressions on your account. Now you have ": "Для публикации платного prompt вы должны иметь не менее 1000 повторов на аккаунте. Сейчас у вас ",
+  "To make a prompt paid, it must have at least 10 repeats. Now you have ": "Чтобы сделать prompt платным, он должен иметь 10 повторов. Сейчас у prompt ",
+  "Confirmation": "Подтверждение",
+  "Username is selected": "Имя пользователя уже занято",
+  "Username is invalid": "Некорректное имя пользователя",
+  "Media not found": "Медиа файлы не найдены"
 }

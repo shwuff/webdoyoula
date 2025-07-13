@@ -115,7 +115,6 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     useEffect(() => {
 
         const handleError = (msg) => {
-            console.log(msg);
             if(msg.message !== undefined) {
                 setError([msg.message]);
                 setLoading(false);

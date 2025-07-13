@@ -35,10 +35,6 @@ export const ImageProvider = ({ children }) => {
         }));
     }, []);
 
-    useEffect(() => {
-        console.log(images);
-    }, [images]);
-
     return (
         <ImageContext.Provider value={{ addImage, getImage, hasImage, updateImage, images, currentImageContext, setCurrentImageContext }}>
             {children}

@@ -668,6 +668,10 @@ a, div, button {
         max-height: calc(100vh - 90px);
         height: max-content !important;
     }
+
+    .center-content-block {
+        padding-bottom: 110px;
+    }
 }
 
 @media (min-width: 1200px) {

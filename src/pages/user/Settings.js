@@ -71,7 +71,6 @@ const Settings = () => {
 
             if (distanceToBottom <= 2500 && !isFetchingRef.current) {
                 const nextPage = lastPageRef.current + 1;
-                console.log("nextPage: ", nextPage);
                 isFetchingRef.current = true;
                 lastPageRef.current = nextPage;
                 setPhotosPage(nextPage);
@@ -167,20 +166,6 @@ const Settings = () => {
                         <span>Мой профиль</span>
                     </Button>
 
-                    <Button sx={{ marginTop: "15px" }} className={'publish-outline-button'}>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            width="20"
-                            fill="#fff"
-                        >
-                            <path d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M20 5h-3.17l-1.84-2H8.99L7.17 5H4a2 2 0 00-2 2v11a2 2 0 002 2h7v-2H4V7h16v4h2V7a2 2 0 00-2-2zm-5 7a4 4 0 11-8 0 4 4 0 018 0zm5 6v-2h-2v-2h-2v2h-2v2h2v2h2v-2h2z"/>
-                        </svg>
-                        <span>Изменить фотографию</span>
-                    </Button>
-
                     <EditData buttonStyle={{ marginTop: "15px" }} />
                     <ToggleSlider
                         options={[t('My Generations'), t('Saved')]}
@@ -188,6 +173,7 @@ const Settings = () => {
                     />
                 </div>
                 <MyGeneratedPhotosList
+                    key={showSaved}
                     resetLastPageRef={resetLastPageRef}
                     resetFetchingRef={resetFetchingRef}
                     photosPage={photosPage}

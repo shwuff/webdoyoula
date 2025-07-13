@@ -13,7 +13,7 @@ import {
     DialogContent,
     DialogActions,
     Button as MUIButton,
-    Typography
+    Typography, Input, TextField
 } from '@mui/material';
 import StyledTextarea from "../input/StyledTextarea";
 
@@ -51,7 +51,7 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
 
         sendData({
             action: "gallery/add/" + selected.id,
-            data: { jwt: token, repeatPrice, caption }
+            data: { jwt: token, repeat_price: repeatPrice, caption }
         });
 
         setExpanded(false);
@@ -69,8 +69,6 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
         addHandler('update_photo_posted_at', handleUpdatePostedAt);
         return () => deleteHandler('update_photo_posted_at');
     }, [addHandler, deleteHandler, selectedPhoto]);
-
-    console.log(selected)
 
     return (
         <>
@@ -98,14 +96,30 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
                             {
                                 isMyPrompt && (
                                     <>
-                                        <input
+                                        <TextField
+                                            size="small"
+                                            fullWidth
                                             inputMode="numeric"
                                             pattern="[0-9]*"
-                                            className="input-field price-field"
                                             placeholder={t('Repeat Price')}
                                             value={repeatPrice}
                                             onChange={(e) => setRepeatPrice(e.target.value)}
-                                            style={{ width: "100%" }}
+                                            style={{ width: "100%", fontSize: "14px" }}
+                                            InputProps={{
+                                                sx: {
+                                                    width: '100%',
+                                                    resize: 'none',
+                                                    fontSize: '14px',
+                                                    borderRadius: '12px',
+                                                    border: '1px solid var(--glass-border)',
+                                                    backgroundColor: 'var(--glass-bg)',
+                                                    color: 'var(--text-color)',
+                                                    fontFamily: 'inherit',
+                                                    lineHeight: 1.5,
+                                                    outline: 'none',
+                                                    backdropFilter: 'blur(8px)',
+                                                }
+                                            }}
                                         />
                                     </>
                                 )
@@ -140,7 +154,7 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
                         <DialogTitle>{t('Confirmation')}</DialogTitle>
                         <DialogContent>
                             <Typography>
-                                Публикация платного промта стоит 1 ⭐. Вы согласны?
+                                Публикация медиа с платным prompt стоит 1 ⭐. Вы согласны?
                             </Typography>
                         </DialogContent>
                         <DialogActions>

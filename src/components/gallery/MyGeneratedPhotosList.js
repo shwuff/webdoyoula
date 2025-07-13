@@ -25,6 +25,7 @@ import imageReducer from "../../redux/reducers/imageReducer";
 import Image from "./Image";
 import Video from "../player/Video";
 import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
+import FeedSkeleton from "./FeedSkeleton";
 
 
 Modal.setAppElement('#app');
@@ -47,19 +48,12 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         toggleSelectPhoto(photo.id);
     };
 
-    const [favoritePhotos, setFavoritePhotos] = useState({});
-
     const imageSelector = useSelector((state) => state.image.images);
 
     const [animatingInId, setAnimatingInId] = useState(null);
     const [animatingOutId, setAnimatingOutId] = useState(null);
 
     const toggleFavorite = (photoId, isAdding) => {
-
-        setFavoritePhotos(prev => ({
-            ...prev,
-            [photoId]: isAdding,
-        }));
 
         if (isAdding) {
             setAnimatingInId(photoId);
@@ -88,7 +82,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
 
-            { photo.media_url && photo.status !== 'creating' ? (
+            { imageSelector[photo.id].media_url && imageSelector[photo.id].status !== 'creating' ? (
                 // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
                 <>
                     {
@@ -183,7 +177,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
 
 
             {
-                photo.status !== 'creating' && profileGallery === false && (
+                imageSelector[photo.id].status !== 'creating' && profileGallery === false && (
                     <div
                         className={`${styles.selectCircle} ${isSelected ? styles.selected : ''}`}
                         onClick={handleCircleClick}
@@ -195,7 +189,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             }
 
             {
-                photo.file_type === 'video' && (
+                imageSelector[photo.id].file_type === 'video' && (
                     <button className={styles.playButton}>
                         <BiPlay style={{background: "var(--secondary-bg-color)"}} className={styles.playButtonIcon} />
                     </button>
@@ -330,6 +324,7 @@ const MyGeneratedPhotosList = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(0);
     const [closingModal, setClosingModal] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [photosSortModel, setPhotosSortModel] = useState(0);
     const [selectedModel, setSelectedModel] = useState([]);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -339,6 +334,9 @@ const MyGeneratedPhotosList = ({
 
     const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
+
+    const isEmptyRef = useRef(true);
+    const isLoadingRef = useRef(true);
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
     const { token, myLoras, setMyLoras } = useAuth();
@@ -360,13 +358,6 @@ const MyGeneratedPhotosList = ({
             setSearchText('');
         }, 300);
     };
-
-    useEffect(() => {
-        setSearchText('');
-    }, []);
-
-    const photosRef = useRef([]);
-    const isLoadingRef = useRef(false);
 
     const generateUUID = () => {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -399,17 +390,6 @@ const MyGeneratedPhotosList = ({
 
     }, [sendData, token, setSelectedPhoto]);
 
-    // const openModalP = (post) => {
-    //     if (!post) return;
-    //     setSelectedPostForComment(post);
-    //     setIsModalOpen(true);
-    // };
-    //
-    // const closeModalP = () => {
-    //     setIsModalOpen(false);
-    //     setSelectedPostForComment(null);
-    // };
-
     const closeModal = useCallback(() => {
         setClosingModal(true);
         setTimeout(() => {
@@ -430,18 +410,6 @@ const MyGeneratedPhotosList = ({
         });
     }, []);
 
-    const openActionsModal = () => {
-        setIsActionsModalOpen(true);
-    };
-
-    const closeActionsModal = () => {
-        setClosingModal(true);
-        setTimeout(() => {
-            setIsActionsModalOpen(false);
-            setClosingModal(false);
-        }, 300);
-    };
-
     const handleUploadToBot = () => {
         setIsActionsModalOpen(false);
         sendData({
@@ -458,51 +426,6 @@ const MyGeneratedPhotosList = ({
             data: { jwt: token, media_ids: selectedImages }
         });
         setSelectedImages([]);
-    };
-
-    const handleAddToPost = () => {
-        setIsActionsModalOpen(false);
-        sendData({
-            action: "add_images_to_post",
-            data: { jwt: token, imagesIds: selectedImages, postId }
-        });
-        setSelectedImages([]);
-    }
-    const handleCreatePost = () => {
-        setIsActionsModalOpen(false);
-        sendData({
-            action: "handle_create_post_with_generated_media",
-            data: { jwt: token, mediaIds: selectedImages }
-        });
-        setSelectedImages([]);
-    };
-
-    const sortAndUniquePhotos = (photosArray) => {
-        const sorted = photosArray.sort((a, b) => {
-            const aStr = String(a.id);
-            const bStr = String(b.id);
-            if (aStr === bStr) return 0;
-
-            const aStartsWithB = aStr.startsWith("b");
-            const bStartsWithB = bStr.startsWith("b");
-
-            if (aStartsWithB && bStartsWithB) {
-                return parseInt(aStr.slice(1), 10) - parseInt(bStr.slice(1), 10);
-            }
-            if (aStartsWithB) {
-                return -1;
-            }
-            if (bStartsWithB) {
-                return 1;
-            }
-            return Number(b.id) - Number(a.id);
-        });
-
-        const uniqueSorted = sorted.filter((photo, index, arr) => {
-            return index === 0 || photo.id !== arr[index - 1].id;
-        });
-
-        return uniqueSorted;
     };
 
     const sortAndUniquePhotosWithRepeats = (photosArray) => {
@@ -633,16 +556,7 @@ const MyGeneratedPhotosList = ({
         setPhotosPage(0);
         resetFetchingRef();
         resetLastPageRef();
-    }, [filter, dateRange, feed, showPaidPrompts, showSaved]);
-
-    //clean photos ref
-    useEffect(() => {
-        setPhotosList([]);
-        setPhotosPage(0);
-        resetLastPageRef();
-        resetFetchingRef();
-        isLoadingRef.current = false;
-    }, [userIdLoaded, setPhotosList]);
+    }, [filter, dateRange, feed, showPaidPrompts, showSaved, userIdLoaded, setPhotosList]);
 
     // Click backButton Telegram
     useEffect(() => {
@@ -662,9 +576,8 @@ const MyGeneratedPhotosList = ({
 
     //close loading
     useEffect(() => {
-        if (isLoadingRef.current) return;
+        // if (isLoadingRef.current) return;
         if(token === null) return;
-        isLoadingRef.current = true;
 
         sendData({
             action: from === "feedPage" ? "v2/get/feed" : "v2/get/media/all",
@@ -683,109 +596,11 @@ const MyGeneratedPhotosList = ({
         });
     }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed, showPaidPrompts, showSaved]);
 
-    //start generating image
-    useEffect(() => {
-        if(userIdLoaded < 1) {
-            const handleStartGeneratingImages = async (msg) => {
-                if (!msg.photos || msg.photos.length < 1) return;
-                const { modelId, photos } = msg;
-
-                if (photosSortModel === 0 || photosSortModel === modelId) {
-                    setPhotosList((prev) => sortAndUniquePhotos([...prev, ...photos]));
-                }
-            };
-
-            addHandler('start_generating_images', handleStartGeneratingImages);
-            return () => deleteHandler('start_generating_images');
-        }
-    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded, photosList, setPhotosList]);
-
-    // update photo hided status
-    useEffect(() => {
-        const handleMessage = async (msg) => {
-            setPhotosList(photo => {
-                if (photo.id === msg.photoId) {
-                    return { ...photo, hided: msg.hided };
-                }
-                return photo;
-            });
-            if(selectedPhoto !== null && selectedPhoto.id === msg.photoId) {
-                // setSelectedPhoto((prev) => ({
-                //     ...prev,
-                //     hided: msg.hided
-                // }));
-                setPhotosList((prev) =>
-                    prev.map((photo) =>
-                        selectedImages.includes(photo.id)
-                            ? { ...photo, hided: false }
-                            : photo
-                    )
-                );
-            }
-            dispatch(updateImage(msg.photoId, {hided: msg.hided}));
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        };
-
-        addHandler('update_photo_hided', handleMessage);
-        return () => deleteHandler('update_photo_hided');
-    }, [photosSortModel, addHandler, deleteHandler, selectedPhoto, setPhotosList]);
-
-    //new photos notify
-    useEffect(() => {
-
-        if(userIdLoaded < 1) {
-            const handleNewPhotos = async (msg) => {
-                if (!msg.media || msg.media.length < 1) return;
-                const { modelId, media, mediaGroupId } = msg;
-
-                if (photosSortModel === 0 || photosSortModel === modelId) {
-                    // let updatedPhotos;
-                    // if (mediaGroupId) {
-                    //     const filteredPrev = photosList.filter(
-                    //         (photo) => photo.media_generated_group_id !== mediaGroupId
-                    //     );
-                    //     const newGroupPhotos = media.map((p) => ({
-                    //         ...p,
-                    //         media_generated_group_id: mediaGroupId,
-                    //         status: "completed"
-                    //     }));
-                    //     updatedPhotos = [...newGroupPhotos, ...filteredPrev];
-                    // } else {
-                    //     updatedPhotos = [...msg.media, ...photosList];
-                    // }
-                    //
-                    // updatedPhotos = sortAndUniquePhotos(updatedPhotos);
-                    setPhotosList((prev) => {
-                        let updatedPhotos;
-                        if (mediaGroupId) {
-                            const filteredPrev = prev.filter(
-                                (photo) => photo.media_generated_group_id !== mediaGroupId
-                            );
-                            const newGroupPhotos = media.map((p) => ({
-                                ...p,
-                                media_generated_group_id: mediaGroupId,
-                                status: "completed"
-                            }));
-                            updatedPhotos = [...newGroupPhotos, ...filteredPrev];
-                        } else {
-                            updatedPhotos = [...msg.media, ...prev];
-                        }
-
-                        updatedPhotos = sortAndUniquePhotos(updatedPhotos);
-                        return updatedPhotos;
-                    })
-                }
-            };
-
-            addHandler('new_photos', handleNewPhotos);
-            return () => deleteHandler('new_photos');
-        }
-
-    }, [photosSortModel, addHandler, deleteHandler, userIdLoaded, setPhotosList]);
-
     //generated photos append
     useEffect(() => {
         const handleAppend = async (msg) => {
+            isLoadingRef.current = false;
+
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
                 if(userIdLoaded < 1 && from !== 'feedPage') {
                     setPhotosList((prev) => ([...prev, ...msg.media]));
@@ -797,64 +612,17 @@ const MyGeneratedPhotosList = ({
                     }
                 }
             }
-
             resetFetchingRef();
-            isLoadingRef.current = false;
         };
 
         addHandler('generated_media_append', handleAppend);
         return () => deleteHandler('generated_media_append');
     }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, photosList, userIdLoaded, from, requestId, setPhotosList, filter, dateRange]);
 
-    //generated photos
-    useEffect(() => {
-        const handleGeneratedPhotos = async (msg) => {
-            if (!msg.photos || msg.photos.length < 1) {
-                isLoadingRef.current = false;
-                resetFetchingRef();
-                return;
-            }
-            setPhotosList((prev) => sortAndUniquePhotos([...prev, ...msg.photos]))
-            isLoadingRef.current = false;
-            resetFetchingRef();
-        };
-
-        addHandler('generated_photos', handleGeneratedPhotos);
-        return () => deleteHandler('generated_photos');
-    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, setPhotosList]);
-
     //scroll to top after filter avatar
     useEffect(() => {
         document.getElementById("generatedPhotosList")?.scrollTo({ top: 0, behavior: 'smooth' });
     }, [photosSortModel]);
-
-    useEffect(() => {
-        const handleNewAvatar = (msg) => {
-            const avatar = msg.avatar;
-
-            if(profileGallery === false) {
-                handleChangePhotosSortModel(Number(avatar.id), [
-                    {
-                        ...avatar,
-                        id: Number(avatar.id)
-                    },
-                    ...myLoras
-                ]);
-
-                setMyLoras(prev => ([
-                    {
-                        ...avatar,
-                        id: Number(avatar.id)
-                    },
-                    ...prev
-                ]));
-            }
-        }
-
-        addHandler('handle_create_new_avatar', handleNewAvatar);
-
-        return () => deleteHandler('handle_create_new_avatar');
-    }, [profileGallery, myLoras]);
 
     const handleChangePhotosSortModel = useCallback((value, myLoras) => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -869,7 +637,6 @@ const MyGeneratedPhotosList = ({
         }
         resetLastPageRef();
         resetFetchingRef();
-        isLoadingRef.current = false;
     }, [setPhotosPage, resetLastPageRef, resetFetchingRef, setPhotosList]);
 
     const memoizedPhotos = useMemo(() => photosList, [photosList]);
@@ -883,11 +650,6 @@ const MyGeneratedPhotosList = ({
                 data: { jwt: token, photoId: selectedImages[i] }
             });
 
-            // photosRef.current.forEach((photo) => {
-            //     if (photo.id === selectedImages[i]) {
-            //         photo.hided = false;
-            //     }
-            // });
             setPhotosList((prev) =>
                 prev.map((photo) =>
                     selectedImages.includes(photo.id)
@@ -899,6 +661,12 @@ const MyGeneratedPhotosList = ({
 
         setSelectedImages([]);
     };
+
+    if(photosList.length < 1 && isLoadingRef.current ) {
+        return <FeedSkeleton />
+    } else if(photosList.length < 1 && !isLoadingRef.current) {
+        return <p className={"text-center"} style={{marginTop: 10}}>{t("Media not found")}</p>
+    }
 
     return (
         <div>

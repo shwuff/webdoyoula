@@ -144,7 +144,6 @@ const ViewPosts = ({ posts, images, user, setPosts }) => {
     //
     // useEffect(() => {
     //     const handleComments = (msg) => {
-    //         console.log(msg);
     //         setComments(msg.comments);
     //     }
     //

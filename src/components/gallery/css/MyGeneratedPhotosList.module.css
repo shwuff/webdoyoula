@@ -468,6 +468,29 @@
     cursor: pointer;
 }
 
+.favoriteBookmarkModal {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; /* 👈 КРУГ */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    backdrop-filter: blur(4px); /* чуть менее размыт */
+    background: rgba(0, 0, 0, 0.4); /* 👈 более тёмный фон */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* светлая, но очень тонкая обводка */
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* более плотная тень */
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
 .favoriteBookmark:hover {
     transform: scale(1.05); /* 👈 Небольшой zoom при наведении */
 }
