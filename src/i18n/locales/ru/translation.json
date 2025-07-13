@@ -135,6 +135,8 @@
   "Field prompt is required": "Поле \"Промт\" является обязательным!",
   "Invalid option selected in field aspect_ratio": "В поле \"Соотношение сторон\" выбран неверный параметр",
   "Field start_image is required": "Поле \"Стартовое изображение\" является обязательным!",
+  "Field input_image is required": "Поле \"Изображение\" является обязательным!",
+  "input image": "Загрузите изображение",
   "Model not found": "Модель не найдена",
   "You can only publish once every 10 minutes": "Публиковать можно только раз в 10 минут!",
   "Post to group": "Опубликовать в группе",

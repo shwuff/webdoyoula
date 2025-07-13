@@ -22,7 +22,7 @@ const Placeholder = styled('div')(({ theme }) => ({
     animation: `${shimmer} 1.5s linear infinite`,
 }));
 
-export default function FeedSkeleton({ items = 9 }) {
+export default function FeedSkeleton({ items = 15 }) {
     return (
         <Grid container spacing={2}>
             {Array.from({ length: items }).map((_, i) => (
