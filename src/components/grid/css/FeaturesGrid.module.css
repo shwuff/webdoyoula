@@ -115,9 +115,7 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text-color);
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    position: static;
     width: 100%;
     padding: 12px 16px;
     backdrop-filter: blur(10px);
@@ -135,4 +133,32 @@
     gap: 6px;
     font-size: 0.9rem;
     opacity: 0.85;
+}
+
+.featureNameDown {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    position: static;
+    width: 100%;
+    padding: 0 16px 12px;
+    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.telegramStar {
+    width: 14px;
+    height: 16px;
+}
+
+.telegramStarIcon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
 }
