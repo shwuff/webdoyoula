@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     MenuItem, Select, FormControl, InputLabel, Switch, FormControlLabel
 } from "@mui/material";
@@ -52,6 +52,12 @@ const FeedFilters = ({
             }
         );
     };
+
+    useEffect(() => {
+        if (window.Telegram?.WebApp?.HapticFeedback?.impactOccurred) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+    }, [isMarket]);
 
     const hideFilters = () => {
         gsap.killTweensOf(filtersWrapperRef.current);

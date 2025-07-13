@@ -222,13 +222,14 @@
 
 .selectedBar {
     position: sticky;
-    top: 35px;
+    top: 52px;
     z-index: 9;
     background-color: var(--bg-color, #fff);
-    padding: 5px;
+    padding: 3px 5px 5px;
     display: flex;
     align-items: center;
     gap: 5px;
+    
 }
 
 .navButton {
@@ -547,4 +548,29 @@
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+.scrollToTop {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-bg-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+    cursor: pointer;
+    transition: opacity .25s ease, transform .25s ease;
+    opacity: .8;
+    z-index: 1100;
+}
+
+.scrollToTop:hover {
+    opacity: 1;
+    transform: translateY(-4px);
 }

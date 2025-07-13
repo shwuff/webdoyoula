@@ -26,6 +26,8 @@ import Image from "./Image";
 import Video from "../player/Video";
 import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
 import FeedSkeleton from "./FeedSkeleton";
+import { BsArrowUp } from 'react-icons/bs';
+
 
 
 Modal.setAppElement('#app');
@@ -242,6 +244,8 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
         toggleSelectPhoto(photo.id);
     };
 
+    
+
     const imageSelector = useSelector((state) => state.image.images);
 
     return (
@@ -307,6 +311,7 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
     );
 };
 
+
 const areEqual = (prevProps, nextProps) =>
     prevProps.photo.id === nextProps.photo.id &&
     prevProps.isSelected === nextProps.isSelected;
@@ -367,6 +372,8 @@ const MyGeneratedPhotosList = ({
     const searchInputRef = useRef(null);
 
     const handleSearchFocus = () => setSearchExpanded(true);
+
+    const [showScrollTop, setShowScrollTop] = useState(false);
 
     const handleSearchBlur = () => {
         setSearchExpanded(false);
@@ -574,6 +581,29 @@ const MyGeneratedPhotosList = ({
         resetLastPageRef();
     }, [filter, dateRange, feed, showPaidPrompts, showSaved, userIdLoaded, setPhotosList]);
 
+    useEffect(() => {
+        const listEl = document.getElementById('generatedPhotosList');
+        if (!listEl) return;
+
+        const onScroll = () => {
+            // показываем кнопку, если проскроллили > 1000 px
+            setShowScrollTop(listEl.scrollTop > 1000);
+        };
+
+        listEl.addEventListener('scroll', onScroll);
+        return () => listEl.removeEventListener('scroll', onScroll);
+    }, []);
+
+
+    useEffect(() => {
+        if (typeof window !== "undefined" &&
+            window?.Telegram?.WebApp?.HapticFeedback?.impactOccurred &&
+            typeof showPaidPrompts !== "undefined"
+        ) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+    }, [showPaidPrompts]);
+
     // Click backButton Telegram
     useEffect(() => {
 
@@ -658,6 +688,14 @@ const MyGeneratedPhotosList = ({
     const memoizedPhotos = useMemo(() => photosList, [photosList]);
     const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
 
+    const scrollToTop = () => {
+        const listEl = document.getElementById('generatedPhotosList');
+        if (!listEl) return;
+        listEl.scrollTo({ top: 0, behavior: 'smooth' });
+        window.Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('light');
+    };
+
+
     const handlePublishToGallery = () => {
         for (let i=0; i < selectedImages.length; i++){
             
@@ -728,6 +766,17 @@ const MyGeneratedPhotosList = ({
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
+
+            {showScrollTop && (
+                <button
+                    className={styles.scrollToTop}
+                    onClick={scrollToTop}
+                    aria-label="Наверх"
+                >
+                    <BsArrowUp size={24} />
+                </button>
+            )}
+
 
             {selectedImages.length > 0 && (
                 <div className={styles.selectedBar}>
@@ -813,6 +862,8 @@ const MyGeneratedPhotosList = ({
                     )
                 }
             </div>
+
+
 
             {
                 selectedModel.status === 'waiting' && photosSortModel === selectedModel.id && (
