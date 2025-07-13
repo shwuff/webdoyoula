@@ -136,7 +136,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             )}
 
             {Number(imageSelector[photo.id]?.author?.id) === Number(imageSelector[photo.id]?.prompt_author) ? (
-                <div className={styles.publishedBadge} style={{ left: 0 }}>
+                <div className={styles.publishedBadge} style={{ left: "4px" }}>
                     {
                         imageSelector[photo.id]?.repeat_price !== null && imageSelector[photo.id]?.repeat_price > 0 ? (
                             <img
@@ -167,7 +167,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             ) : (
                 <>
                     { imageSelector[photo.id]?.repeat_price !== null && imageSelector[photo.id]?.repeat_price > 0 && (
-                        <div className={styles.publishedBadge} style={{ left: 0 }}>
+                        <div className={styles.publishedBadge} style={{ left: "4px" }}>
                             <img
                                 src={telegramAnimationStar}
                                 alt="Gold Animation Star"

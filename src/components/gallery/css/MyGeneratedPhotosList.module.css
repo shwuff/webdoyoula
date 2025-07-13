@@ -335,12 +335,10 @@
 .publishedBadge {
     position: absolute;
     bottom: 5px;
-    right: 8px;
+    right: 7px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 8px;
-    height: 40px;
 }
 
 
@@ -447,8 +445,8 @@
 
 .favoriteBookmark {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 5px;
+    right: 5px;
     z-index: 10;
 
     width: 36px;
@@ -528,8 +526,8 @@
 
 .authorAvatarWrapper {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 5px;
+    left: 5px;
     z-index: 5;
     cursor: pointer;
     border-radius: 50%;
