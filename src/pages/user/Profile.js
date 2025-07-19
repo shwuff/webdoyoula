@@ -169,6 +169,7 @@ const Profile = () => {
 
     const [photosPage, setPhotosPage] = useState(0);
     const [filter, setFilter] = useState("date");
+    const [searchingAiModel, setSearchingAiModel] = useState(0);
     const [dateRange, setDateRange] = useState("all_time");
     const [isMarket, setIsMarket] = useState(false);
     const [showPaidPrompts, setShowPaidPrompts] = useState(false);
@@ -416,6 +417,8 @@ const Profile = () => {
                     <FeedFilters
                         filter={filter}
                         setFilter={setFilter}
+                        searchingAiModel={searchingAiModel}
+                        setSearchingAiModel={setSearchingAiModel}
                         dateRange={dateRange}
                         setDateRange={setDateRange}
                         feed={'feed'}
@@ -434,9 +437,10 @@ const Profile = () => {
                         resetFetchingRef={resetFetchingRef}
                         photosPage={photosPage}
                         setPhotosPage={setPhotosPage}
-                        from={'viewGallery'}
+                        from={'feedPage'}
                         userIdLoaded={tempUserData.id}
                         filter={filter}
+                        searchingAiModel={searchingAiModel}
                         dateRange={dateRange}
                         showPaidPrompts={showPaidPrompts}
                     />
@@ -449,7 +453,7 @@ const Profile = () => {
                 <div className="p-2 w-100 d-flex justify-content-between">
                     <h2 className={styles.modalTitle}>{modalTitle}</h2>
                     {
-                        !userData.isTelegram && (
+                        !userData.is_telegram && (
                             <CloseButton onClick={closeModal} />
                         )
                     }

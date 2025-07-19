@@ -84,21 +84,21 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
 
-            { profileGallery === true && imageSelector[photo.id]?.author && (
-                <div
-                    className={styles.authorAvatarWrapper}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        navigate('/profile/' + imageSelector[photo.id].author.id);
-                    }}
-                >
-                    <img
-                        src={imageSelector[photo.id].author.photo_url}
-                        alt={imageSelector[photo.id].author.username}
-                        className={styles.authorAvatar}
-                    />
-                </div>
-            )}
+            {/*{ profileGallery === true && imageSelector[photo.id]?.author && (*/}
+            {/*    <div*/}
+            {/*        className={styles.authorAvatarWrapper}*/}
+            {/*        onClick={(e) => {*/}
+            {/*            e.stopPropagation();*/}
+            {/*            navigate('/profile/' + imageSelector[photo.id].author.id);*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        <img*/}
+            {/*            src={imageSelector[photo.id].author.photo_url}*/}
+            {/*            alt={imageSelector[photo.id].author.username}*/}
+            {/*            className={styles.authorAvatar}*/}
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*)}*/}
 
             { imageSelector[photo.id].media_url && imageSelector[photo.id].status !== 'creating' ? (
                 // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
@@ -331,11 +331,11 @@ const MyGeneratedPhotosList = ({
     resetLastPageRef,
     resetFetchingRef,
     from,
-    postId,
     showSaved = false,
     userIdLoaded = 0,
     searchQuery = '',
     filter = '',
+    searchingAiModel = 0,
     dateRange = '',
     feed = 'feed',
     isMarket = false,
@@ -357,7 +357,6 @@ const MyGeneratedPhotosList = ({
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
 
     const isEmptyRef = useRef(true);
-    const isLoadingRef = useRef(true);
 
     const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
     const { token, myLoras, setMyLoras } = useAuth();
@@ -366,21 +365,9 @@ const MyGeneratedPhotosList = ({
 
     const dispatch = useDispatch();
 
-    const [searchExpanded, setSearchExpanded] = useState(false);
     const [searchText, setSearchText] = useState('');
-    
-    const searchInputRef = useRef(null);
-
-    const handleSearchFocus = () => setSearchExpanded(true);
-
     const [showScrollTop, setShowScrollTop] = useState(false);
-
-    const handleSearchBlur = () => {
-        setSearchExpanded(false);
-        setTimeout(() => {
-            setSearchText('');
-        }, 300);
-    };
+    const [isLoading, setIsLoading] = useState(true);
 
     const generateUUID = () => {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -530,7 +517,8 @@ const MyGeneratedPhotosList = ({
                     ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
                     ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
                     ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
-                    ...(from === 'feedPage' ? {feed} : {})
+                    ...(from === 'feedPage' ? {feed} : {}),
+                    ...(searchingAiModel !== 0 ? {searching_ai_model: searchingAiModel} : {})
                 }
             });
         }
@@ -548,6 +536,7 @@ const MyGeneratedPhotosList = ({
             userIdLoaded,
             requestId,
             filter,
+            searchingAiModel,
             dateRange,
             showPaidPrompts,
             showSaved
@@ -566,33 +555,11 @@ const MyGeneratedPhotosList = ({
     }, [sendData, photosList]);
 
     useEffect(() => {
-        if(searchQuery.length > 1) {
-            setPhotosList([]);
-            setPhotosPage(0);
-            resetFetchingRef();
-            resetLastPageRef();
-        }
-    }, [searchQuery]);
-
-    useEffect(() => {
         setPhotosList([]);
         setPhotosPage(0);
         resetFetchingRef();
         resetLastPageRef();
-    }, [filter, dateRange, feed, showPaidPrompts, showSaved, userIdLoaded, setPhotosList]);
-
-    useEffect(() => {
-        const listEl = document.getElementById('generatedPhotosList');
-        if (!listEl) return;
-
-        const onScroll = () => {
-            // показываем кнопку, если проскроллили > 1000 px
-            setShowScrollTop(listEl.scrollTop > 1000);
-        };
-
-        listEl.addEventListener('scroll', onScroll);
-        return () => listEl.removeEventListener('scroll', onScroll);
-    }, []);
+    }, [filter, dateRange, feed, showPaidPrompts, showSaved, userIdLoaded, searchingAiModel, setPhotosList, searchQuery]);
 
 
     useEffect(() => {
@@ -637,15 +604,15 @@ const MyGeneratedPhotosList = ({
                 ...(searchQuery.length > 1 ? { searchParam: searchQuery } : {}),
                 ...(filter.length > 1 ? { filter: filter, dateRange: dateRange } : {}),
                 ...(showPaidPrompts !== false ? {showPaidPrompts: true} : {showPaidPrompts: false}),
-                ...(from === 'feedPage' ? {feed} : {})
+                ...(from === 'feedPage' ? {feed} : {}),
+                ...(searchingAiModel !== 0 ? {searching_ai_model: searchingAiModel} : {})
             }
         });
-    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, dateRange, feed, showPaidPrompts, showSaved]);
+    }, [token, photosPage, photosSortModel, userIdLoaded, from, requestId, searchQuery, filter, searchingAiModel, dateRange, feed, showPaidPrompts, showSaved]);
 
-    //generated photos append
+    //generated media append
     useEffect(() => {
         const handleAppend = async (msg) => {
-            isLoadingRef.current = false;
 
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
                 if(userIdLoaded < 1 && from !== 'feedPage') {
@@ -659,11 +626,13 @@ const MyGeneratedPhotosList = ({
                 }
             }
             resetFetchingRef();
+
+            setIsLoading(false);
         };
 
         addHandler('generated_media_append', handleAppend);
         return () => deleteHandler('generated_media_append');
-    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, photosList, userIdLoaded, from, requestId, setPhotosList, filter, dateRange]);
+    }, [addHandler, deleteHandler, resetFetchingRef, photosSortModel, photosList, userIdLoaded, from, requestId, setPhotosList, filter, dateRange, searchingAiModel, setIsLoading]);
 
     //scroll to top after filter avatar
     useEffect(() => {
@@ -688,13 +657,6 @@ const MyGeneratedPhotosList = ({
     const memoizedPhotos = useMemo(() => photosList, [photosList]);
     const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
 
-    const scrollToTop = () => {
-        const listEl = document.getElementById('generatedPhotosList');
-        if (!listEl) return;
-        listEl.scrollTo({ top: 0, behavior: 'smooth' });
-        window.Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('light');
-    };
-
 
     const handlePublishToGallery = () => {
         for (let i=0; i < selectedImages.length; i++){
@@ -716,9 +678,9 @@ const MyGeneratedPhotosList = ({
         setSelectedImages([]);
     };
 
-    if(photosList.length < 1 && isLoadingRef.current ) {
+    if(photosList.length < 1 && isLoading ) {
         return <FeedSkeleton />
-    } else if(photosList.length < 1 && !isLoadingRef.current) {
+    } else if(photosList.length < 1 && !isLoading) {
         return <p className={"text-center"} style={{marginTop: 10}}>{t("Media not found")}</p>
     }
 
@@ -727,25 +689,16 @@ const MyGeneratedPhotosList = ({
             {
                 profileGallery === false && (
                     <div className="myButtonsContainer horizontal-list ">
-                        {(searchText.length === 0 || photosSortModel === 0) && (
-                            <button
-                                onClick={() => handleChangePhotosSortModel(0, myLoras)}
-                                className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-glass'}`}
-                            >
-                                {t('all')}
-                            </button>
-                        )}
+                        <button
+                            onClick={() => handleChangePhotosSortModel(0, myLoras)}
+                            className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-glass'}`}
+                        >
+                            {t('all')}
+                        </button>
 
 
 
-                        {[...new Set([
-                            ...myLoras?.filter((model) =>
-                            model.name.toLowerCase().includes(searchText.toLowerCase())
-                            ),
-                            ...(photosSortModel !== 0
-                            ? myLoras.filter((model) => model.id === photosSortModel)
-                            : [])
-                        ])].map((model, idx) => (
+                        {myLoras.map((model, idx) => (
                             <button
                                 key={model.id}
                                 onClick={() => handleChangePhotosSortModel(model.id, myLoras)}
@@ -766,17 +719,6 @@ const MyGeneratedPhotosList = ({
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-
-            {showScrollTop && (
-                <button
-                    className={styles.scrollToTop}
-                    onClick={scrollToTop}
-                    aria-label="Наверх"
-                >
-                    <BsArrowUp size={24} />
-                </button>
-            )}
-
 
             {selectedImages.length > 0 && (
                 <div className={styles.selectedBar}>
@@ -829,7 +771,7 @@ const MyGeneratedPhotosList = ({
                 </div>
             )}
 
-            <div className={styles.photoGrid} id="generatedPhotosList">
+            <div className={styles.photoGrid}>
                 {
                     isMarket ? (
                         <>
@@ -879,31 +821,32 @@ const MyGeneratedPhotosList = ({
                 )
             }
 
-            {isMarket 
-            ? 
-            <PhotoMarketModal 
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                setOpenBackdropLoader={setOpenBackdropLoader}
-                profileGallery={profileGallery}
-                nextPhoto={handleNextPhoto}
-                prevPhoto={handlePrevPhoto}
-                userIdLoaded={userIdLoaded}
-                selectedPhoto={selectedPhoto}
-                setSelectedPhoto={setSelectedPhoto}
-            /> 
-            : 
-            <PhotoPostModal 
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                setOpenBackdropLoader={setOpenBackdropLoader}
-                profileGallery={profileGallery}
-                nextPhoto={handleNextPhoto}
-                prevPhoto={handlePrevPhoto}
-                userIdLoaded={userIdLoaded}
-                selectedPhoto={selectedPhoto}
-                setSelectedPhoto={setSelectedPhoto}
-             />
+            {
+            isMarket
+                ?
+                <PhotoMarketModal
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    setOpenBackdropLoader={setOpenBackdropLoader}
+                    profileGallery={profileGallery}
+                    nextPhoto={handleNextPhoto}
+                    prevPhoto={handlePrevPhoto}
+                    userIdLoaded={userIdLoaded}
+                    selectedPhoto={selectedPhoto}
+                    setSelectedPhoto={setSelectedPhoto}
+                />
+            :
+                <PhotoPostModal
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    setOpenBackdropLoader={setOpenBackdropLoader}
+                    profileGallery={profileGallery}
+                    nextPhoto={handleNextPhoto}
+                    prevPhoto={handlePrevPhoto}
+                    userIdLoaded={userIdLoaded}
+                    selectedPhoto={selectedPhoto}
+                    setSelectedPhoto={setSelectedPhoto}
+                 />
             }
 
 

@@ -13,29 +13,75 @@ const MAX_PHOTOS = 15;
 export default function CreateAvatarModal() {
     const [open, setOpen] = useState(false);
     const [avatarName, setAvatarName] = useState('');
-    const [photos, setPhotos] = useState([]); // массив { file, preview }
+    const [photos, setPhotos] = useState([]);
 
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { sendData } = useWebSocket();
     const { token } = useAuth();
 
-    const handleFilesChange = (e) => {
-        const selectedFiles = Array.from(e.target.files || []);
-        setPhotos(prev => {
-            // сколько ещё можно добавить
-            const slotsLeft = MAX_PHOTOS - prev.length;
-            if (slotsLeft <= 0) return prev;
+    const compressImage = (file, maxSizeKB = 100, maxWidth = 512) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
 
-            // берем не больше чем осталось слотов
-            const toAdd = selectedFiles.slice(0, slotsLeft).map(file => ({
-                file,
-                preview: URL.createObjectURL(file)
-            }));
+            reader.onload = () => {
+                const dataUrl = reader.result;
+                const sizeKB = Math.round((dataUrl.length * (3 / 4)) / 1024);
 
-            return [...prev, ...toAdd];
+                if (sizeKB <= maxSizeKB) {
+                    return resolve(dataUrl.split(',')[1]);
+                }
+
+                const img = new Image();
+                img.src = dataUrl;
+
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ratio = img.width > maxWidth ? maxWidth / img.width : 1;
+
+                    canvas.width = img.width * ratio;
+                    canvas.height = img.height * ratio;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const tryCompress = (q = 0.8) => {
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', q);
+                        const compressedSizeKB = Math.round((compressedDataUrl.length * (3 / 4)) / 1024);
+
+                        if (compressedSizeKB <= maxSizeKB || q <= 0.4) {
+                            resolve(compressedDataUrl.split(',')[1]);
+                        } else {
+                            tryCompress(q - 0.05);
+                        }
+                    };
+
+                    tryCompress();
+                };
+            };
+
+            reader.readAsDataURL(file);
         });
-        // чтобы можно было выбрать те же файлы повторно
+    };
+
+    const handleFilesChange = async (e) => {
+        const selectedFiles = Array.from(e.target.files || []);
+        const slotsLeft = MAX_PHOTOS - photos.length;
+        if (slotsLeft <= 0) return;
+
+        const toCompress = selectedFiles.slice(0, slotsLeft);
+
+        const compressed = await Promise.all(
+            toCompress.map(async (file) => {
+                const base64 = await compressImage(file);
+                return {
+                    base64,
+                    preview: `data:image/jpeg;base64,${base64}`
+                };
+            })
+        );
+
+        setPhotos(prev => [...prev, ...compressed]);
         e.target.value = null;
     };
 
@@ -48,20 +94,7 @@ export default function CreateAvatarModal() {
     };
 
     const handleCreateAvatar = async () => {
-        // конвертация в base64
-        const toBase64 = (file) =>
-            new Promise((res, rej) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    // reader.result: data:<mime>;base64,<data>
-                    const dataUrl = reader.result || "";
-                    res(dataUrl.split(',')[1]);
-                };
-                reader.onerror = () => rej(reader.error);
-                reader.readAsDataURL(file);
-            });
-
-        const photosB64 = await Promise.all(photos.map(p => toBase64(p.file)));
+        const photosB64 = photos.map(p => p.base64);
 
         sendData({
             action: "lora/create",
@@ -73,7 +106,7 @@ export default function CreateAvatarModal() {
         });
 
         setOpen(false);
-        navigate('/profile');
+        navigate('/settings');
     };
 
     return (
@@ -109,13 +142,24 @@ export default function CreateAvatarModal() {
                         sx={{ mb: 2 }}
                     >
                         {t('Upload photos')} ({photos.length}/{MAX_PHOTOS})
-                        <input
-                            type="file"
-                            hidden
-                            accept="image/*"
-                            multiple
-                            onChange={handleFilesChange}
-                        />
+                        {
+                            window?.Telegram?.WebApp?.platform === 'android' ? (
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept="image/*"
+                                    onChange={handleFilesChange}
+                                />
+                            ) : (
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleFilesChange}
+                                />
+                            )
+                        }
                     </Button>
 
                     <Box

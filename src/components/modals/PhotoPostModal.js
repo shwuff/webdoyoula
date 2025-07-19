@@ -314,7 +314,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
 
                                         {
                                             imageSelector[selectedPhoto].file_type === 'video' ? (
-                                                    <Video videoUrl={imageSelector[selectedPhoto].media_url}/>
+                                                    <Video videoUrl={imageSelector[selectedPhoto].media_url} className={styles.modalImage} />
                                                 )
                                                 : (
                                                     <Image mediaId={imageSelector[selectedPhoto].id} className={styles.modalImage} />
@@ -516,7 +516,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                             {t('comments')}
                                                                         </Typography>
                                                                         {
-                                                                            !userData.isTelegram && (
+                                                                            !userData.is_telegram && (
                                                                                 <CloseButton onClick={() => setIsCommentModalOpen(false)} />
                                                                             )
                                                                         }
@@ -595,7 +595,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     {t('comments')}
                                                 </Typography>
                                                 {
-                                                    !userData.isTelegram && (
+                                                    !userData.is_telegram && (
                                                         <CloseButton onClick={closeModal} />
                                                     )
                                                 }

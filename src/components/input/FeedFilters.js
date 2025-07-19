@@ -11,17 +11,22 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import gsap from "gsap";
 import Button from "@mui/material/Button";
 import animationGoldStar from './../../assets/gif/gold_star.gif';
+import {useWebSocket} from "../../context/WebSocketContext";
+import {useAuth} from "../../context/UserContext";
 
 const FeedFilters = ({
-                         filter, setFilter, dateRange, setDateRange,
+                         filter, setFilter, searchingAiModel, setSearchingAiModel, dateRange, setDateRange,
                          feed, setFeed, style, setPhotosPage,
                          isMarket, setIsMarket, fromProfile = false
                      }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const {addHandler, deleteHandler, sendData} = useWebSocket();
+    const {token} = useAuth();
 
     const [filtersVisible, setFiltersVisible] = useState(false);
     const filtersWrapperRef = useRef(null);
+    const [availableModels, setAvailableModels] = useState([]);
 
     const showFilters = () => {
         gsap.killTweensOf(filtersWrapperRef.current);
@@ -88,6 +93,11 @@ const FeedFilters = ({
         setPhotosPage(0);
     };
 
+    const handleSearchingModelChange = (event) => {
+        setSearchingAiModel(event.target.value);
+        setPhotosPage(0);
+    };
+
     const handleFeedChange = (event) => {
         setFeed(event.target.value);
         setPhotosPage(0);
@@ -97,6 +107,27 @@ const FeedFilters = ({
         setDateRange(event.target.value);
         setPhotosPage(0);
     };
+
+    useEffect(() => {
+        if(token) {
+            sendData({
+                action: "get/models",
+                data: {
+                    jwt: token,
+                }
+            });
+        }
+    }, [token]);
+
+    useEffect(() => {
+        const receiveAvailableModels = (msg) => {
+            setAvailableModels(msg.models);
+        }
+
+        addHandler("receive_available_models", receiveAvailableModels);
+
+        return () => deleteHandler("receive_available_models");
+    }, [addHandler, deleteHandler, setAvailableModels]);
 
     return (
         <>
@@ -147,30 +178,57 @@ const FeedFilters = ({
                 style={{ overflow: 'hidden', height: 0, opacity: 0, transform: 'scale(0.95)', margin: "auto" }}
             >
 
-                {
-                    !fromProfile && (
-                        <div className="w-100 d-flex align-items-center justify-content-between mb-2" style={{marginBottom: "10px"}}>
-                            <FormControl
-                                sx={{ fontSize: "0.8rem", flexGrow: 1 }}
-                                size="small"
-                            >
-                                <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
-                                    {t('feed_type')}
-                                </InputLabel>
-                                <Select
-                                    labelId="filter-select-label"
-                                    value={feed}
-                                    onChange={handleFeedChange}
-                                    label={t('feed_type')}
-                                    sx={{ fontSize: "0.8rem", height: "40px" }}
+                <div className="d-flex" style={style}>
+                    {
+                        !fromProfile && (
+                            <div className="w-100 d-flex align-items-center justify-content-between mb-2" style={{ paddingRight: "5px", marginBottom: "10px" }}>
+                                <FormControl
+                                    sx={{ fontSize: "0.8rem", flexGrow: 1 }}
+                                    size="small"
                                 >
-                                    <MenuItem value="feed">{t('feed')}</MenuItem>
-                                    <MenuItem value="subs">{t('subscribes')}</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </div>
-                    )
-                }
+                                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
+                                        {t('feed_type')}
+                                    </InputLabel>
+                                    <Select
+                                        labelId="filter-select-label"
+                                        value={feed}
+                                        onChange={handleFeedChange}
+                                        label={t('feed_type')}
+                                        sx={{ fontSize: "0.8rem", height: "40px" }}
+                                    >
+                                        <MenuItem value="feed">{t('feed')}</MenuItem>
+                                        <MenuItem value="subs">{t('subscribes')}</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        )
+                    }
+
+                    <div className="w-100" style={{ paddingLeft: !fromProfile ? "5px" : "0px" }}>
+                        <FormControl fullWidth size="small" sx={{ marginBottom: "10px" }}>
+                            <InputLabel id="sort-label">{t('Select AI Model')}</InputLabel>
+                            <Select
+                                labelId="sort-label"
+                                value={searchingAiModel}
+                                onChange={handleSearchingModelChange}
+                                sx={{ fontSize: "0.8rem", height: "40px"}}
+                                label={t('Select AI Model')}
+                            >
+
+                                {
+                                    Object.values(availableModels).map((i) => {
+                                        return (
+                                            <MenuItem key={i.id} value={i.id}>
+                                                {i.name}
+                                            </MenuItem>
+                                        )
+                                    })
+                                }
+
+                            </Select>
+                        </FormControl>
+                    </div>
+                </div>
 
                 <div className="d-flex" style={style}>
                     <div className="w-100" style={{ paddingRight: "5px" }}>

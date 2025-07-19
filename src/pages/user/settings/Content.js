@@ -23,7 +23,7 @@ import CreateAvatarModal from "../../../components/modals/CreateAvatarModal";
 
 const Content = () => {
 
-    const { userData, token, setUserData } = useAuth();
+    const { userData, token, setUserData, myLoras } = useAuth();
     const {t} = useTranslation();
 
     const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
@@ -71,15 +71,7 @@ const Content = () => {
                                 </TableCell>
                             </TableRow>
 
-                            {/*<TableRow>*/}
-                            {/*    <TableCell>{t('automatic_posting_to_a_profile')}</TableCell>*/}
-                            {/*    <TableCell align="right">*/}
-                            {/*        <Switch*/}
-                            {/*            checked={autoUpload}*/}
-                            {/*            onChange={() => setAutoUpload(!autoUpload)}*/}
-                            {/*        />*/}
-                            {/*    </TableCell>*/}
-                            {/*</TableRow>*/}
+
                         </TableBody>
                     </Table>
                 </TableContainer>

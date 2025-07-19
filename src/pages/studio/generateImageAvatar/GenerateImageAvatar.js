@@ -18,6 +18,8 @@ import {useSelector} from "react-redux";
 import Video from "../../../components/player/Video";
 import Image from "../../../components/gallery/Image";
 import ErrorList from "../../../components/list/ErrorList";
+import ModelInstructionPage from "../../../components/models/ModelInstructionPage";
+import ModelInstructionModal from "../../../components/models/ModelInstructionModal";
 
 const GenerateImageAvatar = ({ editImage = false }) => {
 
@@ -30,14 +32,13 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     const imageSelector = useSelector(state => state.image.images);
 
     const [slug, setSlug] = useState(owner + '/' + model);
-    const promptId = undefined;
-    const photoId = undefined;
 
     const [currentModelFields, setCurrentModelFields] = useState({});
     const [currentModel, setCurrentModel] = useState(null);
     const [availableModels, setAvailableModels] = useState([]);
     const [loading, setLoading] = useState(false);
     const [promptData, setPromptData] = useState({});
+    const [paidOptionsPrice, setPaidOptionsPrice] = useState(0);
 
     const [error, setError] = useState([]);
 
@@ -76,14 +77,14 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     }, [addHandler, deleteHandler, setAvailableModels]);
 
     useEffect(() => {
-        if (currentModelFields) {
+        if (currentModelFields && Object.entries(dynamicFieldValues).length === 0) {
             const initial = {};
             for (const [key, field] of Object.entries(currentModelFields)) {
                 initial[key] = field.value ?? '';
             }
             setDynamicFieldValues(initial);
         }
-    }, [currentModelFields]);
+    }, [currentModelFields, dynamicFieldValues]);
 
     useEffect(() => {
         const onPredictionCreated = (msg) => {
@@ -141,6 +142,29 @@ const GenerateImageAvatar = ({ editImage = false }) => {
 
     }, [prompt_id]);
 
+    useEffect(() => {
+        if (
+            currentModel &&
+            currentModel.paid_options &&
+            typeof currentModel.paid_options === 'object'
+        ) {
+            let totalPrice = 0;
+
+            for (const key in dynamicFieldValues) {
+                const selectedValue = dynamicFieldValues[key];
+
+                if (
+                    currentModel.paid_options.hasOwnProperty(key) &&
+                    currentModel.paid_options[key].hasOwnProperty(selectedValue)
+                ) {
+                    totalPrice += currentModel.paid_options[key][selectedValue];
+                }
+            }
+
+            setPaidOptionsPrice(totalPrice);
+        }
+    }, [currentModel, dynamicFieldValues]);
+
     if(currentModel === null) {
         return <AllPage />
     }
@@ -149,7 +173,6 @@ const GenerateImageAvatar = ({ editImage = false }) => {
         <div className={`globalBlock`} style={{ paddingTop: "var(--safeAreaInset-top)" }}>
 
             <div className={"center-content-block"} style={{
-                /* либо auto+padding, либо calc от %: */
                 height: 'auto',
                 paddingBottom: '100px',
                 boxSizing: 'border-box',
@@ -172,10 +195,15 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                                 <Tooltip title={t('Average generation time')}>
                                     <span className={styles.runs}>
                                         <ClockIcon />
-                                        {currentModel.average_time}s.
+                                        {currentModel.average_time}s
                                     </span>
                                 </Tooltip>
                             </div>
+                            {
+                                (currentModel.name === 'professional' || currentModel.name === 'standart') && (
+                                    <i style={{ color: 'blue', textDecoration: "underline" }} className={"c-pointer"} onClick={() => navigate('/settings/content')}>Обучить модель со своим лицом</i>
+                                )
+                            }
                         </div>
                     </div>
 
@@ -211,6 +239,8 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                     }
 
                 </div>
+
+                <ModelInstructionModal description={currentModel.description} />
 
                 {Object.entries(currentModelFields).map(([fieldName, fieldConfig]) => (
                     <DynamicFieldRenderer
@@ -263,13 +293,13 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                 {
                     !promptData?.repeat_price || promptData?.repeat_price < 1 ? (
                         <p>
-                            <img src={redSirenAnimation} width={18} alt={"Red Siren"} /> С Вас спишется <span className={"no-wrap"}>{ (dynamicFieldValues.quantity || 1) * currentModel.price }
+                            <img src={redSirenAnimation} width={18} alt={"Red Siren"} /> С Вас спишется <span className={"no-wrap"}>{ (dynamicFieldValues.quantity || 1) * currentModel.price + (dynamicFieldValues.quantity || 1) * paidOptionsPrice }
                             <img src={animationStarGold} width={12} alt={"Star"} /></span>
                         </p>
                     ) : (
                         <p>
                             <img src={redSirenAnimation} width={18} alt={"Red Siren"} /> Вы повторяете prompt стоимостью {promptData.repeat_price} <img src={animationStarGold} width={12} alt={"Star"} />.
-                            С Вас спишется <span className={"no-wrap"}>{ (dynamicFieldValues.quantity || 1) * currentModel.price + promptData.repeat_price * (dynamicFieldValues.quantity || 1) }
+                            С Вас спишется <span className={"no-wrap"}>{ (dynamicFieldValues.quantity || 1) * currentModel.price + promptData.repeat_price * (dynamicFieldValues.quantity || 1) + (dynamicFieldValues.quantity || 1) * paidOptionsPrice }
                             <img src={animationStarGold} width={12} alt={"Star"} /></span>
                         </p>
                     )

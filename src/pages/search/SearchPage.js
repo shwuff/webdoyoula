@@ -81,6 +81,7 @@ const ShowImagesResult = ({ photosPage, setPhotosPage, resetFetchingRef, resetLa
     return (
         <div className="images-results">
             <MyGeneratedPhotosList
+                key={searchQuery}
                 profileGallery={true}
                 resetLastPageRef={resetLastPageRef}
                 resetFetchingRef={resetFetchingRef}
@@ -127,13 +128,13 @@ const SearchPage = ({ userResults, isFetchingRef, lastPageRef, photosPage, setPh
             {value === 0 && (
                 <>
                     <ShowUsersResult searchResults={userResults} setUserResults={setUserResults} sendData={sendData} token={token} max={5} showUsersPage={() => setValue(1)} searchQuery={searchQuery} />
-                    {/*<ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />*/}
+                    <ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />
                 </>
             )}
 
             {value === 1 && <ShowUsersResult setUserResults={setUserResults} searchResults={userResults} sendData={sendData} token={token} searchQuery={searchQuery} />}
 
-            {/*{value === 2 && <ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />}*/}
+            {value === 2 && <ShowImagesResult photosPage={photosPage} setPhotosPage={setPhotosPage} searchQuery={searchQuery} resetLastPageRef={resetLastPageRef} resetFetchingRef={resetFetchingRef} />}
         </div>
     );
 };

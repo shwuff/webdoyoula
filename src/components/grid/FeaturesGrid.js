@@ -59,7 +59,6 @@ const FeaturesGrid = ({ features }) => {
         return () => window.removeEventListener("keydown", handleKey);
     }, []);
 
-
     return (
         <>
             <div className={styles.searchBar}>
@@ -152,7 +151,7 @@ const FeaturesGrid = ({ features }) => {
                                     </span>
                                     <span className={styles.telegramStarIcon}>
                                         <img src={telegramStar} className={styles.telegramStar} />
-                                        {parseInt(feature.price)}
+                                        {feature.paid_options !== null && 'от '}{parseInt(feature.price)}
                                     </span>
                                 </div>
                             </div>

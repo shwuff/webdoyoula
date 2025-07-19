@@ -114,7 +114,7 @@ const DynamicFieldRenderer = ({ name, config, value, onChange, isRepeat = false 
                             alt="preview"
                             style={{
                                 marginTop: '10px',
-                                width: '100%',
+                                maxWidth: '200px',
                                 maxHeight: '200px',
                                 objectFit: 'cover',
                                 borderRadius: '12px',

@@ -17,6 +17,7 @@ import ChatPng from './../../assets/images/chat.png';
 
 const FeedPage = () => {
     const [filter, setFilter] = useState("repeats");
+    const [searchingAiModel, setSearchingAiModel] = useState(0);
     const [dateRange, setDateRange] = useState("last_1_day");
     const [feed, setFeed] = useState('feed');
     const [photosPage, setPhotosPage] = useState(0);
@@ -60,6 +61,8 @@ const FeedPage = () => {
                 <FeedFilters
                     filter={filter}
                     setFilter={setFilter}
+                    searchingAiModel={searchingAiModel}
+                    setSearchingAiModel={setSearchingAiModel}
                     dateRange={dateRange}
                     setDateRange={setDateRange}
                     feed={feed}
@@ -77,6 +80,7 @@ const FeedPage = () => {
                     setPhotosPage={setPhotosPage}
                     from={"feedPage"}
                     filter={filter}
+                    searchingAiModel={searchingAiModel}
                     dateRange={dateRange}
                     feed={feed}
                     isMarket={isMarket}

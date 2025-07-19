@@ -558,8 +558,7 @@ a, div, button {
 }
 
 .navbar-content {
-    width: 80%;
-    max-width: 600px;
+    width: 100%;
     display: flex;
     justify-content: space-around;
     align-items: center;

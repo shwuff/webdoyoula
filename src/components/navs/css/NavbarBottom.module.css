@@ -7,12 +7,12 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 12px;
-    width: 75%;
+    padding: 8px;
+    width: 65%;
     gap: 30px;
     z-index: 1000;
     border-radius: 24px;
-    left: 12.5%;
+    left: 16.5%;
 }
 
 .navItem {
