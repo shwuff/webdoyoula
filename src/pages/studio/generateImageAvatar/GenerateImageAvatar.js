@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import styles from './css/GenerateImageAvatar.module.css';
 import {useAuth} from "../../../context/UserContext";
 import {useWebSocket} from "../../../context/WebSocketContext";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {Button} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import animationStarGold from "../../../assets/gif/gold_star.gif";
 import redSirenAnimation from "./../../../assets/gif/red_siren.gif";
 import DynamicFieldRenderer from "../../../components/DynamicFieldRenderer";
@@ -27,9 +27,13 @@ const GenerateImageAvatar = ({ editImage = false }) => {
 
     const { owner, model, prompt_id} = useParams();
     const navigate = useNavigate();
-    const { token } = useAuth();
+    const { token, userData } = useAuth();
     const { sendData, addHandler, deleteHandler } = useWebSocket();
     const imageSelector = useSelector(state => state.image.images);
+
+    const [searchParams] = useSearchParams();
+    const get_prompt_id = searchParams.get('promptId');
+    const image_id_animate = searchParams.get('image_id_animate');
 
     const [slug, setSlug] = useState(owner + '/' + model);
 
@@ -39,6 +43,8 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     const [loading, setLoading] = useState(false);
     const [promptData, setPromptData] = useState({});
     const [paidOptionsPrice, setPaidOptionsPrice] = useState(0);
+    const [instructionOpen, setInstructionOpen] = useState(false);
+    const [isPromptReceived, setIsPromptReceived] = useState(false);
 
     const [error, setError] = useState([]);
 
@@ -117,9 +123,11 @@ const GenerateImageAvatar = ({ editImage = false }) => {
 
         const handleError = (msg) => {
             if(msg.message !== undefined) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
                 setError([msg.message]);
                 setLoading(false);
             } else if(msg.messages !== undefined) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
                 setError(Object.values(msg.messages));
                 setLoading(false);
             }
@@ -152,18 +160,112 @@ const GenerateImageAvatar = ({ editImage = false }) => {
 
             for (const key in dynamicFieldValues) {
                 const selectedValue = dynamicFieldValues[key];
+                const options = currentModel.paid_options[key];
 
-                if (
-                    currentModel.paid_options.hasOwnProperty(key) &&
-                    currentModel.paid_options[key].hasOwnProperty(selectedValue)
-                ) {
-                    totalPrice += currentModel.paid_options[key][selectedValue];
+                if (!options) continue;
+
+                if (!isNaN(selectedValue) && typeof selectedValue === 'number') {
+                    const valueInt = Number(selectedValue);
+
+                    if ('0' in options) {
+                        const pricePerUnit = Number(options['0']);
+                        totalPrice += pricePerUnit * valueInt;
+                    } else {
+                        let thresholdPrice = 0;
+                        for (const threshold in options) {
+                            if (valueInt >= Number(threshold)) {
+                                thresholdPrice = Number(options[threshold]);
+                            }
+                        }
+                        totalPrice += thresholdPrice;
+                    }
+                } else if (options.hasOwnProperty(selectedValue)) {
+                    totalPrice += Number(options[selectedValue]);
                 }
             }
 
             setPaidOptionsPrice(totalPrice);
         }
     }, [currentModel, dynamicFieldValues]);
+
+    useEffect(() => {
+
+        const handleClickBackButton = () => {
+            if (instructionOpen) {
+                setInstructionOpen(false);
+            } else {
+                navigate('/studio/create');
+            }
+        }
+
+        if(userData.is_telegram) {
+
+            window.Telegram.WebApp.BackButton.show();
+            window.Telegram.WebApp.BackButton.onClick(handleClickBackButton);
+        }
+
+        return () => {
+            window.Telegram.WebApp.BackButton.hide();
+            window.Telegram.WebApp.BackButton.offClick(handleClickBackButton);
+        };
+
+    }, [userData, instructionOpen]);
+
+    useEffect(() => {
+        if(get_prompt_id !== undefined && get_prompt_id !== null && get_prompt_id.length > 0 && Object.entries(dynamicFieldValues).length > 0 && !isPromptReceived) {
+            sendData({
+                action: "prompt/get/" + get_prompt_id,
+                data: { jwt: token }
+            });
+
+            setIsPromptReceived(true);
+        }
+    }, [dynamicFieldValues, get_prompt_id, isPromptReceived]);
+
+    function blobUrlToBase64(blobUrl) {
+        return fetch(blobUrl) // забираем реальный Blob по ссылке
+            .then(res => res.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result); // data:image/png;base64,...
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            }));
+    }
+
+    useEffect(() => {
+        if (image_id_animate && Object.entries(dynamicFieldValues).length > 0 && !isPromptReceived) {
+            const imageUrl = imageSelector[image_id_animate]?.media_url;
+
+            if (!imageUrl) return;
+
+            blobUrlToBase64(imageUrl).then(base64 => {
+                setDynamicFieldValues(prev => {
+                    const updated = { ...prev };
+
+                    Object.keys(updated).forEach(key => {
+                        if (key.includes('image')) {
+                            updated[key] = base64;
+                        }
+                    });
+
+                    return updated;
+                });
+            });
+
+            setIsPromptReceived(true);
+        }
+    }, [image_id_animate, dynamicFieldValues]);
+
+    useEffect(() => {
+        const handleReceivedPrompt = (msg) => {
+            setDynamicFieldValues(prev => ({ ...prev, 'prompt': msg.prompt }));
+        }
+
+        addHandler("received_prompt_text", handleReceivedPrompt);
+
+        return () => deleteHandler("received_prompt_text");
+    }, [dynamicFieldValues, setDynamicFieldValues]);
 
     if(currentModel === null) {
         return <AllPage />
@@ -177,13 +279,11 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                 paddingBottom: '100px',
                 boxSizing: 'border-box',
             }}>
-
+                <h2><span className={"text-muted"}>{currentModel.owner} / </span>{currentModel.name}</h2>
                 <div className={styles.modelPreview}>
-
                     <div className={styles.header}>
-                        <img src={`${config.apiUrl}public/models_logo/${currentModel.logo}`} />
+                        <img style={{ aspectRatio: "16/9" }} src={`${config.apiUrl}public/models_logo/${currentModel.logo}`} />
                         <div className={styles.info}>
-                            <h2><span className={"text-muted"}>{currentModel.owner} / </span>{currentModel.name}</h2>
                             <div className="d-flex" style={{ gap: '15px' }}>
                                 <Tooltip title={t('Total runs')}>
                                     <span className={styles.runs}>
@@ -200,7 +300,7 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                                 </Tooltip>
                             </div>
                             {
-                                (currentModel.name === 'professional' || currentModel.name === 'standart') && (
+                                (currentModel.name === 'flux-schnell' || currentModel.name === 'flux-dev') && (
                                     <i style={{ color: 'blue', textDecoration: "underline" }} className={"c-pointer"} onClick={() => navigate('/settings/content')}>Обучить модель со своим лицом</i>
                                 )
                             }
@@ -240,7 +340,11 @@ const GenerateImageAvatar = ({ editImage = false }) => {
 
                 </div>
 
-                <ModelInstructionModal description={currentModel.description} />
+                <p style={{ marginTop: "4px" }}>{currentModel.mini_description}</p>
+
+                <hr />
+
+                <ModelInstructionModal open={instructionOpen} setOpen={setInstructionOpen} description={currentModel.description} />
 
                 {Object.entries(currentModelFields).map(([fieldName, fieldConfig]) => (
                     <DynamicFieldRenderer
@@ -304,6 +408,21 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                         </p>
                     )
                 }
+                {/*{*/}
+                {/*    currentModel.examples && (*/}
+                {/*        <Box>*/}
+                {/*            <h3>{t("Examples")}</h3>*/}
+                {/*            <div className={"d-flex"} style={{ gap: "8px", maxWidth: "100%", overflowX: "auto" }}>*/}
+                {/*                {*/}
+                {/*                    currentModel.examples.map((example, index) => {*/}
+                {/*                        return <img src={config.apiUrl + "public/model_examples/" + example} key={index} alt={"Model Example"} style={{ maxWidth: "150px", borderRadius: "12px" }} />*/}
+                {/*                    })*/}
+                {/*                }*/}
+                {/*            </div>*/}
+
+                {/*        </Box>*/}
+                {/*    )*/}
+                {/*}*/}
             </div>
         </div>
     );

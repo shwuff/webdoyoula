@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import { useAuth } from "../../context/UserContext";
 import styles from './css/Settings.module.css';
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import EditData from './settings/EditData';
 import {useTranslation} from "react-i18next";
@@ -11,6 +11,7 @@ import palmIcon from './../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../assets/icons/profileIcons/hi.png';
 import {Button} from "@mui/material";
 import ToggleSlider from "../../components/teegee/ToogleSlider/ToggleSlider";
+import PromptsHistory from "../../components/gallery/PromptsHistory";
 
 
 const Settings = () => {
@@ -27,6 +28,7 @@ const Settings = () => {
     const lastPageRef = useRef(0);
     const scrollTimeoutRef = useRef(null);
     const [showSaved, setShowSaved] = useState(false);
+    const [showPromptsHistory, setShowPromptsHistory] = useState(false);
 
     const resetLastPageRef = () => {
         lastPageRef.current = 0;
@@ -102,8 +104,20 @@ const Settings = () => {
         );
     };
 
-    const toggleShowSaved = () => {
-        setShowSaved(!showSaved);
+    const toggleShowSaved = (i) => {
+        setPhotosPage(0)
+        resetLastPageRef();
+        resetFetchingRef();
+        if(i === 0) {
+            setShowSaved(false);
+            setShowPromptsHistory(false);
+        } else if(i === 1) {
+            setShowSaved(true);
+            setShowPromptsHistory(false);
+        } else if(i === 2) {
+            setShowSaved(false);
+            setShowPromptsHistory(true);
+        }
     }
 
     return (
@@ -113,7 +127,8 @@ const Settings = () => {
         }}>
             <div className="center-content-block">
                 <div className={`${styles.profileBackgroundBlock}`} style={{marginBottom: "10px", position: "relative", paddingTop: window.Telegram.WebApp?.safeAreaInset?.top
-                        ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: userData.profile_color.second_color_full}}>
+                        ? `${window.Telegram.WebApp.safeAreaInset.top * 2}px` : '30px', background: userData.profile_color.second_color_full}}
+                >
                     <div className={`p-2-phone ${styles.miniProfileIconWrapper}`}>
                         <img
                             src={userData.photo_url}
@@ -168,20 +183,31 @@ const Settings = () => {
 
                     <EditData buttonStyle={{ marginTop: "15px" }} />
                     <ToggleSlider
-                        options={[t('My Generations'), t('Saved')]}
+                        options={[t('My Generations'), t('Saved'), t('Prompts history')]}
                         onChange={toggleShowSaved}
                     />
                 </div>
-                <MyGeneratedPhotosList
-                    key={showSaved}
-                    resetLastPageRef={resetLastPageRef}
-                    resetFetchingRef={resetFetchingRef}
-                    photosPage={photosPage}
-                    showSaved={showSaved}
-                    profileGallery={showSaved ? true : false}
-                    setPhotosPage={setPhotosPage}
-                    from={showSaved ? 'viewGallery' : 'createContent'}
-                />
+                {
+                    showPromptsHistory ? (
+                        <PromptsHistory
+                            resetLastPageRef={resetLastPageRef}
+                            resetFetchingRef={resetFetchingRef}
+                            page={photosPage}
+                            setPage={setPhotosPage}
+                        />
+                    ) : (
+                        <MyGeneratedPhotosList
+                            key={showSaved}
+                            resetLastPageRef={resetLastPageRef}
+                            resetFetchingRef={resetFetchingRef}
+                            photosPage={photosPage}
+                            showSaved={showSaved}
+                            profileGallery={showSaved ? true : false}
+                            setPhotosPage={setPhotosPage}
+                            from={showSaved ? 'viewGallery' : 'createContent'}
+                        />
+                    )
+                }
             </div>
         </div>
     );

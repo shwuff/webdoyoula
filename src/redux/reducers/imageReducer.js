@@ -1,4 +1,4 @@
-import { ADD_IMAGE, UPDATE_IMAGE, SET_IMAGES, GET_IMAGE, HAS_IMAGE, SET_CURRENT_IMAGE_SELECTED, GET_CURRENT_IMAGE_SELECTED } from '../actions/imageActions';
+import { ADD_IMAGE, UPDATE_IMAGE, SET_IMAGES, SET_CURRENT_IMAGE_SELECTED } from '../actions/imageActions';
 
 const initialState = {
     images: {},

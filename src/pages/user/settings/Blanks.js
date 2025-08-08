@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useWebSocket} from "../../../context/WebSocketContext";
 import {useAuth} from "../../../context/UserContext";
-import {add} from "react-modal/lib/helpers/classList";
 import {useTranslation} from "react-i18next";
 
 const Blanks = () => {
@@ -18,7 +17,7 @@ const Blanks = () => {
             sendData({action: "get_blanks", data: {jwt: token}});
         }
 
-    }, [token, blanks]);
+    }, [token, blanks, sendData]);
 
     useEffect(() => {
 
@@ -30,7 +29,7 @@ const Blanks = () => {
 
         return () => deleteHandler('receive_blanks');
 
-    }, []);
+    }, [addHandler, deleteHandler]);
 
     return (
         <div className={"container"}>

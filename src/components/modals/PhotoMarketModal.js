@@ -284,9 +284,13 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
                                                         </button>
                                                     )
                                                 }
-                                                <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/repeat/${imageSelector[selectedPhoto].prompt_id}`)}>
-                                                    {t('repeat')}
-                                                </button>
+                                                {
+                                                    imageSelector[selectedPhoto].prompt_id !== null && (
+                                                        <button className={"btn iconButton w-100"} style={{margin: 0, marginTop: 4}} onClick={() => navigate(`/studio/repeat/${imageSelector[selectedPhoto].prompt_id}`)}>
+                                                            {t('repeat')}
+                                                        </button>
+                                                    )
+                                                }
                                                                                            
                                             </>
                                         ) : (

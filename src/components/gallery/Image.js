@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../context/UserContext";
+import Video from "../player/Video";
+import LoadingPlaceholder from "../loading/LoadingPlaceholer";
+import {useSelector} from "react-redux";
+import AudioWave from "./AudioWave";
 
-const Image = ({ mediaId, className, style }) => {
+const Image = ({ mediaId, className, style, file_type = 'image' }) => {
     const { token } = useAuth();
     const [src, setSrc] = useState(null);
     const [error, setError] = useState(null);
+
+    const imageSelector = useSelector(state => state.image.images);
 
     useEffect(() => {
         if (!mediaId || !token) return;
@@ -42,15 +48,17 @@ const Image = ({ mediaId, className, style }) => {
         };
     }, [mediaId, token]);
 
-    if (error) {
-        return <div className="text-red-500">Ошибка загрузки: {error}</div>;
+    if(file_type === 'image') {
+        return <img src={imageSelector[mediaId].media_url} style={style} className={className} alt={`media ${mediaId}`} />;
     }
 
-    if (!src) {
-        return <div></div>;
+    if(file_type === 'audio') {
+        return <AudioWave audioUrl={src} />
     }
 
-    return <img src={src} style={style} className={className} alt={`media ${mediaId}`} />;
+    if(file_type === 'video') {
+        return <Video style={style} className={className} videoUrl={src} />
+    }
 };
 
 export default Image;

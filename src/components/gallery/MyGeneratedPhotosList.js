@@ -27,14 +27,35 @@ import Video from "../player/Video";
 import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
 import FeedSkeleton from "./FeedSkeleton";
 import { BsArrowUp } from 'react-icons/bs';
-
-
+import {Grid} from "@mui/material";
+import {keyframes, styled} from "@mui/system";
+import {Play} from "lucide-react";
+import AudioWave from "./AudioWave";
 
 Modal.setAppElement('#app');
 
+const shimmer = keyframes`
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+const Placeholder = styled('div')(({ theme }) => ({
+    position: 'relative',
+    width: '100%',
+    paddingTop: '125%',
+    overflow: 'hidden',
+    borderRadius: 12,
+    background:
+        `linear-gradient(90deg,
+      ${theme.palette.action.hover} 0%,
+      ${theme.palette.action.selected} 50%,
+      ${theme.palette.action.hover} 100%)`,
+    backgroundSize: '200% 100%',
+    animation: `${shimmer} 1.5s linear infinite`,
+}));
+
 const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSelected, profileGallery }) => {
     const { ref, inView } = useInView({ threshold: 0.01, triggerOnce: true });
-    const navigate = useNavigate();
     const {sendData} = useWebSocket();
     const {token} = useAuth();
 
@@ -100,14 +121,28 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             {/*    </div>*/}
             {/*)}*/}
 
-            { imageSelector[photo.id].media_url && imageSelector[photo.id].status !== 'creating' ? (
+            { imageSelector[photo.id].status !== 'creating' ? (
                 // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
                 <>
                     {
-                        imageSelector[photo.id].file_type === 'video' ? (
-                            <img src={imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
+                        imageSelector[photo.id].media_url ? (
+                            <>
+                                {
+                                    imageSelector[photo.id].file_type === 'video' ? (
+                                        <img src={imageSelector[photo.id].video_preview} alt={`video-${photo.id}`} className={styles.photoImage} />
+                                    ) : imageSelector[photo.id].file_type === 'audio' ? (
+                                        <AudioWave audioUrl={imageSelector[photo.id].media_url} canPlay={false} />
+                                    ) : (
+                                        <img src={imageSelector[photo.id].media_url} className={styles.photoImage} />
+                                    )
+                                }
+                            </>
                         ) : (
-                            <Image mediaId={imageSelector[photo.id].id} className={styles.photoImage} />
+                            <>
+                                <Grid item xs={4}>
+                                    <Placeholder />
+                                </Grid>
+                            </>
                         )
                     }
                 </>
@@ -244,7 +279,7 @@ const PhotoMarketCardComponent = ({ photo, index, openModal, toggleSelectPhoto, 
         toggleSelectPhoto(photo.id);
     };
 
-    
+
 
     const imageSelector = useSelector((state) => state.image.images);
 
@@ -616,7 +651,7 @@ const MyGeneratedPhotosList = ({
 
             if (msg.media && msg.media.length > 0 && (photosSortModel === msg.lora_id || msg.lora_id === undefined) && requestId === msg.requestId) {
                 if(userIdLoaded < 1 && from !== 'feedPage') {
-                    setPhotosList((prev) => ([...prev, ...msg.media]));
+                    setPhotosList((prev) => (uniquePhotos([...prev, ...msg.media])));
                 } else {
                     if(filter === 'repeats1' && dateRange === 'last_1_day1') {
                         setPhotosList((prev) => sortAndUniquePhotosWithRepeats([...prev, ...msg.media]));

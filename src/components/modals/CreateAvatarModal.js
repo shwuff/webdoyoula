@@ -115,7 +115,6 @@ export default function CreateAvatarModal() {
                 fullWidth
                 variant="contained"
                 onClick={() => setOpen(true)}
-                sx={{ mt: 1 }}
             >
                 {t('create_avatar')}
             </Button>
@@ -196,7 +195,7 @@ export default function CreateAvatarModal() {
 
                     <hr />
 
-                    <p>Стоимость обучения: 50 <img src={starAnimation} width={15} /></p>
+                    <p>Стоимость обучения: 99 <img src={starAnimation} width={15} /></p>
 
                     <Button
                         fullWidth

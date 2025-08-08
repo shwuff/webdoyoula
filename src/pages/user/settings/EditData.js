@@ -97,7 +97,7 @@ const EditData = ({ buttonStyle = {} }) => {
             })
 
         }
-    }, [token, isConnected, availableSettings]);
+    }, [token, isConnected, availableSettings, sendData]);
 
     useEffect(() => {
 

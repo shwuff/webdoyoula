@@ -28,28 +28,6 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
         { id: 4, name: "1000 " + t('photos'), price: isRubles ? 4999 : 3999 },
     ]);
 
-    const handleCurrencyChange = (event, newCurrency) => {
-        if (newCurrency !== null) {
-            setCurrencyType(newCurrency);
-        }
-    };
-
-    const [modelOption, setModelOption] = useState({
-        id: 5,
-        name: t('buy_avatar'),
-        price: isRubles ? 399 : 249
-    });
-
-    const handleBuyClick = (option) => {
-        if(userData.language_code === 'ru') {
-            setSelectedOption(option);
-            setPaymentStep(2);
-        } else {
-            setSelectedOption(option);
-            handleConfirmPurchase("XTR");
-        }
-    };
-
     const handleConfirmPurchase = () => {
         if (!selectedOption) return;
         sendData({
@@ -76,18 +54,30 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
 
     useEffect(() => {
         setPaymentOptions([
-            { id: 1, name: "100 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 899 : 749 },
-            { id: 2, name: "300 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 1499 : 1299 },
-            { id: 3, name: "500 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 2549 : 2199 },
-            { id: 4, name: "1000 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 4999 : 3999 },
+            { id: 1, name: "459 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 599 : 699 },
+            { id: 2, name: "1399 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 1499 : 1499 },
+            { id: 3, name: "2999 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 2999 : 2999 },
+            { id: 4, name: "4999 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 4999 : 4999 },
         ]);
-
-        setModelOption({
-            id: 5,
-            name: t('buy_avatar'),
-            price: currencyType === "RUB" ? 399 : 249
-        });
     }, [currencyType, t]);
+
+    useEffect(() => {
+
+        const handleClickBackButton = () => {
+            setOpenPaymentModal(false);
+        }
+
+        if(userData.is_telegram && openPaymentModal) {
+            window.Telegram.WebApp.BackButton.show();
+            window.Telegram.WebApp.BackButton.onClick(handleClickBackButton);
+        }
+
+        return () => {
+            window.Telegram.WebApp.BackButton.hide();
+            window.Telegram.WebApp.BackButton.offClick(handleClickBackButton);
+        }
+
+    }, [userData, openPaymentModal]);
 
     return (
         <RightModal

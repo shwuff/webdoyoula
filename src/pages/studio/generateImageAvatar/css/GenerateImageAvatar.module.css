@@ -33,8 +33,7 @@
 }
 
 .modelPreview img {
-    width: 150px;
-    height: 150px;
+    height: 90px;
     object-fit: cover;
     border-radius: 20px;
 }

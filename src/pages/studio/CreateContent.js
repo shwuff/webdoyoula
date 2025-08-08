@@ -1,63 +1,27 @@
 import React, {useEffect, useRef, useState} from "react";
 import styles from './css/CreateContent.module.css';
 import {Link, useNavigate} from "react-router-dom";
-import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
-import MyModels from "../../components/models/MyModels";
 import {useAuth} from "../../context/UserContext";
 import {CiSettings} from "react-icons/ci";
-import WebAppModal from "../../components/modal/WebAppModal";
-import RightModal from "../../components/modal/RightModal";
 import PaymentModal from "../../components/modals/PaymentModal";
-import CreateAvatarModal from "../../components/modals/CreateAvatarModal";
 import {useWebSocket} from "../../context/WebSocketContext";
 import {useTranslation} from "react-i18next";
 import animationStarGold from './../../assets/gif/gold_star.gif';
-import {Button} from "@mui/material";
 import FeaturesGrid from "../../components/grid/FeaturesGrid";
+import ChatLogo from './../../assets/images/chat.jpg';
+import ChannelLogo from './../../assets/images/channel.jpg';
+import TgLogo from './../../assets/svg/telegram-logo.svg';
+import {Button} from "@mui/material";
 
 const CreateContent = () => {
-
-    const navigate = useNavigate();
 
     const { userData, token } = useAuth();
     const { sendData, deleteHandler, addHandler } = useWebSocket();
 
     const {t} = useTranslation();
 
-    const [photosPage, setPhotosPage] = useState(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [availableModels, setAvailableModels] = useState([]);
-
-    const isFetchingRef = useRef(false);
-    const lastPageRef = useRef(0);
-    const scrollTimeoutRef = useRef(null);
-
-    const resetLastPageRef = () => {
-        lastPageRef.current = 0;
-    }
-
-    const resetFetchingRef = () => {
-        isFetchingRef.current = false;
-    }
-
-    const handleScroll = (e) => {
-        if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current);
-        }
-
-        scrollTimeoutRef.current = setTimeout(() => {
-            const { scrollHeight, scrollTop, clientHeight } = e.target;
-
-            const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
-
-            if (distanceToBottom <= 2500 && !isFetchingRef.current) {
-                const nextPage = lastPageRef.current + 1;
-                isFetchingRef.current = true;
-                lastPageRef.current = nextPage;
-                setPhotosPage(nextPage);
-            }
-        }, 0);
-    };
 
     useEffect(() => {
         if(token) {
@@ -81,20 +45,22 @@ const CreateContent = () => {
     }, [addHandler, deleteHandler, setAvailableModels]);
 
     return (
-        <div className={"globalBlock"} id={"generatedPhotosList"} onScroll={handleScroll}>
+        <div className={"globalBlock"} id={"generatedPhotosList"}>
             <PaymentModal openPaymentModal={openPaymentModal} setOpenPaymentModal={setOpenPaymentModal} isRubles={userData.language_code === 'ru'} />
             <div className="center-content-block">
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
-                    <div className={"p-2-phone d-flex align-items-center justify-content-center"}>
-                        <div>
+
+                    <div className="w-100">
+                        <div className={"d-flex align-items-center"} style={{ gap: "7px" }}>
                             <p>{t('Balance')}: {userData.photos_left} <img src={animationStarGold} width={14}/></p>
-                        </div>
-                        <div>
-                            <button className={"publish-button"} style={{marginTop: 4, marginLeft: 8}} onClick={() => setOpenPaymentModal(true)}>
-                                {t('Buy More Stars')}
-                            </button>
+                            <div>
+                                <button className={"publish-button"} onClick={() => setOpenPaymentModal(true)}>
+                                    {t('Buy More Stars')}
+                                </button>
+                            </div>
                         </div>
                     </div>
+
                     <Link to={"/settings/content"}>
                         <CiSettings style={{width: 24, height: 24}} />
                     </Link>
@@ -102,6 +68,26 @@ const CreateContent = () => {
                 <div className={styles.featuresList}>
                     <FeaturesGrid features={availableModels} />
                 </div>
+                {
+                    availableModels.length > 0 && (
+                        <div className={"d-flex"} style={{ gap: "5px", margin: 0, width: "100%", maxWidth: 800, marginTop: "4px", marginBottom: "0px" }}>
+                            <Button size={"small"} variant={"outlined"} onClick={() => {
+                                window.open('https://t.me/doyoulachat');
+                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                            }} sx={{ gap: "10px", width: "100%", height: "35px" }}>
+                                <img src={TgLogo} alt={"Chat logo"} style={{ width: "25px", borderRadius: "12px" }} />
+                                {t('Group')}
+                            </Button>
+                            <Button size={"small"} variant={"outlined"} onClick={() => {
+                                window.open('https://t.me/doyoula');
+                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                            }} sx={{ gap: "10px", width: "100%", height: "35px" }}>
+                                <img src={TgLogo} alt={"Channel logo"} style={{ width: "25px", borderRadius: "12px" }} />
+                                {t('Channel')}
+                            </Button>
+                        </div>
+                    )
+                }
             </div>
         </div>
     );

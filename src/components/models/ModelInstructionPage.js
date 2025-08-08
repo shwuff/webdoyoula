@@ -75,6 +75,7 @@ const PageRenderer = ({ pageSetting, onClick }) => {
                                             position: 'relative',
                                             height: {xs: 300, md: 420},
                                             mb: 6,
+                                            // aspectRatio: '1/1',
                                             borderRadius: 3,
                                             overflow: 'hidden',
                                             boxShadow: 3,
@@ -84,7 +85,7 @@ const PageRenderer = ({ pageSetting, onClick }) => {
                                             component="img"
                                             src={config.apiUrl + block.image}
                                             alt="hero"
-                                            sx={{filter: 'brightness(0.6)'}}
+                                            sx={{filter: 'brightness(0.6)', width: '100%', height: '100%', objectFit: 'cover'}}
                                         />
                                         <Box
                                             sx={{
@@ -145,12 +146,24 @@ const PageRenderer = ({ pageSetting, onClick }) => {
                                         {block.items.map((img, i) => (
                                             <Grid item xs={12} sm={6} md={4} key={i}>
                                                 <Card sx={{boxShadow: 1}}>
-                                                    <CardMedia
-                                                        component="img"
-                                                        image={config.apiUrl + img.src}
-                                                        alt={img.caption}
-                                                        sx={{aspectRatio: "1/1", objectFit: 'cover'}}
-                                                    />
+                                                    {img.src.endsWith('.mp4') ? (
+                                                        <CardMedia
+                                                            component="video"
+                                                            src={config.apiUrl + img.src}
+                                                            controls
+                                                            autoPlay={false}
+                                                            loop
+                                                            muted
+                                                            sx={{ aspectRatio: "4/5", objectFit: 'cover' }}
+                                                        />
+                                                    ) : (
+                                                        <CardMedia
+                                                            component="img"
+                                                            image={config.apiUrl + img.src}
+                                                            alt={img.caption}
+                                                            sx={{ aspectRatio: "4/5", objectFit: 'cover' }}
+                                                        />
+                                                    )}
                                                     {img.caption && (
                                                         <CardContent sx={{py: 1.5}}>
                                                             <Typography

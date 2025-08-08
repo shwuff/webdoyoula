@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
+import { Route, Routes, useNavigate} from 'react-router-dom';
 import NavbarBottom from "./components/navs/NavbarBottom";
 import "./assets/css/index.css";
 import {useAuth} from "./context/UserContext";
@@ -7,7 +7,6 @@ import {useWebSocket} from "./context/WebSocketContext";
 import Profile from "./pages/user/Profile";
 import CreateContent from "./pages/studio/CreateContent";
 import GenerateImageAvatar from "./pages/studio/generateImageAvatar/GenerateImageAvatar";
-import EditPost from "./pages/post/EditPost";
 import Settings from "./pages/user/Settings";
 import Blanks from "./pages/user/settings/Blanks";
 import Search from "./components/Search";
@@ -25,8 +24,8 @@ import Cart from "./components/modals/Cart";
 import {addGood, deleteGood, setCart, updateCount} from "./redux/actions/cartActions";
 import {useDispatch} from "react-redux";
 import PhotoPostModal from "./components/modals/PhotoPostModal";
-import Video from './components/player/Video';
 import {updateImage} from "./redux/actions/imageActions";
+import {ArrowUpwardRounded} from "@mui/icons-material";
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -151,6 +150,32 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        const handleUpdate = (msg) => {
+            setMyLoras(prev =>
+                prev.map(lora =>
+                    lora.id === msg.lora_id
+                        ? { ...lora, ...msg.data }
+                        : lora
+                )
+            )
+        }
+
+        const handleDelete = (msg) => {
+            setMyLoras(prev =>
+                prev.filter(lora => lora.id !== msg.lora_id)
+            )
+        }
+
+        addHandler('update_lora_data', handleUpdate)
+        addHandler('delete_lora',      handleDelete)
+
+        return () => {
+            deleteHandler('update_lora_data')
+            deleteHandler('delete_lora')
+        }
+    }, [setMyLoras])
+
+    useEffect(() => {
         const handleNotification = (msg) => {
             setNotification(msg);
             if(msg.type === 'like' || msg.type === 'comment' || msg.type === 'subscribe') {
@@ -244,6 +269,22 @@ const App = () => {
             });
 
             params.some(param => {
+                const match = param.match(/buy(\w+)/);
+                if (match && token && isConnected) {
+                    sendData({
+                        action: "payment/buy/stars",
+                        data: {
+                            jwt: token,
+                            optionId: match[1],
+                            currency: userData.language_code === 'ru' ? 'RUB' : 'XTR',
+                        }
+                    });
+                    return true;
+                }
+                return false;
+            });
+
+            params.some(param => {
                 const match = param.match(/photoId(\w+)/);
                 if (match && window.location.pathname === "/") {
                     setOpenedPhotoId(match[1]);
@@ -262,7 +303,7 @@ const App = () => {
                 return false;
             });
         }
-    }, [setOpenedPhotoId, token]);
+    }, [setOpenedPhotoId, token, isConnected]);
 
     useEffect(() => {
         if(window.location.pathname !== '/') {
@@ -419,6 +460,8 @@ const App = () => {
         return () => deleteHandler("update_user_data");
     }, [addHandler, deleteHandler]);
 
+    const { showButton, scrollToTop } = useScrollToTop();
+
     // useEffect(() => {
     //     const SettingsButton = window?.Telegram?.WebApp?.SettingsButton;
     //
@@ -470,9 +513,20 @@ const App = () => {
                 <Route path="/studio/create" element={<CreateContent />} />
                 <Route path="/studio/create/:owner/:model" element={<GenerateImageAvatar />} />
                 <Route path="/studio/repeat/:prompt_id" element={<GenerateImageAvatar />} />
+                <Route path="/prompt/:prompt_id/" element={<GenerateImageAvatar />} />
                 <Route path="/rating" element={<Rating />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
             </Routes>
+            {showButton && (
+                <>
+                    <button className="scrollToTop" onClick={scrollToTop}>
+                        <ArrowUpwardRounded />
+                    </button>
+                    <button className="scrollToTop" style={{ left: "16px" }} onClick={scrollToTop}>
+                        <ArrowUpwardRounded />
+                    </button>
+                </>
+            )}
             <NavbarBottom />
             {
                 openedPhotoId > 0 && (
@@ -583,5 +637,50 @@ export const getTimeAgo = (timestamp) => {
 
     return "только что";
 };
+
+function useScrollToTop() {
+    const [showButton, setShowButton] = useState(false);
+
+    // универсальный селектор
+    const selector = '.globalProfileBlock, .globalBlock';
+
+    useEffect(() => {
+        let block = document.querySelector(selector);
+
+        const attachScroll = (el) => {
+            const onScroll = () => {
+                setShowButton(el.scrollTop > window.innerHeight);
+            };
+            el.addEventListener('scroll', onScroll, { passive: true });
+            return () => el.removeEventListener('scroll', onScroll);
+        };
+
+        // если блока ещё нет — ждём, пока появится
+        if (!block) {
+            const obs = new MutationObserver(() => {
+                block = document.querySelector(selector);
+                if (block) {
+                    const detach = attachScroll(block);
+                    obs.disconnect();
+                    return detach;            // отписка, когда компонент размонтируется
+                }
+            });
+            obs.observe(document.body, { childList: true, subtree: true });
+            return () => obs.disconnect();
+        }
+
+        // блок есть сразу
+        return attachScroll(block);
+    }, []);
+
+    const scrollToTop = () => {
+        const el = document.querySelector(selector);
+        if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+        setShowButton(false);
+    };
+
+    return { showButton, scrollToTop };
+}
+
 
 export default App;

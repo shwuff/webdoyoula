@@ -8,6 +8,7 @@
     color: var(--text-color);
     box-sizing: border-box;
     user-select: none;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
 }
 
 body, html {
@@ -86,7 +87,6 @@ a, div, button {
     padding: 8px 12px;
     font-size: 14px;
     font-weight: 500;
-    border: none;
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -106,7 +106,7 @@ a, div, button {
 }
 
 .publish-button:hover {
-    background: var(--button-color);
+    /*background: var(--button-color);*/
 }
 
 .publish-outline-button {
@@ -164,7 +164,7 @@ a, div, button {
 }
 
 .btn-glass:hover {
-    background: var(--button-color);
+    /*background: var(--button-color);*/
 }
 
 * {
@@ -185,7 +185,7 @@ a, div, button {
     top: 0;
     z-index: 10;
     background: var(--bg-color);
-    padding: 10px 0;
+    padding: 4px 0;
     gap: 8px;
 }
 
@@ -850,4 +850,61 @@ a, div, button {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.instr_container {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+}
+.instr_title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.instr_step_title {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.instr_text {
+    margin: 5px 0 15px;
+}
+.instr_list {
+    margin: 0 0 15px 25px;
+    padding: 0;
+    list-style: none;
+}
+.instr_list li {
+    margin-bottom: 5px;
+}
+
+.scrollToTop {
+    position: fixed;
+    right: 16px;
+    bottom: 28px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+    cursor: pointer;
+    transition: opacity .25s ease, transform .25s ease;
+    opacity: .8;
+    z-index: 1100;
+}
+
+.scrollToTop:hover {
+    opacity: 1;
+    transform: translateY(-4px);
 }

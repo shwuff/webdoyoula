@@ -59,7 +59,8 @@ export const WebSocketProvider = ({ children }) => {
                             }));
                         }
                         return;
-                    } else if(metaData.action === "video_preview") {
+                    }
+                    else if(metaData.action === "video_preview") {
                         const { id, size } = metaData;
                         if (imagesSelectorRef.current.hasOwnProperty(id)) {
                             const imgSlice = buffer.slice(offset, offset + size);
@@ -69,7 +70,8 @@ export const WebSocketProvider = ({ children }) => {
                             }));
                         }
                         return;
-                    } else if(metaData.action === 'update_media_field') {
+                    }
+                    else if(metaData.action === 'update_media_field') {
                         const { mediaId, update } = metaData;
                         if (imagesSelectorRef.current.hasOwnProperty(mediaId)) {
                             dispatch(updateImage(mediaId, {
@@ -83,14 +85,23 @@ export const WebSocketProvider = ({ children }) => {
                         for (const photo of metaData.media) {
                             const { id, size, file_type } = photo;
                             const slice = buffer.slice(offset, offset + size);
-                            const mime  = file_type === "video"
-                                ? "video/mp4"
-                                : "image/webp";
-                            const blob  = new Blob([slice], { type: mime });
+
+                            let mediaUrl;
+
+                            if (slice.byteLength > 0) {
+                                const mime =
+                                    file_type === "video"
+                                        ? "image/webp"
+                                        : file_type === "audio"
+                                            ? "audio/mp3"
+                                            : "image/webp";
+                                const blob  = new Blob([slice], { type: mime });
+                                mediaUrl = URL.createObjectURL(blob);
+                            }
 
                             const imageData = {
                                 ...photo,
-                                media_url: URL.createObjectURL(blob),
+                                ...(mediaUrl ? { media_url: mediaUrl } : {})
                             };
 
                             if (!imagesSelectorRef.current.hasOwnProperty(id)) {

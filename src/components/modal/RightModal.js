@@ -3,6 +3,7 @@ import React from "react";
 import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import { motion, AnimatePresence } from 'framer-motion';
 import CloseButton from "../buttons/CloseButton";
+import {useAuth} from "../../context/UserContext";
 
 const RightModal = ({
     isOpen,
@@ -11,6 +12,9 @@ const RightModal = ({
     isBackButton = false,
     children
 }) => {
+
+    const {userData} = useAuth();
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -27,9 +31,13 @@ const RightModal = ({
                     transition={{ duration: 0.4 }}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div className={styles.rightModalHeader}>
-                        <CloseButton onClick={isBackButton ? onBack : onClose} isBack={isBackButton} />
-                    </div>
+                    {
+                        !userData.is_telegram && (
+                            <div className={styles.rightModalHeader}>
+                                <CloseButton onClick={isBackButton ? onBack : onClose} isBack={isBackButton} />
+                            </div>
+                        )
+                    }
                     {children}
                 </motion.div>
             )}

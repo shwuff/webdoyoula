@@ -340,6 +340,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: min-content;
 }
 
 
@@ -550,27 +551,10 @@
     display: block;
 }
 
-.scrollToTop {
-    position: fixed;
-    right: 16px;
-    bottom: 16px;
-    width: 48px;
-    height: 48px;
-    border: none;
-    border-radius: 50%;
+.audioBlock {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-bg-color);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
-    cursor: pointer;
-    transition: opacity .25s ease, transform .25s ease;
-    opacity: .8;
-    z-index: 1100;
-}
-
-.scrollToTop:hover {
-    opacity: 1;
-    transform: translateY(-4px);
 }

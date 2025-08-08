@@ -16,8 +16,6 @@ import zzzIcon from './../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../assets/icons/profileIcons/hi.png';
 import FeedFilters from "../../components/input/FeedFilters";
-import {faGift} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GiftIcon from "../../assets/svg/GiftIcon";
 import PaymentModal from "../../components/modals/PaymentModal";
 
@@ -27,7 +25,6 @@ const Profile = () => {
 
     const {t} = useTranslation();
 
-    const [isMyProfile, setMyProfile] = useState(true);
     const [tempUserData, setTempUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { userId } = useParams();
@@ -122,7 +119,7 @@ const Profile = () => {
             setPhotosPage(0);
             sendData({ action: 'get/user/' + userId, data: { jwt: token } });
         }
-    }, [userId]);
+    }, [userId, token]);
 
     useEffect(() => {
         const handleGetPosts = (msg) => {
@@ -144,7 +141,6 @@ const Profile = () => {
     useEffect(() => {
         const handleGetProfile = (msg) => {
             setTempUserData(msg.user);
-            setMyProfile(msg.user.id === userData.id);
 
             if(msg.user.id === userData.id) {
                 setUserData(prev => ({
@@ -171,7 +167,6 @@ const Profile = () => {
     const [filter, setFilter] = useState("date");
     const [searchingAiModel, setSearchingAiModel] = useState(0);
     const [dateRange, setDateRange] = useState("all_time");
-    const [isMarket, setIsMarket] = useState(false);
     const [showPaidPrompts, setShowPaidPrompts] = useState(false);
     const [openGiftMenu, setOpenGiftMenu] = useState(false);
 
@@ -305,6 +300,7 @@ const Profile = () => {
                                             width: `${miniIconsCoordinates[index].size}px`,
                                             height: `${miniIconsCoordinates[index].size}px`,
                                         }}
+                                        alt={"Mini icon profile"}
                                     />
                                 ))}
                             </div>
