@@ -154,7 +154,7 @@ const DynamicFieldRenderer = ({ name, config, value, onChange, isRepeat = false 
                                                 <span>{opt}</span>
                                             </div>
                                         ) : (
-                                            opt
+                                            t(opt)
                                         )
                                     }
                                 </MenuItem>;

@@ -66,7 +66,8 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                 action: "get/models",
                 data: {
                     jwt: token,
-                    editImage: editImage
+                    editImage: editImage,
+                    slug: slug
                 }
             });
         }

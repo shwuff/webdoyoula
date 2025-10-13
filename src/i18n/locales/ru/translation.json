@@ -181,5 +181,9 @@
   "Group": "Чат",
   "Channel": "Канал",
   "create_music": "Создание музыки",
-  "Choose file": "Выберите файл"
+  "Choose file": "Выберите файл",
+  "resolution": "качество",
+  "high": "высокое",
+  "standart": "стандартное",
+  "seconds": "длительность"
 }

@@ -29,6 +29,7 @@ const CreateContent = () => {
                 action: "get/models",
                 data: {
                     jwt: token,
+                    optimized: true
                 }
             });
         }
