@@ -9,6 +9,7 @@ import {
 import StyledTextarea from "./input/StyledTextarea";
 import {useTranslation} from "react-i18next";
 import { Checkbox, FormControlLabel } from '@mui/material';
+import {Remove, RemoveCircleOutlined} from "@mui/icons-material";
 
 const DynamicFieldRenderer = ({ name, config, value, onChange, isRepeat = false }) => {
 
@@ -172,42 +173,200 @@ const DynamicFieldRenderer = ({ name, config, value, onChange, isRepeat = false 
             return (
                 <FormControl fullWidth margin="normal">
                     <div className={"d-flex align-items-center"} style={{ gap: "10px", marginBottom: "10px" }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path>
-                        </svg> <span style={{ color: 'var(--text-color)' }} className={"comfortaa-500"}>{t(`${label}`)}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true">
+                            <path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path>
+                        </svg>
+                        <span style={{ color: 'var(--text-color)' }} className={"comfortaa-500"}>
+                    {t(`${label}`)}
+                </span>
                     </div>
 
                     <Button component="label" variant="contained">
-                        {config.required ? t('Choose file') + ' *' : t('Choose file')}
+                        {config.required ? t('Choose files') + ' *' : t('Choose files')}
                         <input
                             type="file"
                             hidden
+                            multiple={config.multiple}
                             accept="*"
                             onChange={(e) => {
-                                const file = e.target.files[0];
-                                if (file) {
-                                    const reader = new FileReader();
-                                    reader.onloadend = () => {
-                                        onChange(name, reader.result);
-                                    };
-                                    reader.readAsDataURL(file);
+                                const files = e.target.files;
+                                if (files && files.length > 0) {
+                                    const readers = [];
+                                    const fileContents = [];
+
+                                    Array.from(files).forEach((file, index) => {
+                                        const reader = new FileReader();
+                                        readers.push(reader);
+
+                                        reader.onloadend = () => {
+                                            fileContents.push(reader.result); // Только base64 данные
+
+                                            // Когда все файлы прочитаны
+                                            if (fileContents.length === files.length) {
+                                                if (config.multiple) {
+                                                    // Для multiple - массив base64 строк
+                                                    const currentFiles = Array.isArray(value) ? value : [];
+                                                    onChange(name, [...currentFiles, ...fileContents]);
+                                                } else {
+                                                    // Для одиночного файла - просто base64 строка
+                                                    onChange(name, fileContents[0]);
+                                                }
+                                            }
+                                        };
+                                        reader.readAsDataURL(file);
+                                    });
                                 }
                             }}
                         />
                     </Button>
 
                     {value && (
-                        <img
-                            src={value}
-                            alt="preview"
-                            style={{
-                                marginTop: '10px',
-                                maxWidth: '200px',
-                                maxHeight: '200px',
-                                objectFit: 'cover',
-                                borderRadius: '12px',
-                                border: '1px solid var(--glass-border)'
-                            }}
-                        />
+                        <div style={{ marginTop: '10px' }}>
+                            {config.multiple && Array.isArray(value) ? (
+                                // Отображение нескольких файлов с кнопками удаления
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                    {value.map((fileData, index) => (
+                                        <div key={index} style={{ position: 'relative' }}>
+                                            {/* Кнопка удаления */}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const updatedFiles = value.filter((_, i) => i !== index);
+                                                    onChange(name, updatedFiles.length > 0 ? updatedFiles : null);
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '-8px',
+                                                    right: '-8px',
+                                                    background: 'var(--error-color)',
+                                                    border: 'none',
+                                                    borderRadius: '50%',
+                                                    width: '32px',
+                                                    height: '32px',
+                                                    color: 'white',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '12px',
+                                                    zIndex: 1
+                                                }}
+                                                title="Remove file"
+                                            >
+                                                <RemoveCircleOutlined />
+                                            </button>
+
+                                            {/* Проверяем, является ли файл изображением по MIME-type */}
+                                            {typeof fileData === 'string' && fileData.startsWith('data:image/') ? (
+                                                <img
+                                                    src={fileData}
+                                                    alt={`preview-${index}`}
+                                                    style={{
+                                                        maxWidth: '200px',
+                                                        maxHeight: '200px',
+                                                        objectFit: 'cover',
+                                                        borderRadius: '12px',
+                                                        border: '1px solid var(--glass-border)'
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div style={{
+                                                    width: '200px',
+                                                    height: '200px',
+                                                    border: '1px solid var(--glass-border)',
+                                                    borderRadius: '12px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    flexDirection: 'column',
+                                                    padding: '10px',
+                                                    background: 'var(--glass-bg)'
+                                                }}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256">
+                                                        <path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path>
+                                                    </svg>
+                                                    <span style={{
+                                                        fontSize: '12px',
+                                                        marginTop: '8px',
+                                                        textAlign: 'center',
+                                                        wordBreak: 'break-all'
+                                                    }}>
+                                                File {index + 1}
+                                            </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                // Отображение одиночного файла с кнопкой удаления
+                                <div style={{ position: 'relative', display: 'inline-block' }}>
+                                    {/* Кнопка удаления для одиночного файла */}
+                                    <button
+                                        type="button"
+                                        onClick={() => onChange(name, null)}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-8px',
+                                            right: '-8px',
+                                            background: 'var(--error-color)',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            width: '32px',
+                                            height: '32px',
+                                            color: 'white',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '12px',
+                                            zIndex: 1
+                                        }}
+                                        title="Remove file"
+                                    >
+                                        <RemoveCircleOutlined />
+                                    </button>
+
+                                    {typeof value === 'string' && value.startsWith('data:image/') ? (
+                                        <img
+                                            src={value}
+                                            alt="preview"
+                                            style={{
+                                                maxWidth: '200px',
+                                                maxHeight: '200px',
+                                                objectFit: 'cover',
+                                                borderRadius: '12px',
+                                                border: '1px solid var(--glass-border)'
+                                            }}
+                                        />
+                                    ) : (
+                                        <div style={{
+                                            width: '200px',
+                                            height: '200px',
+                                            border: '1px solid var(--glass-border)',
+                                            borderRadius: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexDirection: 'column',
+                                            padding: '10px',
+                                            background: 'var(--glass-bg)'
+                                        }}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256">
+                                                <path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path>
+                                            </svg>
+                                            <span style={{
+                                                fontSize: '12px',
+                                                marginTop: '8px',
+                                                textAlign: 'center'
+                                            }}>
+                                        File
+                                    </span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     )}
                 </FormControl>
             );

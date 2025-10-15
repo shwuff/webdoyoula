@@ -18,6 +18,7 @@ import hiIcon from './../../assets/icons/profileIcons/hi.png';
 import FeedFilters from "../../components/input/FeedFilters";
 import GiftIcon from "../../assets/svg/GiftIcon";
 import PaymentModal from "../../components/modals/PaymentModal";
+import {updateImage} from "../../redux/actions/imageActions";
 
 const Profile = () => {
     const { userData, token, setUserData } = useAuth();
@@ -445,9 +446,11 @@ const Profile = () => {
             <Modal
                 isOpen={isModalOpen}
                 onClose={closeModal}
+                className={"followsContainer"}
+                style={{ maxWidth: "580px" }}
             >
-                <div className="p-2 w-100 d-flex justify-content-between">
-                    <h2 className={styles.modalTitle}>{modalTitle}</h2>
+                <div className="p-2 w-100 d-flex justify-content-between" style={{ position: "fixed", background: "#000", borderRadius: "22px", maxWidth: "580px", height: "70px" }}>
+                    <p className={styles.modalTitle}>{modalTitle}</p>
                     {
                         !userData.is_telegram && (
                             <CloseButton onClick={closeModal} />
@@ -457,11 +460,11 @@ const Profile = () => {
 
                 {
                     isFollowLoading ? (
-                        <div className={"p-2 w-100 d-flex justify-content-center"}>
+                        <div className={"p-2 w-100 d-flex justify-content-center"} style={{ marginTop: "60px" }}>
                             <CircularProgress color="inherit" />
                         </div>
                     ) : (
-                        <ul className={styles.userList}>
+                        <ul className={styles.userList} style={{ marginTop: "60px", overflowY: "auto", overflowX: "hidden", height: "calc(100% - 60px)" }}>
                             {followUsers && followUsers.length > 0 ? (
                                 followUsers.map((user) => {
 
@@ -488,6 +491,13 @@ const Profile = () => {
                                                         </span>
                                                     ) : null
                                                 }
+                                                {/*<SubscribeButton*/}
+                                                {/*    sub={false}*/}
+                                                {/*    setSub={(sub) => {*/}
+                                                {/*        console.log(sub);*/}
+                                                {/*    }}*/}
+                                                {/*    userId={user?.id}*/}
+                                                {/*/>*/}
                                             </div>
 
                                             {/*<button className={'btn-outline-primary'} >*/}

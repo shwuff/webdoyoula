@@ -284,19 +284,19 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     marginRight: Number(imageSelector[selectedPhoto].author?.id) !== Number(userData.id) ? "35px" : "0px",
                                                     gap: "10px"
                                                 }}>
-                                                    {
-                                                        Number(imageSelector[selectedPhoto].author?.id) !== Number(userData.id) && (
-                                                            <SubscribeButton
-                                                                sub={imageSelector[selectedPhoto].author?.sub}
-                                                                setSub={(sub) => {
-                                                                    dispatch(updateImage(imageSelector[selectedPhoto].id, {
-                                                                        author: {...imageSelector[selectedPhoto].author, sub: sub}
-                                                                    }))
-                                                                }}
-                                                                userId={imageSelector[selectedPhoto].author?.id}
-                                                            />
-                                                        )
-                                                    }
+                                                    {/*{*/}
+                                                    {/*    Number(imageSelector[selectedPhoto].author?.id) !== Number(userData.id) && (*/}
+                                                    {/*        <SubscribeButton*/}
+                                                    {/*            sub={imageSelector[selectedPhoto].author?.sub}*/}
+                                                    {/*            setSub={(sub) => {*/}
+                                                    {/*                dispatch(updateImage(imageSelector[selectedPhoto].id, {*/}
+                                                    {/*                    author: {...imageSelector[selectedPhoto].author, sub: sub}*/}
+                                                    {/*                }))*/}
+                                                    {/*            }}*/}
+                                                    {/*            userId={imageSelector[selectedPhoto].author?.id}*/}
+                                                    {/*        />*/}
+                                                    {/*    )*/}
+                                                    {/*}*/}
 
                                                     <IconButton
                                                         onClick={(e) => setAnchorEl(e.currentTarget)}

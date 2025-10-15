@@ -35,7 +35,7 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     const get_prompt_id = searchParams.get('promptId');
     const image_id_animate = searchParams.get('image_id_animate');
 
-    const [slug, setSlug] = useState(owner + '/' + model);
+    const [slug, setSlug] = useState(owner !== undefined ? owner + '/' + model : null);
 
     const [currentModelFields, setCurrentModelFields] = useState({});
     const [currentModel, setCurrentModel] = useState(null);
@@ -61,17 +61,17 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     }, [availableModels, slug]);
 
     useEffect(() => {
-        if(token) {
+        if(token && slug !== null) {
             sendData({
                 action: "get/models",
                 data: {
                     jwt: token,
                     editImage: editImage,
-                    slug: slug
+                    slug: slug,
                 }
             });
         }
-    }, [token, editImage]);
+    }, [token, editImage, slug]);
 
     useEffect(() => {
         const receiveAvailableModels = (msg) => {

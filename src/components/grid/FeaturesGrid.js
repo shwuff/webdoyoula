@@ -11,7 +11,7 @@ import {Chip, TextField} from "@mui/material";
 import telegramStar from "../../assets/gif/gold_star.gif";
 import newWebp from '../../assets/gif/new.gif';
 
-const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+const FIVE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 const FeaturesGrid = ({ features }) => {
     const navigate = useNavigate();

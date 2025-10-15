@@ -13,24 +13,19 @@ import {BiPlay} from "react-icons/bi";
 import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
 import {useTranslation} from "react-i18next";
 import { useDispatch } from 'react-redux';
-import { setCurrentImageSelected, updateImage } from '../../redux/actions/imageActions';
+import { setCurrentImageSelected } from '../../redux/actions/imageActions';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {useSelector} from "react-redux";
 import telegramStar from "../../assets/icons/telegramStar.png";
 import telegramAnimationStar from "../../assets/gif/gold_star.gif";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import PhotoMarketModal from '../modals/PhotoMarketModal';
-import {useNavigate} from "react-router-dom";
-import imageReducer from "../../redux/reducers/imageReducer";
-import Image from "./Image";
-import Video from "../player/Video";
 import { BsBookmark, BsBookmarkFill } from 'react-icons/bs';
 import FeedSkeleton from "./FeedSkeleton";
-import { BsArrowUp } from 'react-icons/bs';
 import {Grid} from "@mui/material";
 import {keyframes, styled} from "@mui/system";
-import {Play} from "lucide-react";
 import AudioWave from "./AudioWave";
+import Confetti from 'react-confetti'
 
 Modal.setAppElement('#app');
 
@@ -59,6 +54,14 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     const {sendData} = useWebSocket();
     const {token} = useAuth();
 
+    const [showConfetti, setShowConfetti] = useState(false);
+    const [confettiKey, setConfettiKey] = useState(0);
+
+    const [animatingInId, setAnimatingInId] = useState(null);
+    const [animatingOutId, setAnimatingOutId] = useState(null);
+
+    const prevStatusRef = useRef();
+
     const style = useSpring({
         opacity: inView ? 1 : 0,
         transform: inView ? 'translateY(0px)' : 'translateY(20px)',
@@ -72,9 +75,6 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
     };
 
     const imageSelector = useSelector((state) => state.image.images);
-
-    const [animatingInId, setAnimatingInId] = useState(null);
-    const [animatingOutId, setAnimatingOutId] = useState(null);
 
     const toggleFavorite = (photoId, isAdding) => {
 
@@ -102,27 +102,47 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     };
 
+
+    useEffect(() => {
+        const currentStatus = imageSelector[photo.id]?.status;
+        const prevStatus = prevStatusRef.current;
+
+        if (prevStatus === 'creating' && currentStatus !== 'creating' && currentStatus !== undefined) {
+            setShowConfetti(true);
+            setConfettiKey(prev => prev + 1);
+
+            const timer = setTimeout(() => {
+                setShowConfetti(false);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+
+        prevStatusRef.current = currentStatus;
+    }, [imageSelector[photo.id]?.status])
+
     return (
         <animated.div ref={ref} style={style} className={styles.photoCard} onClick={() => openModal(photo.id)}>
 
-            {/*{ profileGallery === true && imageSelector[photo.id]?.author && (*/}
-            {/*    <div*/}
-            {/*        className={styles.authorAvatarWrapper}*/}
-            {/*        onClick={(e) => {*/}
-            {/*            e.stopPropagation();*/}
-            {/*            navigate('/profile/' + imageSelector[photo.id].author.id);*/}
-            {/*        }}*/}
-            {/*    >*/}
-            {/*        <img*/}
-            {/*            src={imageSelector[photo.id].author.photo_url}*/}
-            {/*            alt={imageSelector[photo.id].author.username}*/}
-            {/*            className={styles.authorAvatar}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-            {/*)}*/}
+            {showConfetti && (
+                <Confetti
+                    key={confettiKey}
+                    width={200}
+                    height={200}
+                    numberOfPieces={100}
+                    gravity={0.5}
+                    recycle={false}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        pointerEvents: 'none',
+                        zIndex: 10
+                    }}
+                />
+            )}
 
             { imageSelector[photo.id].status !== 'creating' ? (
-                // <img src={photo.file_type === 'image' ? imageSelector[photo.id].media_url : imageSelector[photo.id].video_preview} alt={`photo-${photo.id}`} className={styles.photoImage} />
                 <>
                     {
                         imageSelector[photo.id].media_url ? (

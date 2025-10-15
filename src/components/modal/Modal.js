@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Modal = ({ isOpen, onClose, children, style, isFirst = true }) => {
+const Modal = ({ isOpen, onClose, children, style, isFirst = true, className = '' }) => {
 
     useEffect(() => {
         const handleKeydown = (e) => {
@@ -38,7 +38,7 @@ const Modal = ({ isOpen, onClose, children, style, isFirst = true }) => {
                             paddingTop: "var(--safeAreaInset-top)",
                             ...style
                         }}
-                        className={styles.modalContent}
+                        className={`${styles.modalContent}${className ? " " + className : ""}`}
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.8, opacity: 0 }}

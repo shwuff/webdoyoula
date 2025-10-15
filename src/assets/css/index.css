@@ -596,6 +596,10 @@ a, div, button {
     overflow-y: auto;
 }
 
+.followsContainer {
+    display: block;
+}
+
 .d-block-xl {
     display: none;
 }
@@ -638,6 +642,13 @@ a, div, button {
 
     .d-block-sm {
         display: none;
+    }
+
+    .followsContainer {
+        display: block;
+        max-height: 50vh !important;
+        border-radius: 22px !important;
+        border: 1px solid var(--glass-border);
     }
 
     #navbarBottom {
