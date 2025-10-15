@@ -262,7 +262,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
             }
 
             {
-                imageSelector[photo.id].file_type === 'video' && (
+                (imageSelector[photo.id].file_type === 'video' && imageSelector[photo.id].status !== 'creating') && (
                     <button className={styles.playButton}>
                         <BiPlay style={{background: "var(--secondary-bg-color)"}} className={styles.playButtonIcon} />
                     </button>
