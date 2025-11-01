@@ -13,12 +13,11 @@ import newWebp from '../../assets/gif/new.gif';
 
 const FIVE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
-const FeaturesGrid = ({ features }) => {
+const FeaturesGrid = ({ features, repeat_id }) => {
     const navigate = useNavigate();
     const {t} = useTranslation();
     const [query, setQuery] = useState("");
     const inputRef = useRef(null);
-    const [anchorEl, setAnchorEl] = useState(null);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const modelFilters = [
         'edit_image', 'creating_image', 'animate_image', 'create_video', 'with_face', 'create_music'
@@ -115,6 +114,15 @@ const FeaturesGrid = ({ features }) => {
                 ))}
             </div>
 
+            {
+                repeat_id ? (
+                    <div className={"d-flex justify-content-between align-items-center"} style={{ padding: "6px", border: "1px solid red", borderRadius: "8px" }}>
+                        <p style={{  }}>{t('Choose model for repeat prompt')}</p>
+                        <span style={{ color: "lightgray", fontSize: "14px" }} onClick={() => navigate('/studio/create')}>{t("Cancel repeat")}</span>
+                    </div>
+                ) : null
+            }
+
             <div className={styles.featuresList} style={{ marginTop: 5 }}>
                 <AnimatePresence>
                     {filteredFeatures.map(feature => {
@@ -133,7 +141,11 @@ const FeaturesGrid = ({ features }) => {
                                 transition={{ duration: 0.25, ease: "easeInOut" }}
                                 className={`${styles.featureItem}`}
                                 onClick={() => {
-                                    navigate('/studio/create/' + feature.slug + (image_id_animate ? "?image_id_animate=" + image_id_animate : ""))
+                                    if(repeat_id) {
+                                        navigate('/studio/repeat/' + repeat_id + "?selected_model=" + feature.slug)
+                                    } else {
+                                        navigate('/studio/create/' + feature.slug + (image_id_animate ? "?image_id_animate=" + image_id_animate : ""))
+                                    }
                                 }}
                             >
                                 <div className={styles.featurePresent}>

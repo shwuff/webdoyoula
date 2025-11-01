@@ -54,10 +54,10 @@ const PaymentModal = ({ openPaymentModal, setOpenPaymentModal, isRubles = true, 
 
     useEffect(() => {
         setPaymentOptions([
-            { id: 1, name: "459 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 599 : 699 },
-            { id: 2, name: "1399 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 1499 : 1499 },
-            { id: 3, name: "2999 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 2999 : 2999 },
-            { id: 4, name: "4999 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 4999 : 4999 },
+            { id: 1, name: "459 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 599 : 699, last_price: currencyType === "RUB" ? 799 : 899 },
+            { id: 2, name: "1399 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 1499 : 1499, last_price: currencyType === "RUB" ? 1799 : 1799 },
+            { id: 3, name: "2999 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 2999 : 2999, last_price: currencyType === "RUB" ? 3299 : 3299 },
+            { id: 4, name: "4999 " + t('Doyoula Stars'), price: currencyType === "RUB" ? 4999 : 4999, last_price: currencyType === "RUB" ? 5299 : 5299 },
         ]);
     }, [currencyType, t]);
 

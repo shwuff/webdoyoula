@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import styles from './css/CreateContent.module.css';
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import {useAuth} from "../../context/UserContext";
 import {CiSettings} from "react-icons/ci";
 import PaymentModal from "../../components/modals/PaymentModal";
@@ -8,8 +8,6 @@ import {useWebSocket} from "../../context/WebSocketContext";
 import {useTranslation} from "react-i18next";
 import animationStarGold from './../../assets/gif/gold_star.gif';
 import FeaturesGrid from "../../components/grid/FeaturesGrid";
-import ChatLogo from './../../assets/images/chat.jpg';
-import ChannelLogo from './../../assets/images/channel.jpg';
 import TgLogo from './../../assets/svg/telegram-logo.svg';
 import {Button} from "@mui/material";
 
@@ -17,6 +15,8 @@ const CreateContent = () => {
 
     const { userData, token } = useAuth();
     const { sendData, deleteHandler, addHandler } = useWebSocket();
+    const [searchParams] = useSearchParams();
+    const repeat_id = searchParams.get('repeat_id') ? searchParams.get('repeat_id') : null;
 
     const {t} = useTranslation();
 
@@ -52,9 +52,9 @@ const CreateContent = () => {
                 <div className={"w-100 d-flex align-items-center justify-content-between"}>
 
                     <div className="w-100">
-                        <div className={"d-flex align-items-center"} style={{ gap: "7px" }}>
+                        <div className={"d-flex align-items-center"} style={{ gap: "7px", paddingBottom: "4px" }}>
                             <p>{t('Balance')}: {userData.photos_left} <img src={animationStarGold} width={14}/></p>
-                            <div>
+                            <div style={{ maxHeight: "80%" }}>
                                 <button className={"publish-button"} onClick={() => setOpenPaymentModal(true)}>
                                     {t('Buy More Stars')}
                                 </button>
@@ -67,7 +67,7 @@ const CreateContent = () => {
                     </Link>
                 </div>
                 <div className={styles.featuresList}>
-                    <FeaturesGrid features={availableModels} />
+                    <FeaturesGrid repeat_id={repeat_id} features={availableModels} />
                 </div>
                 {
                     availableModels.length > 0 && (

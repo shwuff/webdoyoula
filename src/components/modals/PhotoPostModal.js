@@ -220,6 +220,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     };
 
+    console.log(imageSelector);
+
     return (
         <AnimatePresence>
             {isModalOpen && (
@@ -621,13 +623,13 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                                 {imageSelector[selectedPhoto].comments_count || 0}
                                                                             </p>
                                                                         </div>
-                                                                        <div className={"d-flex align-items-center"}
-                                                                             style={{marginLeft: 3}}>
-                                                                            <VisibilityIcon sx={{width: 24, height: 24}}/>
-                                                                            <p style={{marginLeft: "8px"}}>
-                                                                                {imageSelector[selectedPhoto].count_views}
-                                                                            </p>
-                                                                        </div>
+                                                                        {/*<div className={"d-flex align-items-center"}*/}
+                                                                        {/*     style={{marginLeft: 3}}>*/}
+                                                                        {/*    <VisibilityIcon sx={{width: 24, height: 24}}/>*/}
+                                                                        {/*    <p style={{marginLeft: "8px"}}>*/}
+                                                                        {/*        {imageSelector[selectedPhoto].count_views}*/}
+                                                                        {/*    </p>*/}
+                                                                        {/*</div>*/}
                                                                         {/*{imageSelector[selectedPhoto].prompt_id}*/}
                                                                         {
                                                                             imageSelector[selectedPhoto].prompt_id !== null && (

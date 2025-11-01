@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import styles from './css/GenerateImageAvatar.module.css';
 import {useAuth} from "../../../context/UserContext";
 import {useWebSocket} from "../../../context/WebSocketContext";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {Box, Button} from "@mui/material";
+import {Button} from "@mui/material";
 import animationStarGold from "../../../assets/gif/gold_star.gif";
 import redSirenAnimation from "./../../../assets/gif/red_siren.gif";
 import DynamicFieldRenderer from "../../../components/DynamicFieldRenderer";
@@ -16,9 +16,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import AllPage from "../../../components/loading/AllPage";
 import {useSelector} from "react-redux";
 import Video from "../../../components/player/Video";
-import Image from "../../../components/gallery/Image";
 import ErrorList from "../../../components/list/ErrorList";
-import ModelInstructionPage from "../../../components/models/ModelInstructionPage";
 import ModelInstructionModal from "../../../components/models/ModelInstructionModal";
 
 const GenerateImageAvatar = ({ editImage = false }) => {
@@ -35,7 +33,7 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     const get_prompt_id = searchParams.get('promptId');
     const image_id_animate = searchParams.get('image_id_animate');
 
-    const [slug, setSlug] = useState(owner !== undefined ? owner + '/' + model : null);
+    const [slug, setSlug] = useState(searchParams.get('selected_model') ? searchParams.get('selected_model') : owner !== undefined ? owner + '/' + model : null);
 
     const [currentModelFields, setCurrentModelFields] = useState({});
     const [currentModel, setCurrentModel] = useState(null);
@@ -84,14 +82,15 @@ const GenerateImageAvatar = ({ editImage = false }) => {
     }, [addHandler, deleteHandler, setAvailableModels]);
 
     useEffect(() => {
-        if (currentModelFields && Object.entries(dynamicFieldValues).length === 0) {
+        const selectedModel = availableModels.find(model => model.slug === slug);
+        if (currentModelFields && Object.entries(dynamicFieldValues).length === 0 && selectedModel) {
             const initial = {};
             for (const [key, field] of Object.entries(currentModelFields)) {
                 initial[key] = field.value ?? '';
             }
             setDynamicFieldValues(initial);
         }
-    }, [currentModelFields, dynamicFieldValues]);
+    }, [currentModelFields, dynamicFieldValues, slug]);
 
     useEffect(() => {
         const onPredictionCreated = (msg) => {
@@ -107,7 +106,10 @@ const GenerateImageAvatar = ({ editImage = false }) => {
 
         const handleReceivePromptData = (msg) => {
             setPromptData(msg.prompt);
-            setSlug(msg.prompt.slug);
+            console.log("Selected model params: ", searchParams.get("selected_model"));
+            if(searchParams.get("selected_model") === null) {
+                setSlug(msg.prompt.slug);
+            }
 
             sendData({
                 action: "get/media/"
@@ -272,6 +274,15 @@ const GenerateImageAvatar = ({ editImage = false }) => {
         return <AllPage />
     }
 
+    if(availableModels.find(model => model.slug === slug) === undefined && !loading) {
+        return (
+            <div className={"p-2 d-flex justify-content-center w-100"} style={{flexDirection: "column", width: "100%", justifyContent: "center", height: "100vh", alignItems: "center"}}>
+                <h2>{t('Model not found')}</h2>
+                <Link to={"/studio/create"} style={{ color: "#0000FF" }}>{t('Back to models')}</Link>
+            </div>
+        )
+    }
+
     return (
         <div className={`globalBlock`} style={{ paddingTop: "var(--safeAreaInset-top)" }}>
 
@@ -303,6 +314,13 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                             {
                                 (currentModel.name === 'flux-schnell' || currentModel.name === 'flux-dev') && (
                                     <i style={{ color: 'blue', textDecoration: "underline" }} className={"c-pointer"} onClick={() => navigate('/settings/content')}>Обучить модель со своим лицом</i>
+                                )
+                            }
+                            {
+                                promptData?.media_id && (
+                                    <div>
+                                        <button onClick={() => navigate("/studio/create?repeat_id=" + promptData?.uuid)} className={"btn btn-primary"} style={{ marginTop: "8px" }}>{t('Change model')}</button>
+                                    </div>
                                 )
                             }
                         </div>
@@ -346,6 +364,8 @@ const GenerateImageAvatar = ({ editImage = false }) => {
                 <hr />
 
                 <ModelInstructionModal open={instructionOpen} setOpen={setInstructionOpen} description={currentModel.description} />
+
+
 
                 {Object.entries(currentModelFields).map(([fieldName, fieldConfig]) => (
                     <DynamicFieldRenderer

@@ -1,15 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
-import { FaHome, FaBookmark, FaPlus, FaUser, FaSearch, FaFolder } from 'react-icons/fa';
+import React, {useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import styles from './css/NavbarBottom.module.css';
 import {useAuth} from "../../context/UserContext";
-import Search from "../Search";
 import {useTranslation} from "react-i18next";
 import HomeIcon from "../../assets/svg/HomeIcon";
 import PlusIcon from "../../assets/svg/PlusIcon";
 import SearchIcon from "../../assets/svg/SearchIcon";
 import RatingIcon from "../../assets/svg/RatingIcon";
 import NotificationIcon from "../../assets/svg/NotificationIcon";
+import ChatGpt from "../../assets/svg/ChatGpt";
 
 const NavbarBottom = () => {
     const location = useLocation();
@@ -49,6 +48,15 @@ const NavbarBottom = () => {
                                 </div>
                                 <p className={"navbar-content-title"}>{t('search')}</p>
                             </div>
+                            {/*<div onClick={() => {*/}
+                            {/*    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');*/}
+                            {/*    navigate("/chat_gpt");*/}
+                            {/*}} className={`${styles.navItem} ${location.pathname === '/chat_gpt' ? styles.active : ''}`}>*/}
+                            {/*    <div className={styles.navIcon}>*/}
+                            {/*        <ChatGpt className={location.pathname === '/chat_gpt' ? styles.activeIcon : ''} active={location.pathname === '/chat_gpt'} />*/}
+                            {/*    </div>*/}
+                            {/*    <p className={"navbar-content-title"}>{t('ChatGPT')}</p>*/}
+                            {/*</div>*/}
                             <div onClick={() => {
                                 window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
                                 navigate("/rating");

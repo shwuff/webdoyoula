@@ -99,7 +99,7 @@ export default function PricingWidget({ billingOptions = [], plansByCycle = {}, 
                                 )}
                             </span>
                         </div>
-                        <div className={`${styles.price} text-shadow`}>{currency !== 'RUB' && currency !== "XTR" && currency} { currency === "XTR" && <img src={GoldStarIcon} width={20}  height={20}/> } {plan.price} <span className={styles.price}>{currency === 'RUB' && "₽"}</span></div>
+                        <div className={`${styles.price} text-shadow`}>{currency !== 'RUB' && currency !== "XTR" && currency} { currency === "XTR" && <img src={GoldStarIcon} width={20}  height={20}/> } {plan.price} <span className={styles.price}>{currency === 'RUB' && "₽"}</span>{plan.last_price ? <div><span style={{ textDecoration: "line-through", fontSize: 14, marginLeft: 8, bottom: 0 }}>{ currency === "XTR" && <img src={GoldStarIcon} width={14}  height={14}/> } {plan.last_price} {currency === 'RUB' && "₽"}</span></div> : ''}</div>
                     </div>
                 ))}
             </div>

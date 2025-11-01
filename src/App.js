@@ -26,6 +26,8 @@ import {useDispatch} from "react-redux";
 import PhotoPostModal from "./components/modals/PhotoPostModal";
 import {updateImage} from "./redux/actions/imageActions";
 import {ArrowUpwardRounded} from "@mui/icons-material";
+import NotFound from "./pages/NotFound";
+import ChatGpt from "./pages/chat_gpt/chat_gpt";
 
 const Bookmark = () => {
     return <div className="page about">This is the Bookmark Page!</div>;
@@ -516,6 +518,8 @@ const App = () => {
                 <Route path="/prompt/:prompt_id/" element={<GenerateImageAvatar />} />
                 <Route path="/rating" element={<Rating />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/chat_gpt" element={<ChatGpt />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
             {showButton && (
                 <>
@@ -527,7 +531,11 @@ const App = () => {
                     </button>
                 </>
             )}
-            <NavbarBottom />
+            {
+                window.location.pathname !== '/chat_gpt' && (
+                    <NavbarBottom />
+                )
+            }
             {
                 openedPhotoId > 0 && (
                     <PhotoPostModal

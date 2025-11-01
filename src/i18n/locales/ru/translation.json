@@ -185,5 +185,9 @@
   "resolution": "качество",
   "high": "высокое",
   "standart": "стандартное",
-  "seconds": "длительность"
+  "seconds": "длительность",
+  "Back to models": "Вернуться к списку моделей",
+  "Change model": "Выбрать другую модель",
+  "Choose model for repeat prompt": "Выберите модель для повтора",
+  "Cancel repeat": "Отменить повтор"
 }

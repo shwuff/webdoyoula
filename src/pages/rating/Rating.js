@@ -60,7 +60,7 @@ const Rating = () => {
     const [users, setUsers] = useState([]);
 
     const {sendData, addHandler, deleteHandler} = useWebSocket();
-    const {token, userData} = useAuth();
+    const {token} = useAuth();
     const navigate = useNavigate();
 
     const {t} = useTranslation();
@@ -102,17 +102,6 @@ const Rating = () => {
                 return users;
         }
     };
-
-    // if(users.length < 1) {
-    //
-    //     return (
-    //         <div className="globalBlock" style={{ position: 'relative' }}>
-    //             <div className="center-content-block">
-    //                 loading...
-    //             </div>
-    //         </div>
-    //     );
-    // }
 
     const topUsers = sortUsers(filter).slice(0, 3);
 

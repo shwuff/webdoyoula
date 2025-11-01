@@ -26,7 +26,6 @@ const AudioWave = ({ audioUrl, canPlay = true }) => {
             try {
                 let url = audioUrl;
 
-                // Если это blob:// ссылка, грузим через fetch и делаем Object URL
                 if (audioUrl.startsWith('blob:')) {
                     const res = await fetch(audioUrl);
                     const blob = await res.blob();

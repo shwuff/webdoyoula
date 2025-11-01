@@ -88,16 +88,16 @@ export const WebSocketProvider = ({ children }) => {
 
                             let mediaUrl;
 
-                            if (slice.byteLength > 0) {
-                                const mime =
-                                    file_type === "video"
-                                        ? "image/webp"
-                                        : file_type === "audio"
-                                            ? "audio/mp3"
-                                            : "image/webp";
-                                const blob  = new Blob([slice], { type: mime });
-                                mediaUrl = URL.createObjectURL(blob);
-                            }
+                            // if (slice.byteLength > 0) {
+                            //     const mime =
+                            //         file_type === "video"
+                            //             ? "image/webp"
+                            //             : file_type === "audio"
+                            //                 ? "audio/mp3"
+                            //                 : "image/webp";
+                            //     const blob  = new Blob([slice], { type: mime });
+                            mediaUrl = "https://testapi.doyoula.com/media/" + photo.id;//URL.createObjectURL(blob);
+                            // }
 
                             const imageData = {
                                 ...photo,
