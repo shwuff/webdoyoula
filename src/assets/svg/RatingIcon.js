@@ -1,8 +1,6 @@
 import React from 'react';
 
-const RatingIcon = ({className, active}) => {
-
-    const color = '#fff';
+const RatingIcon = ({className, active, color = '#ffffff'}) => {
 
     if(active) {
         return (

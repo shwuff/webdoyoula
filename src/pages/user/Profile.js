@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { useAuth } from "../../context/UserContext";
+import { useAuth } from "../../app/providers/UserContext";
 import styles from './css/Profile.module.css';
 import {useNavigate, useParams} from "react-router-dom";
-import { useWebSocket } from "../../context/WebSocketContext";
+import { useWebSocket } from "../../app/providers/WebSocketContext";
 import CircularProgress from '@mui/material/CircularProgress';
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import Modal from "../../components/modal/Modal";
@@ -18,7 +18,6 @@ import hiIcon from './../../assets/icons/profileIcons/hi.png';
 import FeedFilters from "../../components/input/FeedFilters";
 import GiftIcon from "../../assets/svg/GiftIcon";
 import PaymentModal from "../../components/modals/PaymentModal";
-import {updateImage} from "../../redux/actions/imageActions";
 
 const Profile = () => {
     const { userData, token, setUserData } = useAuth();
@@ -31,11 +30,10 @@ const Profile = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
 
-    // const [posts, setPosts] = useState([]);
-    // const [images, setImages] = useState([]);
     const [followUsers, setFollowUsers] = useState([]);
     const [modalTitle, setModalTitle] = useState("");
     const [isFollowLoading, setIsFollowLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const BackButton = window.Telegram.WebApp.BackButton;
 
@@ -425,6 +423,8 @@ const Profile = () => {
                         isMarket={showPaidPrompts}
                         setIsMarket={setShowPaidPrompts}
                         fromProfile={true}
+                        setSearchQuery={setSearchQuery}
+                        searchQuery={searchQuery}
                     />
 
                     <MyGeneratedPhotosList
@@ -440,6 +440,7 @@ const Profile = () => {
                         searchingAiModel={searchingAiModel}
                         dateRange={dateRange}
                         showPaidPrompts={showPaidPrompts}
+                        searchQuery={searchQuery}
                     />
                 </div>
             </div>
@@ -449,7 +450,7 @@ const Profile = () => {
                 className={"followsContainer"}
                 style={{ maxWidth: "580px" }}
             >
-                <div className="p-2 w-100 d-flex justify-content-between" style={{ position: "fixed", background: "#000", borderRadius: "22px", maxWidth: "580px", height: "70px" }}>
+                <div className="p-2 w-100 d-flex justify-content-between" style={{ position: "fixed", borderRadius: "22px", maxWidth: "580px", height: "70px" }}>
                     <p className={styles.modalTitle}>{modalTitle}</p>
                     {
                         !userData.is_telegram && (

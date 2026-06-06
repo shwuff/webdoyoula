@@ -1,21 +1,34 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-// import LanguageDetector from 'i18next-browser-languagedetector';
+import Backend from 'i18next-http-backend';
+import { v4 as uuidv4 } from 'uuid';
 
-import translationEN from './locales/en/translation.json';
-import translationRU from './locales/ru/translation.json';
+const getOrCreateUUID = () => {
+    const uuid = uuidv4();
 
-const resources = {
-    en: { translation: translationEN },
-    ru: { translation: translationRU }
+    return uuid;
 };
 
 i18n
-    // .use(LanguageDetector)
+    .use(Backend)
     .use(initReactI18next)
     .init({
-        resources,
         fallbackLng: 'en',
+        lng: 'en',
+
+        backend: {
+            loadPath: (lng) => {
+                const uuid = getOrCreateUUID();
+                return `https://api.doyoula.com/translation/{{lng}}.json?id=${uuid}`;
+            },
+            crossDomain: true,
+            requestOptions: {
+                mode: 'cors',
+                credentials: 'same-origin',
+                cache: 'default'
+            }
+        },
+
         interpolation: {
             escapeValue: false
         }

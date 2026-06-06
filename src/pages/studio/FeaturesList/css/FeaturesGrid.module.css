@@ -1,0 +1,208 @@
+.searchBar {
+    padding: 4px 0;
+    text-align: end;
+    display: block;
+    justify-content: space-between;
+}
+
+.searchInputWrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    height: 32px;
+}
+
+@media (max-width: 1200px) {
+
+    .searchBar {
+        display: flex;
+    }
+}
+
+.searchIcon {
+    position: absolute;
+    z-index: 100;
+    left: 10px;
+    top: calc(50% - 10px);
+    color: var(--hint-color);
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    /*padding: 10px 70px 10px 36px; !* место под иконку и клавиши *!*/
+    font-size: 1rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--glass-bg);
+    color: var(--text-color);
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+.searchInput:focus {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.featuresList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 2fr));
+    gap: 5px;
+    align-items: start;
+    transition: all 0.3s ease;
+}
+
+.runsIcon {
+    width: 15px;
+    height: 15px;
+}
+
+@media (max-width: 600px) {
+    .featuresList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .featureName {
+        font-size: 12px !important;
+    }
+
+    .runs {
+        font-size: 12px !important;
+    }
+
+    .runsIcon {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+.featureItem {
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    will-change: transform, opacity;
+}
+
+.featureItem:hover {
+    transform: translateY(-6px);
+}
+
+.featurePresent {
+    position: relative;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    padding-bottom: 30px;
+}
+
+.featureLogo {
+    width: 100%;
+    aspect-ratio: 16/11;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+}
+
+.featureName {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    position: static;
+    width: 100%;
+    padding: 5px 9px 0 9px;
+    text-shadow: var(--text-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.runs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.featureNameDown {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    position: absolute;
+    bottom: 4px;
+    width: 100%;
+    padding: 0 9px 5px 9px;
+    text-shadow: var(--text-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.telegramStar {
+    width: 14px;
+    height: 16px;
+}
+
+.telegramStarIcon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+}
+
+.filterDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    z-index: 1000;
+    padding: 6px 0;
+}
+
+.filterItem {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.filterItem:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.selected {
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.filterIcon {
+    background: var(--glass-bg) !important;
+    border-radius: 8px !important;
+    width: 42px;
+    height: 42px;
+    margin: -5px !important;
+    border: 1px solid var(--glass-border) !important;
+}
+

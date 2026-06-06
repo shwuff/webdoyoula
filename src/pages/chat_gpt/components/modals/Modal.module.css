@@ -1,0 +1,694 @@
+/* Основные стили для оверлея */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: auto;
+}
+
+/* Бэкдроп */
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.backdropVisible {
+    opacity: 1;
+}
+
+.backdropHidden {
+    opacity: 0;
+}
+
+/* Контейнер модалки */
+.modalContainer {
+    position: relative;
+    width: 100%;
+    max-width: 60%;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    z-index: 1001;
+}
+
+/* Контент модалки */
+.modalContent {
+    background: var(--bg-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border: 1px solid var(--glass-border);
+}
+
+.modalVisible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.modalHidden {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+}
+
+/* Кнопка закрытия для ДЕСКТОПА */
+.desktopCloseButton {
+    position: absolute;
+    right: 1.25rem;
+    top: 1.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--bg-color);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.desktopCloseButton:hover {
+    background-color: var(--bg-color);
+    border-color: var(--glass-border);
+    transform: scale(1.05);
+}
+
+/* Кнопка закрытия для МОБИЛКИ - ФИКСИРОВАННАЯ */
+.mobileCloseButton {
+    position: fixed;
+    right: 1rem;
+    top: 1rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--bg-color);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 1002; /* Поверх модалки */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mobileCloseButton:hover {
+    background-color: var(--bg-color);
+    border-color: var(--glass-border);
+    transform: scale(1.05);
+}
+
+.mobileCloseButton:active {
+    transform: scale(0.95);
+}
+
+/* Иконка закрытия */
+.closeIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #4b5563;
+}
+
+/* Заголовок */
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--hint-color);
+    line-height: 1.6;
+}
+
+/* Сетка тарифов */
+.plansGrid {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .plansGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Карточка тарифа */
+.planCard {
+    border: 2px solid var(--glass-border);
+    border-radius: 1rem;
+    padding: 1.75rem;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.popularCard {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, var(--header-bg-color) 0%, var(--bg-color) 100%);
+}
+
+.popularCard:hover {
+    border-color: #2563eb;
+}
+
+/* Бейдж для популярного тарифа */
+.badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.badgeText {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 0.375rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+/* Заголовок тарифа */
+.planHeader {
+    margin-bottom: 1.5rem;
+    flex-grow: 0;
+}
+
+.planName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.priceContainer {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+}
+
+.price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-color);
+    line-height: 1;
+}
+
+.period {
+    color: var(--hint-color);
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.planDescription {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+/* Список фич */
+.featuresList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem 0;
+    flex-grow: 1;
+}
+
+.featureItem {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.featureItem:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.checkmark {
+    color: var(--text-color);
+    font-size: 1.125rem;
+    font-weight: bold;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    line-height: 1.4;
+}
+
+.featureText {
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Кнопка выбора */
+.selectButton {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.primaryButton {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.primaryButton:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    box-shadow: 0 6px 12px -1px rgba(59, 130, 246, 0.4);
+}
+
+.secondaryButton {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 2px solid #e5e7eb;
+}
+
+.secondaryButton:hover {
+    background: var(--bg-color);
+    border-color: var(--glass-border);
+}
+
+/* Футер */
+.footer {
+    padding-top: 2rem;
+    border-top: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.footerText {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.7;
+}
+
+/* Адаптивность для МОБИЛОК */
+@media (max-width: 800px) {
+    .overlay {
+        padding: 0px;
+        align-items: flex-start;
+    }
+
+    .modalContainer {
+        max-width: 100%;
+        height: max-content;
+    }
+
+    .modalContent {
+        padding: 1.5rem;
+        padding-top: max(var(--safeAreaInset-top), 2rem);
+        border-radius: 0px;
+        display: block;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .plansGrid {
+        gap: 1.5rem;
+    }
+
+    .planCard {
+        padding: 1.25rem;
+    }
+
+    .planName {
+        font-size: 1.25rem;
+    }
+
+    .price {
+        font-size: 2rem;
+    }
+
+    .period {
+        font-size: 1rem;
+    }
+
+    .planDescription {
+        font-size: 0.9rem;
+    }
+
+    /* Скрываем десктопный крестик на мобилках */
+    .desktopCloseButton {
+        display: none;
+    }
+}
+
+/* Показываем мобильный крестик только на мобилках */
+@media (min-width: 768px) {
+    .mobileCloseButton {
+        display: none;
+    }
+}
+
+/* Отключаем скролл на теле при открытой модалке */
+body.modalOpen {
+    overflow: hidden;
+}
+
+/* Основной лэйаут */
+.settingsLayout {
+    display: flex;
+    flex: 1;
+    min-height: 400px;
+    gap: 2rem;
+    overflow: hidden;
+}
+
+/* Боковая панель */
+.sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--glass-border);
+    padding-right: 1rem;
+    overflow-y: auto;
+}
+
+.navMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-size: 0.95rem;
+    color: #374151;
+    width: 100%;
+}
+
+.navItem:hover {
+    background-color: var(--bg-color);
+}
+
+.navItemActive {
+    background-color: var(--bg-color);
+    color: #1d4ed8;
+    font-weight: 500;
+}
+
+.navIcon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+}
+
+.navLabel {
+    flex: 1;
+}
+
+/* Контент */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+}
+
+.tabContent {
+    height: 100%;
+}
+
+.tabTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.tabDescription {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.settingsGroup {
+    margin-bottom: 2rem;
+}
+
+.groupTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+/* Адаптивность для МОБИЛОК */
+@media (max-width: 800px) {
+    .overlay {
+        padding: 0;
+        align-items: flex-start;
+    }
+
+    .modalContainer {
+        max-width: 100%;
+        max-height: 100vh;
+        width: 100%;
+        height: 100%;
+    }
+
+    .settingsLayout {
+        flex-direction: column;
+        flex: 1;
+        min-height: auto;
+        gap: 0;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+        padding: 0;
+        overflow-x: auto;
+        flex-shrink: 0;
+        margin-bottom: 1rem;
+    }
+
+    .navMenu {
+        flex-direction: row;
+        flex-wrap: nowrap; /* Не переносить на новую строку */
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        overflow-x: auto; /* Горизонтальный скролл */
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
+        scrollbar-width: none; /* Скрыть скроллбар в Firefox */
+        -ms-overflow-style: none; /* Скрыть скроллбар в IE/Edge */
+    }
+
+    .navMenu::-webkit-scrollbar {
+        display: none; /* Скрыть скроллбар в Chrome/Safari */
+    }
+
+    .navItem {
+        padding: 0.5rem 1rem;
+        white-space: nowrap;
+        width: auto; /* Автоматическая ширина для горизонтального меню */
+        flex-shrink: 0; /* Не сжимать элементы */
+        min-width: max-content; /* Минимальная ширина по содержимому */
+        border: 1px solid transparent;
+    }
+
+    .navItem:hover {
+        border-color: var(--glass-border);
+    }
+
+    .navItemActive {
+        background-color: var(--bg-color);
+        border-color: #3b82f6;
+    }
+
+    .navIcon {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+    }
+
+    .content {
+        flex: 1;
+        padding: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+    }
+
+    /* Скрываем десктопный крестик на мобилках */
+    .desktopCloseButton {
+        display: none;
+    }
+}
+
+/* Показываем мобильный крестик только на мобилках */
+@media (min-width: 768px) {
+    .mobileCloseButton {
+        display: none;
+    }
+}
+
+/* Отключаем скролл на теле при открытой модалке */
+body.modalOpen {
+    overflow: hidden;
+}
+
+/* Модальный overlay подтверждения */
+.confirmOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* полупрозрачный фон */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 12000; /* выше основной модалки */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Когда открыто */
+.confirmOverlay .confirmModal {
+    transform: scale(0.9);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Активное состояние */
+.confirmOverlayActive {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.confirmOverlayActive .confirmModal {
+    transform: scale(1);
+}
+
+/* Сама модалка подтверждения */
+.confirmModal {
+    background: var(--bg-color);
+    padding: 30px 25px;
+    border-radius: 16px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    z-index: 12001;
+    top: 30%;
+}
+
+/* Заголовок */
+.confirmModal h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+/* Текст */
+.confirmModal p {
+    margin: 0 0 20px 0;
+    font-size: 1rem;
+    color: var(--hint-color);
+}
+
+/* Кнопки */
+.confirmButtons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.confirmButtons button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.confirmButtons button:hover {
+    transform: translateY(-2px);
+}
+
+/* Основная кнопка подтверждения */
+.confirmButtons .primaryButton {
+    background-color: #1d4ed8; /* синий */
+    color: white;
+}
+
+.confirmButtons .primaryButton:hover {
+    background-color: #2563eb;
+}
+
+/* Отмена */
+.confirmButtons .secondaryButton {
+    background-color: var(--secondary-bg-color); /* светло-серый */
+    color: var(--text-color);
+}
+
+.confirmButtons .secondaryButton:hover {
+    background-color: #d1d5db;
+}

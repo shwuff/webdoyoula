@@ -7,11 +7,11 @@ import {
 } from '@mui/material';
 import {PhotoCamera} from '@mui/icons-material';
 import RightModal from '../../../components/modal/RightModal';
-import {useAuth} from "../../../context/UserContext";
+import {useAuth} from "../../../app/providers/UserContext";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from './../../../utils/cropImage';
-import {useWebSocket} from "../../../context/WebSocketContext";
+import {useWebSocket} from "../../../app/providers/WebSocketContext";
 import {useTranslation} from "react-i18next";
 import ColorCircle from "../../../components/input/ColorCircle";
 import styles from "../css/Profile.module.css";
@@ -20,6 +20,7 @@ import TelegramStar from './../../../assets/icons/profileIcons/telegram-star.png
 import zzzIcon from './../../../assets/icons/profileIcons/zzz.png';
 import palmIcon from './../../../assets/icons/profileIcons/palm.png';
 import hiIcon from './../../../assets/icons/profileIcons/hi.png';
+import LucideIcon from "../../../assets/icons/LucideIcon";
 
 const EditData = ({ buttonStyle = {} }) => {
     const {userData, token} = useAuth();
@@ -28,8 +29,8 @@ const EditData = ({ buttonStyle = {} }) => {
     const {t} = useTranslation();
 
     const [profileImage, setProfileImage] = useState(userData.photo_url);
-    const [name, setName] = useState(userData.first_name);
-    const [surname, setSurname] = useState(userData.last_name);
+    const [name, setName] = useState(userData.first_name || '');
+    const [surname, setSurname] = useState(userData.last_name || '');
     const [username, setUsername] = useState(userData.username);
     const [isOpen, setIsOpen] = useState(false);
     const fileInputRef = useRef(null);
@@ -140,25 +141,14 @@ const EditData = ({ buttonStyle = {} }) => {
         <>
             <Button
                 onClick={() => setIsOpen(true)}
-                className={'publish-outline-button'}
-                style={buttonStyle}
+                className={'publish-outline-button d-flex'}
+                style={{
+                    gap: "8px",
+                    ...buttonStyle
+                }}
             >
-                <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="#fffC"
-                    >
-
-                        <circle cx="12" cy="9" r="3" />
-                        <path d="M12 13c-3 0-5 1.5-5 2.5v0.5h10v-0.5c0-1-2-2.5-5-2.5z" />
-
-                        <g transform="translate(15, 2) scale(0.3)">
-                            <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 00.12-.66l-1.92-3.32a.5.5 0 00-.61-.22l-2.39.96a7.007 7.007 0 00-1.63-.94L14.5 2.5a.5.5 0 00-.5-.5h-4a.5.5 0 00-.5.5l-.38 2.48c-.59.25-1.13.57-1.63.94l-2.39-.96a.5.5 0 00-.61.22l-1.92 3.32a.5.5 0 00.12.66l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 00-.12.66l1.92 3.32a.5.5 0 00.61.22l2.39-.96c.5.37 1.05.69 1.63.94l.38 2.48c.04.27.26.47.5.47h4c.24 0 .46-.2.5-.47l.38-2.48c.59-.25 1.13-.57 1.63-.94l2.39.96a.5.5 0 00.61-.22l1.92-3.32a.5.5 0 00-.12-.66l-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/>
-                        </g>
-                    </svg>
-                    <span>Изменить профиль</span>
+                <LucideIcon name={"UserPen"} color={"var(--text-color)"} size={18} />
+                <span>{t('Edit Profile')}</span>
             </Button>
 
             <RightModal
@@ -264,10 +254,7 @@ const EditData = ({ buttonStyle = {} }) => {
                 </div>
 
                 <Box sx={{width: '100%', p: 2, textAlign: 'center'}}>
-
                     <Box sx={{position: 'relative', mb: 2}}>
-
-
                         <input
                             type="file"
                             hidden

@@ -20,8 +20,8 @@ import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Cancel'
 import { motion } from 'framer-motion'
 import {useTranslation} from "react-i18next";
-import {useWebSocket} from "../../../context/WebSocketContext";
-import {useAuth} from "../../../context/UserContext";
+import {useWebSocket} from "../../../app/providers/WebSocketContext";
+import {useAuth} from "../../../app/providers/UserContext";
 import StyledTextarea from "../../../components/input/StyledTextarea";
 
 export default function MyLorasList({ myLoras }) {

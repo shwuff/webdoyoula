@@ -1,8 +1,8 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
-import {useWebSocket} from "../../context/WebSocketContext";
-import {useAuth} from "../../context/UserContext";
+import {useWebSocket} from "../../app/providers/WebSocketContext";
+import {useAuth} from "../../app/providers/UserContext";
 import BasketButton from "../buttons/BasketButton";
 
 const Cart = () => {

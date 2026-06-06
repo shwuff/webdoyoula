@@ -98,9 +98,9 @@
         display: none;
     }
 
-    .navItem.active * {
-        font-weight: 800;
-    }
+    /*.navItem.active * {*/
+    /*    font-weight: 800;*/
+    /*}*/
 
     .profileIcon {
         display: none !important;

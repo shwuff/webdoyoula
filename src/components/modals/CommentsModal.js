@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaComment } from 'react-icons/fa';
-import { useWebSocket } from "../../context/WebSocketContext";
-import { useAuth } from "../../context/UserContext";
+import { useWebSocket } from "../../app/providers/WebSocketContext";
+import { useAuth } from "../../app/providers/UserContext";
 import Modal from "../modal/Modal";
 import {
     Avatar,
@@ -189,7 +189,7 @@ const CommentsModal = ({ photoGallery }) => {
                     style={{ marginTop: '16px', width: "100%" }}
                 >
                     {
-                        loading ? <CircularProgress size={20} sx={{ color: 'var(--text-color)' }} /> : <span>{t('to_publish')}</span>
+                        loading ? <CircularProgress size={20} sx={{ color: 'var(--text-color)' }} /> : <span style={{ color: "--var(--button-text-color)" }}>{t('to_publish')}</span>
                     }
                 </Button>
             </div>

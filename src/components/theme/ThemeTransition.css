@@ -1,0 +1,26 @@
+/* ThemeTransition.css */
+.theme-ripple {
+    position: fixed;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    opacity: 0.2;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    pointer-events: none;
+    animation: ripple 1.5s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0.4;
+    }
+    100% {
+        width: 300vw;
+        height: 300vw;
+        opacity: 0;
+    }
+}

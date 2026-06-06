@@ -2,26 +2,22 @@ import React, {useCallback, useEffect, useState} from 'react';
 import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import {Avatar, Box, Skeleton, Typography} from "@mui/material";
 import LikeHeart from "../buttons/LikeHeart";
-import {useWebSocket} from "../../context/WebSocketContext";
-import {useAuth} from "../../context/UserContext";
+import {useWebSocket} from "../../app/providers/WebSocketContext";
+import {useAuth} from "../../app/providers/UserContext";
 import {useNavigate} from "react-router-dom";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { motion, AnimatePresence } from 'framer-motion';
-import SubscribeButton from "../buttons/SubscribeButton";
 import {useTranslation} from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
-import { setCurrentImageSelected, updateImage } from "../../redux/actions/imageActions";
+import { setCurrentImageSelected, updateImage } from "../../app/store/slices/imageSlice";
 import telegramStar from "../../assets/icons/telegramStar.png";
 import PublishToGalleryButton from "../buttons/PublishToGalleryButton";
 import telegramAnimationStar from "../../assets/gif/gold_star.gif";
-import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {getTimeAgo} from "../../App";
-import Video from '../player/Video';
+import {getTimeAgo} from "../../utils/getTimeAgo";
 import CommentIcon from "../../assets/svg/CommentIcon";
 import Modal from "../modal/Modal";
 import CommentsModal from "./CommentsModal";
@@ -32,6 +28,7 @@ import LoadingPlaceholder from "../loading/LoadingPlaceholer";
 import {DownloadIcon} from "lucide-react";
 import CircularProgress from "@mui/material/CircularProgress";
 import EditIcon from "@mui/icons-material/Edit";
+import LucideIcon from "../../assets/icons/LucideIcon";
 
 const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
@@ -73,9 +70,9 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                 return;
             }
 
-            dispatch(updateImage(msg.media_id, {liked: msg.liked, likes_count: msg.likes_count}));
+            dispatch(updateImage({ id: msg.media_id, newImageData: {liked: msg.liked, likes_count: msg.likes_count} }));
 
-            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            window.Telegram.WebApp?.HapticFeedback?.notificationOccurred('success');
         };
 
         addHandler('handle_update_like', handleLikes);
@@ -103,7 +100,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
             if (!msg.media || msg.media.length < 1) return;
-            dispatch(updateImage(msg.media[0].id, {blob_url: msg.media[0].blob_url}));
+            dispatch(updateImage({ id: msg.media[0].id, newImageData: {blob_url: msg.media[0].blob_url} }));
         };
 
         addHandler('photo_modal_studio', handlePhotoGeneratedModal);
@@ -217,10 +214,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                 }
             });
         }
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
     };
-
-    console.log(imageSelector);
 
     return (
         <AnimatePresence>
@@ -283,7 +278,8 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     position: 'relative',
                                                     display: "flex",
                                                     width: "max-content",
-                                                    marginRight: Number(imageSelector[selectedPhoto].author?.id) !== Number(userData.id) ? "35px" : "0px",
+                                                    alignItems: "center",
+                                                    marginRight: Number(imageSelector[selectedPhoto].author?.id) !== Number(userData.id) ? "0px" : "0px",
                                                     gap: "10px"
                                                 }}>
                                                     {/*{*/}
@@ -300,29 +296,18 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                     {/*    )*/}
                                                     {/*}*/}
 
-                                                    <IconButton
+                                                    <span
+                                                        style={{ width: 24, height: 24 }}
                                                         onClick={(e) => setAnchorEl(e.currentTarget)}
                                                     >
-                                                        <MoreVertIcon/>
-                                                    </IconButton>
+                                                        <LucideIcon name={"EllipsisVertical"} color={"#fff"} size={24} />
+                                                    </span>
 
                                                     <Menu
                                                         anchorEl={anchorEl}
                                                         open={Boolean(anchorEl)}
                                                         onClose={() => setAnchorEl(null)}
                                                     >
-                                                        {/*{*/}
-                                                        {/*    Number(imageSelector[selectedPhoto]?.author?.id) === Number(userData.id) && (*/}
-                                                        {/*        <MenuItem onClick={handleEdit}>*/}
-                                                        {/*            <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>*/}
-                                                        {/*            <ListItemText primary="Редактировать" />*/}
-                                                        {/*        </MenuItem>*/}
-                                                        {/*    )*/}
-                                                        {/*}*/}
-                                                        {/*<MenuItem onClick={handleViewPrompt}>*/}
-                                                        {/*    <ListItemIcon><VisibilityIcon fontSize="small" /></ListItemIcon>*/}
-                                                        {/*    <ListItemText primary="Посмотреть промт" />*/}
-                                                        {/*</MenuItem>*/}
                                                         <MenuItem onClick={() => handleShare(selectedPhoto)}>
                                                             <ListItemIcon><ShareIcon fontSize="small"/></ListItemIcon>
                                                             <ListItemText primary="Поделиться"/>
@@ -352,6 +337,11 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                             )
                                                         }
                                                     </Menu>
+                                                    {
+                                                        window.Telegram.WebApp?.safeAreaInset?.top ? null : (
+                                                            <LucideIcon onClick={() => setIsModalOpen(false)} name={"CircleX"} color={"#fff"} size={24} />
+                                                        )
+                                                    }
                                                 </Box>
                                             </div>
                                     {/*    )*/}
@@ -462,7 +452,7 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                             borderRadius: "12px",
                                             padding: "4px 8px",
                                             border: "1px solid gold",
-                                            color: "gold",
+                                            color: "#3b3b3e",
                                             background: "var(--glass-bg)",
                                             backdropFilter: "blur(10px)",
                                         }} className={"text-shadow"}>
@@ -581,26 +571,26 @@ const PhotoPostModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, se
                                                                 <div className="w-100 d-flex justify-content-between">
                                                                     <div className={"actionBar d-flex align-items-center"}>
                                                                         <div className={"d-flex align-items-center"}>
-                                                                            <button
+                                                                            <span
                                                                                 className="actionButton d-flex align-items-center"
                                                                                 onClick={() => handleLike(imageSelector[selectedPhoto].id, userData.id)}
                                                                             >
                                                                                 <LikeHeart key={imageSelector[selectedPhoto].id}
                                                                                            liked={imageSelector[selectedPhoto].liked}/>
-                                                                            </button>
+                                                                            </span>
                                                                             <p style={{marginLeft: "5px"}}>
                                                                                 {imageSelector[selectedPhoto].likes_count || 0}
                                                                             </p>
                                                                         </div>
                                                                         <div className={"d-flex align-items-center"}>
                                                                             {/*<CommentsModal photoGallery={imageSelector[selectedPhoto]} isOpen={isCommentModalOpen} setOpen={setIsCommentModalOpen} />*/}
-                                                                            <button className="actionButton d-flex align-items-center">
-                                                                                <CommentIcon onClick={() => {
+                                                                            <span className="actionButton d-flex align-items-center">
+                                                                                <CommentIcon color={"var(--text-color)"} onClick={() => {
                                                                                     if (window.innerWidth < 1200) {
                                                                                         setIsCommentModalOpen(true);
                                                                                     }
                                                                                 }} style={{width: 24, height: 24}}/>
-                                                                            </button>
+                                                                            </span>
                                                                             <Modal isOpen={isCommentModalOpen}
                                                                                    onClose={() => setIsCommentModalOpen(false)} style={{
                                                                                 overflowY: "auto",

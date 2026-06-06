@@ -1,33 +1,24 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import styles from "../gallery/css/MyGeneratedPhotosList.module.css";
 import {Avatar, Box, Typography} from "@mui/material";
-import LikeHeart from "../buttons/LikeHeart";
-import CommentsModal from "./CommentsModal";
-import {useWebSocket} from "../../context/WebSocketContext";
-import {useAuth} from "../../context/UserContext";
+import {useWebSocket} from "../../app/providers/WebSocketContext";
+import {useAuth} from "../../app/providers/UserContext";
 import {useNavigate} from "react-router-dom";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { motion, AnimatePresence } from 'framer-motion';
 import SubscribeButton from "../buttons/SubscribeButton";
 import {useTranslation} from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
-import { setCurrentImageSelected, updateImage } from "../../redux/actions/imageActions";
+import { setCurrentImageSelected, updateImage } from "../../app/store/slices/imageSlice";
 import telegramStar from "../../assets/icons/telegramStar.png";
-import { addGood, deleteGood, updateCount } from "./../../redux/actions/cartActions";
 import marketStyles from "./css/PhotoMarketModule.module.css";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TShirtMask from './../../assets/images/t_shirt_mask.webp';
 import BasketButton from "../buttons/BasketButton";
 
 const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, selectedPhoto, setSelectedPhoto, nextPhoto = () => {}, prevPhoto = () => {}, profileGallery = false, from = '' }) => {
 
-    const {addHandler, deleteHandler, sendData, isConnected} = useWebSocket();
+    const {addHandler, deleteHandler, sendData} = useWebSocket();
     const {token, userData} = useAuth();
     const {t} = useTranslation();
-
-    const cartSelector = useSelector(state => state);
 
     const [selectedSize, setSelectedSize] = useState('L');
 
@@ -48,13 +39,6 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
         setCurrentImageSelected(0);
         BackButton.hide();
     }, [setCurrentImageSelected]);
-
-    const handleLike = (imageId, userId) => {
-        sendData({
-            action: "handle_like_post",
-            data: { jwt: token, userId: userId, imageId: imageId }
-        });
-    };
 
     const handleDeleteFromGallery = (photoId) => {
         sendData({
@@ -90,9 +74,9 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
                 return;
             }
 
-            dispatch(updateImage(msg.imageId, {liked: msg.liked, likes_count: msg.likesCount}));
+            dispatch(updateImage({ id: msg.imageId, newImageData: {liked: msg.liked, likes_count: msg.likesCount} }));
 
-            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            window.Telegram.WebApp?.HapticFeedback?.notificationOccurred('success');
         };
 
         addHandler('handle_update_like', handleLikes);
@@ -118,7 +102,7 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
     useEffect(() => {
         const handlePhotoGeneratedModal = async (msg) => {
             if (!msg.media || msg.media.length < 1) return;
-            dispatch(updateImage(msg.media[0].id, {blob_url: msg.media[0].blob_url, low: false}));
+            dispatch(updateImage({ id: msg.media[0].id, newImageData: {blob_url: msg.media[0].blob_url, low: false} }));
         };
 
         addHandler('photo_modal_studio', handlePhotoGeneratedModal);
@@ -128,9 +112,9 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
     useEffect(() => {
         const handleMessage = async (msg) => {
             if(selectedPhoto !== null && selectedPhoto === msg.photoId) {
-                dispatch(updateImage(msg.photoId, {posted_at: msg.posted_at}));
+                dispatch(updateImage({ id: msg.photoId, newImageData: {posted_at: msg.posted_at} }));
             }
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
         };
 
         addHandler('update_photo_hided', handleMessage);
@@ -203,7 +187,7 @@ const PhotoMarketModal = ({ isModalOpen, setIsModalOpen, setOpenBackdropLoader, 
                                                     <SubscribeButton
                                                         sub={imageSelector[selectedPhoto].author.sub}
                                                         setSub={(sub) => {
-                                                            dispatch(updateImage(imageSelector[selectedPhoto].id, { author: {...imageSelector[selectedPhoto].author, sub: sub} }))
+                                                            dispatch(updateImage({ id: imageSelector[selectedPhoto].id, newImageData: { author: {...imageSelector[selectedPhoto].author, sub: sub} } }))
                                                         }}
                                                         userId={imageSelector[selectedPhoto].author.id}
                                                     />

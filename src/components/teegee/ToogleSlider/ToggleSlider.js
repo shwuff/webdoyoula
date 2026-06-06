@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import './ToggleSlider.css'
-import {Button} from "@mui/material";
+import styles from './ToggleSlider.module.css'
 
-export default function ToggleSlider({ options = ['First', 'Second'], onChange }) {
-    const [activeIndex, setActiveIndex] = useState(0)
+export default function ToggleSlider({
+                                         options = ['First', 'Second'],
+                                         onChange,
+                                         defaultValue = 0
+                                     }) {
+    const [activeIndex, setActiveIndex] = useState(defaultValue)
 
     const handleClick = i => {
         setActiveIndex(i)
@@ -11,20 +14,25 @@ export default function ToggleSlider({ options = ['First', 'Second'], onChange }
     }
 
     return (
-        <div className="toggle-container">
-            {options.map((opt, i) => (
-                <button
-                    key={i}
-                    className={`toggle-btn ${activeIndex === i ? 'active' : ''}`}
-                    onClick={() => handleClick(i)}
-                >
-                    {opt}
-                </button>
-            ))}
-            <div
-                className="toggle-slider"
-                style={{ left: `${(100 / options.length) * activeIndex}%`, width: `${100 / options.length}%` }}
-            />
+        <div className={styles.container}>
+            <div className={styles.toggleWrapper}>
+                <div
+                    className={styles.toggleSlider}
+                    style={{
+                        transform: `translateX(calc(${(99) * activeIndex}%))`,
+                        width: `${100 / options.length}%`
+                    }}
+                />
+                {options.map((opt, i) => (
+                    <span
+                        key={i}
+                        onClick={() => handleClick(i)}
+                        className={`${styles.toggleButton} ${activeIndex === i ? styles.activeToggle : ''}`}
+                    >
+                        {opt}
+                    </span>
+                ))}
+            </div>
         </div>
     )
 }

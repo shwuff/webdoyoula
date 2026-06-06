@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './css/SmartDropdown.module.css';
 import { gsap } from 'gsap';
+import StarGif from "../../../assets/gif/gold_star.gif";
+import {Button} from "@mui/material";
 
 export default function SmartDropdown({ options = [], selected, setSelected }) {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,0 +1,45 @@
+@property --gradient-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes rotate-gradient {
+    0% {
+        --gradient-angle: 0deg;
+    }
+    100% {
+        --gradient-angle: 360deg;
+    }
+}
+
+.animated-gradient-border {
+    background: conic-gradient(
+            from var(--gradient-angle) at 50% 50%,
+            #00ffaa 0deg,
+            #0099ff 120deg,
+            #aa00ff 240deg,
+            #00ffaa 360deg
+    ) border-box;
+    border: 2px solid transparent;
+    animation: rotate-gradient 3s linear infinite;
+    position: relative;
+    border-radius: 18px;
+    padding: 3px;
+}
+
+.animated-gradient-border::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border-radius: 16px;
+    background: var(--bg-color);
+    z-index: -1;
+}
+
+.duration-200 {
+    transition-duration: 0.2s;
+}

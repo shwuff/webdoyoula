@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useWebSocket } from "../../context/WebSocketContext";
-import { useAuth } from "../../context/UserContext";
+import { useWebSocket } from "../../app/providers/WebSocketContext";
+import { useAuth } from "../../app/providers/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import PhotoPostModal from "../../components/modals/PhotoPostModal";
 import {useTranslation} from "react-i18next";
 import styles from "../../components/teegee/PricingWidget/css/PricingWidget.module.css";
-import {getTimeAgo} from "../../App";
+import {getTimeAgo} from "../../utils/getTimeAgo";
 import animationStarGold from './../../assets/gif/gold_star.gif';
-import Video from "../../components/player/Video";
+import ToggleSlider from "../../components/teegee/ToogleSlider/ToggleSlider";
 
 const NotificationsPage = () => {
     const { addHandler, deleteHandler, sendData } = useWebSocket();
@@ -188,8 +188,17 @@ const NotificationsPage = () => {
         });
     };
 
+    const toggleShowSaved = (i) => {
+        console.log(i)
+        if(i === 0) {
+            setPage("notifications")
+        } else if(i === 1) {
+            setPage("finance")
+        }
+    }
+
     useEffect(() => {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
     }, [page]);
 
     return (
@@ -198,30 +207,7 @@ const NotificationsPage = () => {
 
                 <div className="w-100 d-flex justify-content-center">
                     <div style={{ width: "80%" }}>
-                        <div className={styles.toggleWrapper}>
-                            <div
-                                className={styles.toggleSlider}
-                                style={{
-                                    transform: page === "notifications" ? 'translateX(0%)' : 'translateX(calc(100% - 8px))',
-                                }}
-                            />
-                            <button
-                                onClick={() => {
-                                    setPage("notifications")
-                                }}
-                                className={`${styles.toggleButton} ${page === "notifications" ? styles.activeToggle : ''}`}
-                            >
-                                {t('Notifications')}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setPage("finance")
-                                }}
-                                className={`${styles.toggleButton} ${page === "finance" ? styles.activeToggle : ''}`}
-                            >
-                                {t('Finance')}
-                            </button>
-                        </div>
+                        <ToggleSlider options={[t('Notifications'), t('Finance')]} onChange={toggleShowSaved} />
                     </div>
                 </div>
 

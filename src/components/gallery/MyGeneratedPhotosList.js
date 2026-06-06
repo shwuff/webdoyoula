@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo, memo } from 'react';
 import styles from './css/MyGeneratedPhotosList.module.css';
 import Modal from 'react-modal';
-import { useWebSocket } from "../../context/WebSocketContext";
-import { useAuth } from "../../context/UserContext";
+import { useWebSocket } from "../../app/providers/WebSocketContext";
+import { useAuth } from "../../app/providers/UserContext";
 import { useSpring, animated } from '@react-spring/web';
 import { useInView } from 'react-intersection-observer';
 import { FaCheck } from 'react-icons/fa';
@@ -13,7 +13,7 @@ import {BiPlay} from "react-icons/bi";
 import TrainAvatarProcess from "../../pages/studio/TrainAvatarProcess";
 import {useTranslation} from "react-i18next";
 import { useDispatch } from 'react-redux';
-import { setCurrentImageSelected } from '../../redux/actions/imageActions';
+import { setCurrentImageSelected } from '../../app/store/slices/imageSlice';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {useSelector} from "react-redux";
 import telegramStar from "../../assets/icons/telegramStar.png";
@@ -26,6 +26,8 @@ import {Grid} from "@mui/material";
 import {keyframes, styled} from "@mui/system";
 import AudioWave from "./AudioWave";
 import Confetti from 'react-confetti'
+import {useNavigate} from "react-router-dom";
+import FilterButton from "../buttons/FilterButton";
 
 Modal.setAppElement('#app');
 
@@ -99,7 +101,7 @@ const PhotoCardComponent = ({ photo, index, openModal, toggleSelectPhoto, isSele
                 }
             });
         }
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
     };
 
 
@@ -379,6 +381,14 @@ const areEqualMarket = (prevProps, nextProps) =>
 
 const PhotoCardMarket = memo(PhotoMarketCardComponent, areEqual);
 
+const generateUUID = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
+};
+
 const MyGeneratedPhotosList = ({
     profileGallery = false,
     photosPage,
@@ -397,10 +407,18 @@ const MyGeneratedPhotosList = ({
     showPaidPrompts = false
 }) => {
 
+    const { addHandler, deleteHandler, sendData } = useWebSocket();
+    const { token, myLoras } = useAuth();
+    const {t} = useTranslation();
+    const imageSelector = useSelector((state) => state.image.images);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [requestId, setRequestId] = useState(generateUUID());
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(0);
-    const [closingModal, setClosingModal] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [photosSortModel, setPhotosSortModel] = useState(0);
     const [selectedModel, setSelectedModel] = useState([]);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -408,31 +426,7 @@ const MyGeneratedPhotosList = ({
     const [selectedImages, setSelectedImages] = useState([]);
     const [photosList, setPhotosList] = useState([]);
 
-    const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
     const [openBackdropLoader, setOpenBackdropLoader] = useState(false);
-
-    const isEmptyRef = useRef(true);
-
-    const { addHandler, deleteHandler, sendData, isConnected } = useWebSocket();
-    const { token, myLoras, setMyLoras } = useAuth();
-    const {t} = useTranslation();
-    const imageSelector = useSelector((state) => state.image.images);
-
-    const dispatch = useDispatch();
-
-    const [searchText, setSearchText] = useState('');
-    const [showScrollTop, setShowScrollTop] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-
-    const generateUUID = () => {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-        });
-    };
-
-    const [requestId, setRequestId] = useState(generateUUID());
 
     const BackButton = window.Telegram.WebApp.BackButton;
 
@@ -456,10 +450,8 @@ const MyGeneratedPhotosList = ({
     }, [sendData, token, setSelectedPhoto]);
 
     const closeModal = useCallback(() => {
-        setClosingModal(true);
         setTimeout(() => {
             setIsModalOpen(false);
-            setClosingModal(false);
             setSelectedPhoto(0);
         }, 300);
         BackButton.hide();
@@ -476,7 +468,6 @@ const MyGeneratedPhotosList = ({
     }, []);
 
     const handleUploadToBot = () => {
-        setIsActionsModalOpen(false);
         sendData({
             action: "bot/upload",
             data: { jwt: token, media_ids: selectedImages }
@@ -485,7 +476,6 @@ const MyGeneratedPhotosList = ({
     };
 
     const handlePostToGroup = () => {
-        setIsActionsModalOpen(false);
         sendData({
             action: "bot/post_to_group",
             data: { jwt: token, media_ids: selectedImages }
@@ -529,7 +519,6 @@ const MyGeneratedPhotosList = ({
     
         return uniqueSorted;
     };
-    
 
     const uniquePhotos = (photosArray) => {
         const seen = new Set();
@@ -598,6 +587,44 @@ const MyGeneratedPhotosList = ({
         ]
     );
 
+    const handleChangePhotosSortModel = useCallback((value, myLoras) => {
+        window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
+        setPhotosList([]);
+        setPhotosPage(0);
+        setPhotosSortModel(value);
+        for (let i = 0; i < myLoras.length; i++) {
+            if (myLoras[i].id === value) {
+                setSelectedModel(myLoras[i]);
+                break;
+            }
+        }
+        resetLastPageRef();
+        resetFetchingRef();
+    }, [setPhotosPage, resetLastPageRef, resetFetchingRef, setPhotosList]);
+
+    const memoizedPhotos = useMemo(() => photosList, [photosList]);
+    const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
+
+    const handlePublishToGallery = () => {
+        for (let i=0; i < selectedImages.length; i++){
+
+            sendData({
+                action: "gallery/add/" + selectedImages[i],
+                data: { jwt: token, photoId: selectedImages[i] }
+            });
+
+            setPhotosList((prev) =>
+                prev.map((photo) =>
+                    selectedImages.includes(photo.id)
+                        ? { ...photo, hided: false }
+                        : photo
+                )
+            );
+        }
+
+        setSelectedImages([]);
+    };
+
     const handlePrevPhoto = useCallback((selectedPhoto) => {
         if (!selectedPhoto) return;
 
@@ -614,6 +641,7 @@ const MyGeneratedPhotosList = ({
         setPhotosPage(0);
         resetFetchingRef();
         resetLastPageRef();
+        setIsLoading(true);
     }, [filter, dateRange, feed, showPaidPrompts, showSaved, userIdLoaded, searchingAiModel, setPhotosList, searchQuery]);
 
 
@@ -622,7 +650,7 @@ const MyGeneratedPhotosList = ({
             window?.Telegram?.WebApp?.HapticFeedback?.impactOccurred &&
             typeof showPaidPrompts !== "undefined"
         ) {
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
         }
     }, [showPaidPrompts]);
 
@@ -694,49 +722,8 @@ const MyGeneratedPhotosList = ({
         document.getElementById("generatedPhotosList")?.scrollTo({ top: 0, behavior: 'smooth' });
     }, [photosSortModel]);
 
-    const handleChangePhotosSortModel = useCallback((value, myLoras) => {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        setPhotosList([]);
-        setPhotosPage(0);
-        setPhotosSortModel(value);
-        for (let i = 0; i < myLoras.length; i++) {
-            if (myLoras[i].id === value) {
-                setSelectedModel(myLoras[i]);
-                break;
-            }
-        }
-        resetLastPageRef();
-        resetFetchingRef();
-    }, [setPhotosPage, resetLastPageRef, resetFetchingRef, setPhotosList]);
-
-    const memoizedPhotos = useMemo(() => photosList, [photosList]);
-    const validPhotos = useMemo(() => (memoizedPhotos || []).filter(Boolean), [memoizedPhotos]);
-
-
-    const handlePublishToGallery = () => {
-        for (let i=0; i < selectedImages.length; i++){
-            
-            sendData({
-                action: "gallery/add/" + selectedImages[i],
-                data: { jwt: token, photoId: selectedImages[i] }
-            });
-
-            setPhotosList((prev) =>
-                prev.map((photo) =>
-                    selectedImages.includes(photo.id)
-                        ? { ...photo, hided: false }
-                        : photo
-                )
-            );
-        }
-
-        setSelectedImages([]);
-    };
-
     if(photosList.length < 1 && isLoading ) {
         return <FeedSkeleton />
-    } else if(photosList.length < 1 && !isLoading) {
-        return <p className={"text-center"} style={{marginTop: 10}}>{t("Media not found")}</p>
     }
 
     return (
@@ -744,164 +731,179 @@ const MyGeneratedPhotosList = ({
             {
                 profileGallery === false && (
                     <div className="myButtonsContainer horizontal-list ">
-                        <button
+                        <FilterButton selected={photosSortModel === 0}
                             onClick={() => handleChangePhotosSortModel(0, myLoras)}
-                            className={`btn no-wrap ${photosSortModel === 0 ? 'btn-primary' : 'btn-glass'}`}
                         >
                             {t('all')}
-                        </button>
-
-
+                        </FilterButton>
 
                         {myLoras.map((model, idx) => (
-                            <button
+                            <FilterButton
                                 key={model.id}
+                                selected={photosSortModel === model.id}
                                 onClick={() => handleChangePhotosSortModel(model.id, myLoras)}
-                                className={`btn no-wrap ${photosSortModel === model.id ? 'btn-primary' : 'btn-glass'}`}
-                                style={{ animationDelay: `${idx * 0.05}s` }}
                             >
                                 {model.name}
-                            </button>
+                            </FilterButton>
                         ))}
                     </div>
 
                 )
             }
 
-            <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={openBackdropLoader}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-
-            {selectedImages.length > 0 && (
-                <div className={styles.selectedBar}>
-                    <span className={"no-wrap"} style={{width: "max-content", marginRight: 7, fontSize: 14}}>Выбрано: {selectedImages.length}</span>
-                    <div className="horizontal-list d-flex align-items-center" style={{padding: 0}}>
-                        {
-                            from === 'createContent' ? (
-                                <>
-                                    <button
-                                        className="btn btn-glass no-wrap"
-                                        onClick={handleUploadToBot}
-                                    >
-                                        {t('upload_to_bot')}
-                                    </button>
-
-                                    <button
-                                        className="btn btn-glass no-wrap"
-                                        onClick={handlePostToGroup}
-                                    >
-                                        {t('Post to group')}
-                                    </button>
-
-                                    <button
-                                        className="btn btn-glass no-wrap"
-                                        onClick={handlePublishToGallery}
-                                    >
-                                        {t('to_publish')}
-                                    </button>
-                                    {/*<button*/}
-                                    {/*    className="btn btn-outline-primary no-wrap"*/}
-                                    {/*    style={{marginTop: '10px'}}*/}
-                                    {/*    onClick={handleCreatePost}*/}
-                                    {/*>*/}
-                                    {/*    Создать пост*/}
-                                    {/*</button>*/}
-                                </>
-                            ) : from === 'editPost' ? (
-                                <>
-                                    {/*<button*/}
-                                    {/*    className="btn btn-outline-primary no-wrap"*/}
-                                    {/*    style={{marginTop: '10px'}}*/}
-                                    {/*    onClick={handleAddToPost}*/}
-                                    {/*>*/}
-                                    {/*    Добавить в пост*/}
-                                    {/*</button>*/}
-                                </>
-                            ) : null
-                        }
+            {
+                (photosList.length < 1 && !isLoading) ? (
+                    <div className={"d-flex justify-content-center"} style={{ flexDirection: 'column' }}>
+                        <p className={"text-center"} style={{marginTop: 10}}>{t("Media not found")}</p>
+                        <button className={"btn btn-primary btn-lg"} style={{
+                            width: "max-content",
+                            alignSelf: "center",
+                            marginTop: "8px"
+                        }}
+                        onClick={() => navigate('/studio/create')}
+                        >
+                            {t("Generate")}
+                        </button>
                     </div>
-                </div>
-            )}
+                ) : (
+                    <>
+                        <Backdrop
+                            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                            open={openBackdropLoader}
+                        >
+                            <CircularProgress color="inherit" />
+                        </Backdrop>
 
-            <div className={styles.photoGrid}>
-                {
-                    isMarket ? (
-                        <>
-                            {validPhotos.map((photo, index) => (
-                                <PhotoCardMarket
-                                    key={imageSelector[photo.id].id}
-                                    photo={photo}
-                                    index={index}
-                                    openModal={openModal}
-                                    isSelected={selectedImages.includes(photo.id)}
-                                    toggleSelectPhoto={toggleSelectPhoto}
+                        {selectedImages.length > 0 && (
+                            <div className={styles.selectedBar}>
+                                <button className={"publish-button"} style={{width: "max-content", marginRight: 7, fontSize: 14}}>
+                                    Выбрано: {selectedImages.length}
+                                </button>
+                                <div className="horizontal-list d-flex align-items-center" style={{padding: 0}}>
+                                    {
+                                        from === 'createContent' ? (
+                                            <>
+                                                <button
+                                                    className="btn btn-glass no-wrap"
+                                                    onClick={handleUploadToBot}
+                                                >
+                                                    {t('upload_to_bot')}
+                                                </button>
+
+                                                <button
+                                                    className="btn btn-glass no-wrap"
+                                                    onClick={handlePostToGroup}
+                                                >
+                                                    {t('Post to group')}
+                                                </button>
+
+                                                <button
+                                                    className="btn btn-glass no-wrap"
+                                                    onClick={handlePublishToGallery}
+                                                >
+                                                    {t('to_publish')}
+                                                </button>
+                                                {/*<button*/}
+                                                {/*    className="btn btn-outline-primary no-wrap"*/}
+                                                {/*    style={{marginTop: '10px'}}*/}
+                                                {/*    onClick={handleCreatePost}*/}
+                                                {/*>*/}
+                                                {/*    Создать пост*/}
+                                                {/*</button>*/}
+                                            </>
+                                        ) : from === 'editPost' ? (
+                                            <>
+                                                {/*<button*/}
+                                                {/*    className="btn btn-outline-primary no-wrap"*/}
+                                                {/*    style={{marginTop: '10px'}}*/}
+                                                {/*    onClick={handleAddToPost}*/}
+                                                {/*>*/}
+                                                {/*    Добавить в пост*/}
+                                                {/*</button>*/}
+                                            </>
+                                        ) : null
+                                    }
+                                </div>
+                            </div>
+                        )}
+
+                        <div className={styles.photoGrid}>
+                            {
+                                isMarket ? (
+                                    <>
+                                        {validPhotos.map((photo, index) => (
+                                            <PhotoCardMarket
+                                                key={imageSelector[photo.id].id}
+                                                photo={photo}
+                                                index={index}
+                                                openModal={openModal}
+                                                isSelected={selectedImages.includes(photo.id)}
+                                                toggleSelectPhoto={toggleSelectPhoto}
+                                                profileGallery={profileGallery}
+                                            />
+                                        ))}
+                                    </>
+                                ) : (
+                                    <>
+                                        {validPhotos.map((photo, index) => (
+                                            <PhotoCard
+                                                key={imageSelector[photo.id].id}
+                                                photo={photo}
+                                                index={index}
+                                                openModal={openModal}
+                                                isSelected={selectedImages.includes(photo.id)}
+                                                toggleSelectPhoto={toggleSelectPhoto}
+                                                profileGallery={profileGallery}
+                                            />
+                                        ))}
+                                    </>
+                                )
+                            }
+                        </div>
+
+                        {
+                            selectedModel.status === 'waiting' && photosSortModel === selectedModel.id && (
+                                <TrainAvatarProcess model={selectedModel} setModel={setSelectedModel} />
+                            )
+                        }
+
+                        {
+                            selectedModel.status === 'training' && photosSortModel === selectedModel.id && (
+                                <p style={{marginTop: 5}}>
+                                    {t('model_training', {avatarName: selectedModel.name})}
+                                </p>
+                            )
+                        }
+
+                        {
+                            isMarket
+                                ?
+                                <PhotoMarketModal
+                                    isModalOpen={isModalOpen}
+                                    setIsModalOpen={setIsModalOpen}
+                                    setOpenBackdropLoader={setOpenBackdropLoader}
                                     profileGallery={profileGallery}
+                                    nextPhoto={handleNextPhoto}
+                                    prevPhoto={handlePrevPhoto}
+                                    userIdLoaded={userIdLoaded}
+                                    selectedPhoto={selectedPhoto}
+                                    setSelectedPhoto={setSelectedPhoto}
                                 />
-                            ))}
-                        </>
-                    ) : (
-                        <>
-                            {validPhotos.map((photo, index) => (
-                                <PhotoCard
-                                    key={imageSelector[photo.id].id}
-                                    photo={photo}
-                                    index={index}
-                                    openModal={openModal}
-                                    isSelected={selectedImages.includes(photo.id)}
-                                    toggleSelectPhoto={toggleSelectPhoto}
+                                :
+                                <PhotoPostModal
+                                    isModalOpen={isModalOpen}
+                                    setIsModalOpen={setIsModalOpen}
+                                    setOpenBackdropLoader={setOpenBackdropLoader}
                                     profileGallery={profileGallery}
+                                    nextPhoto={handleNextPhoto}
+                                    prevPhoto={handlePrevPhoto}
+                                    userIdLoaded={userIdLoaded}
+                                    selectedPhoto={selectedPhoto}
+                                    setSelectedPhoto={setSelectedPhoto}
                                 />
-                            ))}
-                        </>
-                    )
-                }
-            </div>
-
-
-
-            {
-                selectedModel.status === 'waiting' && photosSortModel === selectedModel.id && (
-                    <TrainAvatarProcess model={selectedModel} setModel={setSelectedModel} />
+                        }
+                    </>
                 )
-            }
-
-            {
-                selectedModel.status === 'training' && photosSortModel === selectedModel.id && (
-                    <p style={{marginTop: 5}}>
-                        {t('model_training', {avatarName: selectedModel.name})}
-                    </p>
-                )
-            }
-
-            {
-            isMarket
-                ?
-                <PhotoMarketModal
-                    isModalOpen={isModalOpen}
-                    setIsModalOpen={setIsModalOpen}
-                    setOpenBackdropLoader={setOpenBackdropLoader}
-                    profileGallery={profileGallery}
-                    nextPhoto={handleNextPhoto}
-                    prevPhoto={handlePrevPhoto}
-                    userIdLoaded={userIdLoaded}
-                    selectedPhoto={selectedPhoto}
-                    setSelectedPhoto={setSelectedPhoto}
-                />
-            :
-                <PhotoPostModal
-                    isModalOpen={isModalOpen}
-                    setIsModalOpen={setIsModalOpen}
-                    setOpenBackdropLoader={setOpenBackdropLoader}
-                    profileGallery={profileGallery}
-                    nextPhoto={handleNextPhoto}
-                    prevPhoto={handlePrevPhoto}
-                    userIdLoaded={userIdLoaded}
-                    selectedPhoto={selectedPhoto}
-                    setSelectedPhoto={setSelectedPhoto}
-                 />
             }
 
 

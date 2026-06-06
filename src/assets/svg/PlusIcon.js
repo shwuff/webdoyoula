@@ -1,8 +1,6 @@
 import React from 'react';
 
-const PlusIcon = ({className, active}) => {
-
-    const color = '#fff';
+const PlusIcon = ({className, active, color = '#ffffff'}) => {
 
     if(active) {
         return (

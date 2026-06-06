@@ -8,8 +8,8 @@ import {
     MenuItem,
     Typography,
 } from '@mui/material'
-import {useAuth} from "../../../context/UserContext";
-import {useWebSocket} from "../../../context/WebSocketContext";
+import {useAuth} from "../../../app/providers/UserContext";
+import {useWebSocket} from "../../../app/providers/WebSocketContext";
 import {useTranslation} from "react-i18next";
 import CreateAvatarModal from "../../../components/modals/CreateAvatarModal";
 import MyLorasList from "./MyLorasList";

@@ -1,8 +1,6 @@
 import React from 'react';
 
-const SearchIcon = ({className, active, width = 24}) => {
-
-    const color = '#fff';
+const SearchIcon = ({className, active, width = 24, color = '#ffffff'}) => {
 
     if(active) {
         return (

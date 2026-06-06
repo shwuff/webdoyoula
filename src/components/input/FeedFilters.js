@@ -1,306 +1,323 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-    MenuItem, Select, FormControl, InputLabel, Switch, FormControlLabel
+    Button, TextField, InputAdornment,
+    Dialog, List, ListItemText, useMediaQuery, Box, ListItemButton, Typography
 } from "@mui/material";
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import SearchIcon from "../../assets/svg/SearchIcon";
-import { useNavigate } from "react-router-dom";
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import gsap from "gsap";
-import Button from "@mui/material/Button";
 import animationGoldStar from './../../assets/gif/gold_star.gif';
-import {useWebSocket} from "../../context/WebSocketContext";
-import {useAuth} from "../../context/UserContext";
+import { ChevronDown } from 'lucide-react';
+import {useSelector} from "react-redux";
+import FilterButton from "../buttons/FilterButton";
+import Switch from "../../components/teegee/Switch";
+import {useAuth} from "../../app/providers/UserContext";
 
-const FeedFilters = ({
-                         filter, setFilter, searchingAiModel, setSearchingAiModel, dateRange, setDateRange,
-                         feed, setFeed, style, setPhotosPage,
-                         isMarket, setIsMarket, fromProfile = false
-                     }) => {
-    const { t } = useTranslation();
-    const navigate = useNavigate();
-    const {addHandler, deleteHandler, sendData} = useWebSocket();
-    const {token} = useAuth();
+const CustomSelect = ({ value, onChange, options, label }) => {
+    const [open, setOpen] = useState(false);
+    const [tempValue, setTempValue] = useState(value);
 
-    const [filtersVisible, setFiltersVisible] = useState(false);
-    const filtersWrapperRef = useRef(null);
-    const [availableModels, setAvailableModels] = useState([]);
+    const {t} = useTranslation();
 
-    const showFilters = () => {
-        gsap.killTweensOf(filtersWrapperRef.current);
-        gsap.set(filtersWrapperRef.current, { height: 'auto', display: 'block' });
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-        const fullHeight = filtersWrapperRef.current.scrollHeight;
-
-        gsap.fromTo(filtersWrapperRef.current,
-            {
-                width: "0%",
-                height: 0,
-                opacity: 0,
-                scale: 0.7,
-                autoAlpha: 0,
-                overflow: "hidden"
-            },
-            {
-                height: fullHeight,
-                opacity: 1,
-                width: "100%",
-                scale: 1,
-                autoAlpha: 1,
-                duration: 0.4,
-                ease: "power2.out",
-                onComplete: () => {
-                    gsap.set(filtersWrapperRef.current, { height: 'auto', overflow: "visible" });
-                }
-            }
-        );
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const handleApply = () => {
+        onChange(tempValue);
+        handleClose();
     };
 
     useEffect(() => {
-        if (window.Telegram?.WebApp?.HapticFeedback?.impactOccurred) {
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
-    }, [isMarket]);
-
-    const hideFilters = () => {
-        gsap.killTweensOf(filtersWrapperRef.current);
-        gsap.to(filtersWrapperRef.current, {
-            height: 0,
-            opacity: 0,
-            scale: 0.7,
-            autoAlpha: 0,
-            overflow: "hidden",
-            width: "0%",
-            duration: 0.3,
-            ease: "power2.in"
-        });
-    };
-
-    const toggleFilters = () => {
-        if (filtersVisible) {
-            hideFilters();
-        } else {
-            showFilters();
-        }
-        setFiltersVisible(!filtersVisible);
-    };
-
-    const handleFilterChange = (event) => {
-        setFilter(event.target.value);
-        if (event.target.value === "date") setDateRange("all_time");
-        setPhotosPage(0);
-    };
-
-    const handleSearchingModelChange = (event) => {
-        setSearchingAiModel(event.target.value);
-        setPhotosPage(0);
-    };
-
-    const handleFeedChange = (event) => {
-        setFeed(event.target.value);
-        setPhotosPage(0);
-    };
-
-    const handleDateRangeChange = (event) => {
-        setDateRange(event.target.value);
-        setPhotosPage(0);
-    };
-
-    useEffect(() => {
-        if(token) {
-            sendData({
-                action: "get/models",
-                data: {
-                    jwt: token,
-                }
-            });
-        }
-    }, [token]);
-
-    useEffect(() => {
-        const receiveAvailableModels = (msg) => {
-            setAvailableModels(msg.models);
-        }
-
-        addHandler("receive_available_models", receiveAvailableModels);
-
-        return () => deleteHandler("receive_available_models");
-    }, [addHandler, deleteHandler, setAvailableModels]);
+        setTempValue(value);
+    }, [value]);
 
     return (
         <>
-            <div className="d-flex justify-content-between align-items-center w-100 mb-2">
-                <div className="c-pointer w-100 d-flex align-items-center justify-content-between" style={{gap: "15px"}}>
-                    <div className={"d-flex align-items-center"}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={isMarket}
-                                    onChange={(e) => {
-                                        setIsMarket(e.target.checked);
-                                        setPhotosPage(0);
-                                    }}
-                                    size="small"
-                                />
-                            }
-                            sx={{mr: 0, mb: 0, ml: 1, fontSize: '0.8rem'}}
-                        />
-                        <img src={animationGoldStar} width={18} />
-                        {/*<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none">*/}
-                        {/*    <path fill="var(--text-color)" fillRule="evenodd"*/}
-                        {/*          d="M9.522 14.866a1 1 0 0 0 1.1.653l12.766-2.036a1 1 0 0 0 .823-.792l1.355-6.792a1 1 0 0 0-.964-1.196l-17.36-.28a1 1 0 0 0-.958 1.335l3.238 9.108ZM10.326 23.052a2.326 2.326 0 1 0 0-4.652 2.326 2.326 0 0 0 0 4.652ZM21.957 23.052a2.326 2.326 0 1 0 0-4.652 2.326 2.326 0 0 0 0 4.652Z"*/}
-                        {/*          clipRule="evenodd"></path>*/}
-                        {/*    <path fill="var(--text-color)"*/}
-                        {/*          d="M6.169.9h-4.71a1.31 1.31 0 1 0 0 2.618h3.337a1 1 0 0 1 .945.672l.942 2.71L9.35 5.6 8.035 2.182A2 2 0 0 0 6.17.9Z"></path>*/}
-                        {/*</svg>*/}
-                    </div>
+            <FilterButton onClick={handleOpen}>
+                <span>{options.find(o => o.value === value)?.label || label}</span>
+                <span style={{ marginLeft: 8, display: "flex", alignItems: "center" }}><ChevronDown size={14} /></span>
+            </FilterButton>
 
-                    <div className={"w-100"}>
-                        <Button className={"publish-outline-button"} style={{ marginBottom: "10px" }} onClick={toggleFilters}>
-                            <FilterAltIcon style={{ fill: "white", width: "14px", marginRight: "2px" }} />
-                            {t('Open filters')}
-                        </Button>
-                    </div>
-                    {
-                        !fromProfile && (
-                            <div className="c-pointer search-icon-feed" onClick={() => navigate('/search')}>
-                                <SearchIcon />
-                            </div>
-                        )
-                    }
-                </div>
-            </div>
 
-            <div
-                ref={filtersWrapperRef}
-                style={{ overflow: 'hidden', height: 0, opacity: 0, transform: 'scale(0.95)', margin: "auto" }}
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                fullWidth
+                maxWidth="xs"
+                PaperProps={{
+                    style: isMobile
+                        ? {
+                            position: 'fixed',
+                            bottom: 0,
+                            margin: 0,
+                            width: '100%',
+                            height: '50%',
+                            borderTopLeftRadius: 16,
+                            borderTopRightRadius: 16,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            background: "var(--glass-bg)"
+                        }
+                        : {background: "var(--glass-bg)"}
+                }}
             >
+                <Box sx={{ flex: 1, overflowY: 'auto', backdropFilter: "blur(8px)" }}>
+                    <List>
+                        {options.map((o) => (
+                            <ListItemButton
+                                key={o.value}
+                                selected={tempValue === o.value}
+                                onClick={() => setTempValue(o.value)}
+                                sx={{
+                                    background: tempValue === o.value ? 'var(--primary-color) !important' : 'transparent',
+                                    '&:hover': { background: tempValue === o.value ? 'var(--primary-color)' : 'rgba(0,0,0,0.08)' }
+                                }}
+                            >
+                                {/*<ListItemText primary={o.label} sx={{color: tempValue === o.value ? 'var(--button-text-color)' : 'var(--text-color)'}} />*/}
+                                <ListItemText
+                                    primary={
+                                        <Typography sx={{ color: tempValue === o.value ? 'var(--button-text-color)' : 'var(--text-color)' }}>
+                                            {o.label}
+                                        </Typography>
+                                    }
+                                />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                </Box>
+                <Box sx={{ p: 1, borderTop: '1px solid #ddd', display: 'flex', justifyContent: 'flex-end', backdropFilter: "blur(8px)" }}>
+                    <Button variant="contained" onClick={handleApply}>{t('Show')}</Button>
+                </Box>
+            </Dialog>
+        </>
+    );
+};
 
-                <div className="d-flex" style={style}>
-                    {
-                        !fromProfile && (
-                            <div className="w-100 d-flex align-items-center justify-content-between mb-2" style={{ paddingRight: "5px", marginBottom: "10px" }}>
-                                <FormControl
-                                    sx={{ fontSize: "0.8rem", flexGrow: 1 }}
-                                    size="small"
-                                >
-                                    <InputLabel id="filter-select-label" sx={{ fontSize: "0.8rem" }}>
-                                        {t('feed_type')}
-                                    </InputLabel>
-                                    <Select
-                                        labelId="filter-select-label"
-                                        value={feed}
-                                        onChange={handleFeedChange}
-                                        label={t('feed_type')}
-                                        sx={{ fontSize: "0.8rem", height: "40px" }}
-                                    >
-                                        <MenuItem value="feed">{t('feed')}</MenuItem>
-                                        <MenuItem value="subs">{t('subscribes')}</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </div>
-                        )
+const FeedFilters = ({
+                         filter, setFilter,
+                         searchingAiModel, setSearchingAiModel,
+                         dateRange, setDateRange,
+                         feed, setFeed,
+                         style, setPhotosPage,
+                         isMarket, setIsMarket,
+                         fromProfile = false,
+                         searchQuery, setSearchQuery
+                     }) => {
+    const { t } = useTranslation();
+    const {userData} = useAuth();
+
+    const [tempQuery, setTempQuery] = useState(searchQuery || "");
+
+    const availableModels = useSelector(state => state.model.models);
+
+    useEffect(() => {
+        const handler = setTimeout(() => setSearchQuery(tempQuery), 1500);
+        return () => clearTimeout(handler);
+    }, [tempQuery, setSearchQuery]);
+
+    useEffect(() => {
+        if (window.Telegram?.WebApp?.HapticFeedback?.impactOccurred) {
+            window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
+        }
+    }, [isMarket]);
+
+    const feedOptions = [
+        { value: "feed", label: t('recommendations') },
+        { value: "subs", label: t('subscribes') }
+    ];
+
+    const filterOptions = [
+        { value: "repeats", label: t('sort_by_repeats') },
+        { value: "date", label: `${t('publish_date')} ↓` },
+        { value: "-date", label: `${t('publish_date')} ↑` }
+    ];
+
+    const dateRangeOptions = [
+        { value: "last_1_day", label: t('last_1_day') },
+        { value: "last_7_days", label: t('last_7_days') },
+        { value: "last_30_days", label: t('last_30_days') },
+        { value: "all_time", label: t('all_time') }
+    ];
+
+    const modelOptions = Object.values(availableModels).map(m => ({ value: m.id, label: m.name }));
+
+    const [placeholder, setPlaceholder] = useState('');
+    const [displayedText, setDisplayedText] = useState('');
+    const placeholderIndexRef = useRef(null);
+
+    const animationStateRef = useRef({
+        currentIndex: 0,
+        isTyping: true,
+        timer: null
+    });
+
+    const typingSpeed = 100;
+    const erasingSpeed = 50;
+    const pauseBeforeErase = 2000;
+    const pauseBeforeType = 500;
+
+    const getPlaceholders = React.useCallback(() => [
+        t('search_title_1'),
+        t('search_title_2'),
+        t('search_title_3'),
+        t('search_title_4'),
+        t('search_title_5'),
+        t('search_title_6'),
+        t('search_title_7'),
+        t('search_title_8'),
+        t('search_title_9'),
+        t('search_title_10')
+    ], [t]);
+
+    useEffect(() => {
+        const placeholders = getPlaceholders();
+        if (placeholders.length === 0) return;
+
+        if (animationStateRef.current.timer) {
+            clearTimeout(animationStateRef.current.timer);
+        }
+
+        placeholderIndexRef.current = Math.floor(Math.random() * placeholders.length);
+        setPlaceholder(placeholders[placeholderIndexRef.current]);
+
+        animationStateRef.current = {
+            currentIndex: 0,
+            isTyping: true,
+            timer: null
+        };
+        setDisplayedText('');
+    }, [getPlaceholders, userData]);
+
+    const selectNextPlaceholder = React.useCallback(() => {
+        const placeholders = getPlaceholders();
+        if (placeholders.length === 0) return;
+
+        let nextIndex;
+        if (placeholders.length === 1) {
+            nextIndex = 0;
+        } else {
+            do {
+                nextIndex = Math.floor(Math.random() * placeholders.length);
+            } while (nextIndex === placeholderIndexRef.current);
+        }
+
+        placeholderIndexRef.current = nextIndex;
+        return placeholders[nextIndex];
+    }, [getPlaceholders]);
+
+    useEffect(() => {
+        if (!placeholder) return;
+
+        if (animationStateRef.current.timer) {
+            clearTimeout(animationStateRef.current.timer);
+        }
+
+        animationStateRef.current = {
+            currentIndex: 0,
+            isTyping: true,
+            timer: null
+        };
+        setDisplayedText('');
+
+        const type = () => {
+            const state = animationStateRef.current;
+
+            if (state.isTyping) {
+                if (state.currentIndex < placeholder.length) {
+                    setDisplayedText(prev => {
+                        const expectedChar = placeholder.charAt(state.currentIndex);
+                        state.currentIndex++;
+                        return prev + expectedChar;
+                    });
+                    state.timer = setTimeout(type, typingSpeed);
+                } else {
+                    state.isTyping = false;
+                    state.timer = setTimeout(type, pauseBeforeErase);
+                }
+            } else {
+                if (state.currentIndex > 0) {
+                    setDisplayedText(prev => {
+                        state.currentIndex--;
+                        return prev.slice(0, -1);
+                    });
+                    state.timer = setTimeout(type, erasingSpeed);
+                } else {
+                    const newPlaceholder = selectNextPlaceholder();
+                    if (newPlaceholder) {
+                        if (state.timer) {
+                            clearTimeout(state.timer);
+                        }
+                        setPlaceholder(newPlaceholder);
                     }
+                }
+            }
+        };
 
-                    <div className="w-100" style={{ paddingLeft: !fromProfile ? "5px" : "0px" }}>
-                        <FormControl fullWidth size="small" sx={{ marginBottom: "10px" }}>
-                            <InputLabel id="sort-label">{t('Select AI Model')}</InputLabel>
-                            <Select
-                                labelId="sort-label"
-                                value={searchingAiModel}
-                                onChange={handleSearchingModelChange}
-                                sx={{ fontSize: "0.8rem", height: "40px"}}
-                                label={t('Select AI Model')}
-                            >
+        animationStateRef.current.timer = setTimeout(type, pauseBeforeType);
 
-                                {
-                                    Object.values(availableModels).map((i) => {
-                                        return (
-                                            <MenuItem key={i.id} value={i.id}>
-                                                {i.name}
-                                            </MenuItem>
-                                        )
-                                    })
-                                }
+        return () => {
+            if (animationStateRef.current.timer) {
+                clearTimeout(animationStateRef.current.timer);
+            }
+        };
+    }, [placeholder, selectNextPlaceholder]);
 
-                            </Select>
-                        </FormControl>
-                    </div>
-                </div>
+    return (
+        <div style={{ marginBottom: "12px" }} id={"feed-page"}>
+            {/* поиск */}
+            <div style={{ marginBottom: "10px" }}>
+                <TextField
+                    fullWidth
+                    size="small"
+                    placeholder={displayedText}
+                    value={tempQuery}
+                    onChange={(e) => setTempQuery(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon color={'var(--text-color)'} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+            </div>
 
-                <div className="d-flex" style={style}>
-                    <div className="w-100" style={{ paddingRight: "5px" }}>
-                        <FormControl fullWidth size="small" sx={{ marginBottom: "10px" }}>
-                            <InputLabel id="sort-label">{t('sort_by')}</InputLabel>
-                            <Select
-                                labelId="sort-label"
-                                value={filter}
-                                onChange={handleFilterChange}
-                                sx={{ fontSize: "0.8rem", height: "40px"}}
-                                label={t('sort_by')}
-                            >
-                                <MenuItem value="repeats">{t('sort_by_repeats')}</MenuItem>
-                                <MenuItem value="date">
-                                    {t('publish_date')} <ArrowDownwardIcon fontSize="small" />
-                                </MenuItem>
-                                <MenuItem value="-date">
-                                    {t('publish_date')} <ArrowUpwardIcon fontSize="small" />
-                                </MenuItem>
-                            </Select>
-                        </FormControl>
-                    </div>
+            <div className="feed-filter-scroll" style={{
+                display: "flex",
+                gap: "8px",
+                overflowX: "auto",
+                paddingBottom: 4,
+            }}>
+                {!fromProfile && (
+                    <CustomSelect value={feed} onChange={setFeed} options={feedOptions} label={t('feed_type')} />
+                )}
 
-                    <div className="w-100" style={{ paddingLeft: "5px" }}>
-                        {filter === "date" || filter === "-date" ? (
-                            <FormControl fullWidth size="small" sx={{ marginBottom: "10px" }}>
-                                <InputLabel id="date-range-select-label" sx={{ fontSize: "0.8rem" }}>
-                                    {t('type_interval')}
-                                </InputLabel>
-                                <Select
-                                    labelId="date-range-select-label"
-                                    value="all_time"
-                                    onChange={handleDateRangeChange}
-                                    label="Промежуток"
-                                    sx={{ fontSize: "0.8rem", height: "40px" }}
-                                >
-                                    <MenuItem value="all_time" sx={{ fontSize: "0.8rem" }}>
-                                        {t('all_time')}
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        ) : (
-                            <FormControl fullWidth size="small" sx={{ marginBottom: "10px" }}>
-                                <InputLabel id="date-range-select-label" sx={{ fontSize: "0.8rem" }}>
-                                    {t('type_interval')}
-                                </InputLabel>
-                                <Select
-                                    labelId="date-range-select-label"
-                                    value={dateRange}
-                                    onChange={handleDateRangeChange}
-                                    label={t('type_interval')}
-                                    sx={{ fontSize: "0.8rem", height: "40px" }}
-                                >
-                                    <MenuItem value="last_1_day" sx={{ fontSize: "0.8rem" }}>
-                                        {t('last_1_day')}
-                                    </MenuItem>
-                                    <MenuItem value="last_7_days" sx={{ fontSize: "0.8rem" }}>
-                                        {t('last_7_days')}
-                                    </MenuItem>
-                                    <MenuItem value="last_30_days" sx={{ fontSize: "0.8rem" }}>
-                                        {t('last_30_days')}
-                                    </MenuItem>
-                                    <MenuItem value="all_time" sx={{ fontSize: "0.8rem" }}>
-                                        {t('all_time')}
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        )}
-                    </div>
+                <CustomSelect
+                    value={searchingAiModel}
+                    onChange={setSearchingAiModel}
+                    options={[{ label: t('All AI'), value: 0 }, ...modelOptions]}
+                    label={t('Select AI Model')}
+                />
+
+                <CustomSelect value={filter} onChange={setFilter} options={filterOptions} label={t('sort_by')} />
+
+                {(filter === "date" || filter === "-date") ? (
+                    <CustomSelect value="all_time" onChange={setDateRange} options={[{ value: 'all_time', label: t('all_time') }]} label={t('type_interval')} />
+                ) : (
+                    <CustomSelect value={dateRange} onChange={setDateRange} options={dateRangeOptions} label={t('type_interval')} />
+                )}
+
+                <div style={{ display: "flex", alignItems: "center", gap: 2,marginLeft: "8px" }}>
+                    <Switch
+                        checked={isMarket}
+                        onChange={(e) => { setIsMarket(e.target.checked); setPhotosPage(0); }}
+                    />
+                    <img src={animationGoldStar} width={18} />
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
-import {useAuth} from "../../context/UserContext";
-import {useWebSocket} from "../../context/WebSocketContext";
+import {useAuth} from "../../app/providers/UserContext";
+import {useWebSocket} from "../../app/providers/WebSocketContext";
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
@@ -11,7 +11,7 @@ const SubscribeButton = ({ sub, setSub, userId, style = {}, setFollowersCount = 
     const {t} = useTranslation();
 
     const handleSub = () => {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
         sendData({ action: 'user/subscribe/' + userId, data: { jwt: token } })
     }
 

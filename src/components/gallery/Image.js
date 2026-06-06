@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "../../context/UserContext";
+import { useAuth } from "../../app/providers/UserContext";
 import Video from "../player/Video";
-import LoadingPlaceholder from "../loading/LoadingPlaceholer";
 import {useSelector} from "react-redux";
 import AudioWave from "./AudioWave";
 
@@ -21,7 +20,7 @@ const Image = ({ mediaId, className, style, file_type = 'image' }) => {
                     ? `Bearer ${token}`
                     : `Session ${token}`;
 
-                const res = await fetch(`https://testapi.doyoula.com/api/get/file/${mediaId}`, {
+                const res = await fetch(`https://api.doyoula.com/api/get/file/${mediaId}`, {
                     headers: {
                         'Authorization': authHeader,
                     },
@@ -49,7 +48,7 @@ const Image = ({ mediaId, className, style, file_type = 'image' }) => {
     }, [mediaId, token]);
 
     if(file_type === 'image') {
-        return <img src={imageSelector[mediaId].media_url} style={style} className={className} alt={`media ${mediaId}`} />;
+        return <img src={imageSelector[mediaId]?.fullUrl || ""} style={style} className={className} alt={`media ${mediaId}`} />;
     }
 
     if(file_type === 'audio') {

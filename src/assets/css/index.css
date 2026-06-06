@@ -4,25 +4,29 @@
     text-decoration: none;
     list-style: none;
     /*font-family: Arial, sans-serif;*/
-    font-family: var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji");
+    font-family: var(--default-font-family);
     color: var(--text-color);
     box-sizing: border-box;
     user-select: none;
-    text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+    text-shadow: var(--text-shadow);
 }
 
 body, html {
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background: var(--body-bg-color);
+    background: var(--body-bg-color) !important;
     color: var(--text-color);
+}
+
+.max-w-100 {
+    max-width: 100% !important;
 }
 
 hr {
     border: none;
     height: 1px;
-    background: #b4adad;
+    background: var(--hint-color);
     margin: 16px 0;
     opacity: 0.7;
 }
@@ -32,7 +36,7 @@ button:hover {
 }
 
 .text-shadow {
-    text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+    text-shadow: var(--text-shadow);
 }
 
 .comfortaa-300 {
@@ -79,7 +83,7 @@ a, div, button {
 
 .caption {
     font-size: 12px;
-    color: gray;
+    color: var(--hint-color);
 }
 
 .publish-button {
@@ -94,7 +98,7 @@ a, div, button {
 
     border: 1px solid rgba(255, 255, 255, 0.25);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    color: white;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.4s ease;
     flex-shrink: 0;
@@ -106,6 +110,8 @@ a, div, button {
 }
 
 .publish-button:hover {
+    background: transparent;
+    /*background: var(--button-color);*/
     /*background: var(--button-color);*/
 }
 
@@ -143,12 +149,12 @@ a, div, button {
     background: var(--primary-color) !important;
     border: 1px solid var(--primary-color) !important;
     color: var(--button-text-color) !important;
+    font-size: 14px;
 }
 
 .btn-glass {
     padding: 8px 12px;
     font-size: 14px;
-    font-weight: 500;
     border: none;
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
@@ -157,14 +163,30 @@ a, div, button {
 
     border: 1px solid rgba(255, 255, 255, 0.25);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    color: white;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.4s ease;
     flex-shrink: 0;
 }
 
+button {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+button:focus,
+button:active {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
 .btn-glass:hover {
     /*background: var(--button-color);*/
+}
+
+.btn-lg {
+    font-size: 16px !important;
+    padding: 8px 16px !important;
 }
 
 * {
@@ -184,7 +206,6 @@ a, div, button {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--bg-color);
     padding: 4px 0;
     gap: 8px;
 }
@@ -317,7 +338,7 @@ a, div, button {
     width: 100%;
     max-width: 600px;
     margin:auto;
-    /*max-height: var(--content-height);*/
+    /*padding-top: var(--safeAreaInset-top-value) !important;*/
 }
 
 .center-content-block-search {
@@ -485,6 +506,7 @@ a, div, button {
     cursor: pointer;
     padding: 0;
     color: red;
+    outline: none;
 }
 
 .liked {
@@ -576,11 +598,12 @@ a, div, button {
 
 .globalBlock {
     height: var(--content-height);
-    overflow-y: scroll;
+    overflow-y: scroll !important;
     padding-top: var(--safeAreaInset-top);
     padding-left: 5px;
     padding-right: 5px;
     background: var(--body-bg-color);
+    max-height: 100vh;
 }
 
 .globalProfileBlock {
@@ -634,6 +657,28 @@ a, div, button {
     background: var(--glass-secondary-bg);
 }
 
+/*.feed-filter-scroll {*/
+/*    display: flex;*/
+/*    gap: 10px;*/
+/*    overflow-x: auto;*/
+/*    overflow-y: hidden;*/
+/*    padding: 6px 4px;*/
+/*    scroll-snap-type: x mandatory;*/
+/*    -webkit-overflow-scrolling: touch;*/
+/*}*/
+
+.feed-filter-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.feed-filter-chip {
+    scroll-snap-align: start;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    min-width: 120px; /* можно подгонять */
+}
+
+
 @media(min-width: 800px) {
 
     .d-block-xl {
@@ -669,7 +714,7 @@ a, div, button {
         height: 100vh;
         overflow-y: auto;
         padding-bottom: 5px;
-        
+
     }
 }
 
@@ -918,4 +963,131 @@ a, div, button {
 .scrollToTop:hover {
     opacity: 1;
     transform: translateY(-4px);
+}
+
+.react-joyride__tooltip {
+    background: var(--glass-bg) !important;
+}
+
+.__floater__arrow {
+    display: none !important;
+}
+
+.react-joyride__tooltip::after {
+    content: '';
+    position: absolute;
+    width: 42px;
+    height: 20px;
+    background: var(--glass-bg);
+    top: -20px;
+}
+
+.__floater, .__floater__open {
+    filter: none !important;
+}
+
+.jr-tooltip {
+    position: relative;
+    background: var(--glass-bg);
+    /*backdrop-filter: blur(22px) saturate(140%);*/
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    border-radius: 22px;
+    padding: 18px 20px 16px;
+    box-shadow:
+            0 20px 60px rgba(0,0,0,.45),
+            inset 0 0 0 1px rgba(255,255,255,.08);
+    animation: jrIn .45s cubic-bezier(.2,.8,.2,1);
+    max-width: 70%;
+    min-width: 250px;
+    backdrop-filter: blur(10px);
+}
+
+.jr-anim {
+    animation: jrIn .45s cubic-bezier(.2,.8,.2,1);
+}
+
+.jr-arrow {
+    position: absolute;
+    top: -22px;
+    left: 12%;
+    transform: translateX(-50%);
+    color: var(--glass-bg);
+    filter:
+            drop-shadow(0 6px 10px rgba(0,0,0,.25))
+            drop-shadow(0 -1px 0 rgba(255,255,255,.15));
+}
+
+
+.jr-content h4 {
+    margin: 0 0 6px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.jr-content p {
+    margin: 0 0 14px;
+    font-size: 13px;
+    opacity: .85;
+    line-height: 1.35;
+}
+
+.jr-actions {
+    display: flex;
+    justify-content: end;
+}
+
+.jr-actions button {
+    border: 0;
+    background: rgba(255,255,255,.12);
+    color: var(--text-color);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+.jr-actions button:hover {
+    background: rgba(255,255,255,.22);
+    transform: translateY(-1px);
+}
+
+@keyframes jrIn {
+    from {
+        opacity: 0;
+        transform: scale(.92) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes arrowFloat {
+    to { transform: translateX(-50%) translateY(-4px); }
+}
+
+/*.jr-arrow {*/
+/*    animation: arrowFloat 1.6s ease-in-out infinite alternate;*/
+/*}*/
+
+.jr-counter {
+    top: 10px;
+    left: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    opacity: .55;
+    letter-spacing: .4px;
+    pointer-events: none;
+}
+
+@keyframes jr-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.jr-overlay {
+    animation: jr-fade .25s ease-out;
 }

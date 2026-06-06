@@ -5,7 +5,7 @@ import ReactPlayer from 'react-player'
 const Video = ({ videoUrl, className, style = {} }) => {
     return <video
         src={videoUrl}
-        controls
+        // playsInline={true}
         autoPlay
         muted
         loop

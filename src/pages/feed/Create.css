@@ -1,0 +1,91 @@
+/* Create.css */
+
+.create-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.create-title {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.cards-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+.cards-scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.cards-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.cards-scroll-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.cards-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+.cards-wrapper {
+    display: flex;
+    gap: 8px;
+    width: max-content;
+}
+
+.create-card {
+    min-width: 90px;
+    max-height: 90px;
+    background-color: var(--header-bg-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 4px;
+    flex-shrink: 0;
+    aspect-ratio: 1/1;
+    border: 1px solid var(--header-bg-color);
+}
+
+.active {
+    border: 1px solid var(--primary-color)
+}
+
+.card-title {
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--text-color);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+@media (max-width: 800px) {
+    .create-card {
+        padding: 8px !important;
+        text-wrap: auto;
+        max-width: 100px !important;
+        min-width: 100px;
+        max-height: 80px;
+    }
+
+    .card-title {
+        font-size: 0.7rem;
+    }
+}

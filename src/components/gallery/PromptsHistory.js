@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import {
     Box,
     Card,
-    CardMedia,
     CardContent,
     Typography,
     Skeleton, Button
 } from '@mui/material';
-import { useWebSocket } from "../../context/WebSocketContext";
-import { useAuth } from "../../context/UserContext";
+import { useWebSocket } from "../../app/providers/WebSocketContext";
+import { useAuth } from "../../app/providers/UserContext";
 import { useTranslation } from "react-i18next";
 import Image from "./Image";
 import {useNavigate} from "react-router-dom";
@@ -33,6 +32,8 @@ const PromptsHistory = ({ resetLastPageRef, resetFetchingRef, page, setPage }) =
     useEffect(() => {
         const handleReceive = (msg) => {
             const newPrompts = msg.prompts || []
+
+            console.log(newPrompts)
 
             setPrompts(prev => {
                 const existingIds = new Set(prev.map(p => p.prompt_id))

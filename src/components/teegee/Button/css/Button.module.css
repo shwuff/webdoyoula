@@ -13,3 +13,7 @@
     align-items: center;
     justify-content: center;
 }
+
+.button:hover {
+    background: var(--hover-primary-color);
+}

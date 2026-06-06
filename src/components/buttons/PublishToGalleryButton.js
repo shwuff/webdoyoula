@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {useWebSocket} from "../../context/WebSocketContext";
-import {useAuth} from "../../context/UserContext";
+import {useWebSocket} from "../../app/providers/WebSocketContext";
+import {useAuth} from "../../app/providers/UserContext";
 import {useDispatch, useSelector} from "react-redux";
-import { updateImage } from "../../redux/actions/imageActions";
+import { updateImage } from "../../app/store/slices/imageSlice";
 import { useTranslation } from "react-i18next";
 import './css/PublishToGalleryButton.css';
 import CloseButton from "./CloseButton";
@@ -47,7 +47,7 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
     };
 
     const confirmPublish = () => {
-        dispatch(updateImage(selected.id, { caption }));
+        dispatch(updateImage({ id: selected.id, newImageData: { caption } }));
 
         sendData({
             action: "gallery/add/" + selected.id,
@@ -61,9 +61,9 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
     useEffect(() => {
         const handleUpdatePostedAt = async (msg) => {
             if(selectedPhoto !== null && selectedPhoto === msg.media_id) {
-                dispatch(updateImage(msg.media_id, {posted_at: msg.posted_at}));
+                dispatch(updateImage({ id: msg.media_id, newImageData: {posted_at: msg.posted_at} }));
             }
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            window.Telegram.WebApp?.HapticFeedback?.impactOccurred('light');
         };
 
         addHandler('update_photo_posted_at', handleUpdatePostedAt);
@@ -87,7 +87,7 @@ const PublishToGalleryButton = ({ selectedPhoto, expanded, setExpanded, isMyProm
                         }}
                     >
                         {
-                            expanded ? <CloseButton onClick={() => setExpanded(false)} color={"var(--button-text-color)"} /> : t('to_publish')
+                            expanded ? <CloseButton onClick={() => setExpanded(false)} color={"var(--text-color)"} /> : t('to_publish')
                         }
                     </button>
 

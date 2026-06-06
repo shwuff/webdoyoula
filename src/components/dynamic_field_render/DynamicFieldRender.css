@@ -1,0 +1,66 @@
+/* CSS */
+.loadFile {
+    border: 2px dashed rgb(161 161 170);
+    border-radius: 12px;
+    padding: 10px 20px;
+    text-align: center;
+    width: 100%;
+    margin: 20px auto;
+    cursor: pointer;
+    transition: border-color 0.3s, background-color 0.2s;
+    color: rgb(161 161 170) !important;
+}
+
+.loadFile * {
+    color: rgb(161 161 170) !important;
+}
+
+.loadFile:hover {
+    cursor: pointer;
+    border: 2px dashed rgb(42, 208, 234);
+}
+
+.loadFile:hover * {
+    color: rgb(42, 208, 234) !important;
+}
+
+.load-icon {
+    color: rgb(161 161 170) !important;
+    margin-top: 2px;
+}
+
+.fileInput {
+    display: none;
+}
+
+.fileLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.fileText {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.fileText:hover {
+    color: rgb(42, 208, 234) !important;
+    cursor: pointer;
+}
+
+.uploadButton {
+    padding: 8px 16px;
+    background-color: #3b82f6;
+    color: #fff;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.uploadButton:hover {
+    background-color: #2563eb;
+}

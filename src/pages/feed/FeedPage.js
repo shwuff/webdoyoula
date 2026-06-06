@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import MyGeneratedPhotosList from "../../components/gallery/MyGeneratedPhotosList";
 import FeedFilters from "../../components/input/FeedFilters";
-import ChatPng from './../../assets/images/chat.png';
+import Create from "./Create";
 
 const FeedPage = () => {
     const [filter, setFilter] = useState("repeats");
@@ -11,6 +11,7 @@ const FeedPage = () => {
     const [photosPage, setPhotosPage] = useState(0);
     const [isMarket, setIsMarket] = useState(false);
     const [showPaidPrompts, setShowPaidPrompts] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const isFetchingRef = useRef(false);
     const lastPageRef = useRef(0);
@@ -45,7 +46,8 @@ const FeedPage = () => {
 
     return (
         <div className={"globalBlock"} onScroll={handleScroll}>
-            <div className={"center-content-block"} style={{marginTop: "7px"}}>
+            <div className={"center-content-block"}>
+                <Create />
                 <FeedFilters
                     filter={filter}
                     setFilter={setFilter}
@@ -59,6 +61,8 @@ const FeedPage = () => {
                     setPhotosPage={setPhotosPage}
                     isMarket={showPaidPrompts}
                     setIsMarket={setShowPaidPrompts}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
                 />
                 <MyGeneratedPhotosList
                     profileGallery={true}
@@ -73,6 +77,7 @@ const FeedPage = () => {
                     feed={feed}
                     isMarket={isMarket}
                     showPaidPrompts={showPaidPrompts}
+                    searchQuery={searchQuery}
                 />
 
                 {/*<div style={{ position: "absolute", bottom: "100px", right: "20px", padding: "10px", borderRadius: "50%", cursor: "pointer" }} onClick={() => window.location.href = 'https://t.me/doyoulachat'}>*/}

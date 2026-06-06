@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {useWebSocket} from "../../../context/WebSocketContext";
-import {useAuth} from "../../../context/UserContext";
+import {useWebSocket} from "../../../app/providers/WebSocketContext";
+import {useAuth} from "../../../app/providers/UserContext";
 import {useTranslation} from "react-i18next";
 
 const Blanks = () => {

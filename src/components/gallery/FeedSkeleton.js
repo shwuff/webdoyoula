@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Skeleton } from '@mui/material';
+import {darken, Grid, Skeleton} from '@mui/material';
 import { styled, keyframes } from '@mui/system';
 
 const shimmer = keyframes`
@@ -15,9 +15,9 @@ const Placeholder = styled('div')(({ theme }) => ({
     borderRadius: 12,
     background:
         `linear-gradient(90deg,
-      ${theme.palette.action.hover} 0%,
-      ${theme.palette.action.selected} 50%,
-      ${theme.palette.action.hover} 100%)`,
+      ${darken(theme.palette.action.hover, 0.4)} 0%,
+      ${darken(theme.palette.action.selected, 0.4)} 50%,
+      ${darken(theme.palette.action.hover, 0.4)} 100%)`,
     backgroundSize: '200% 100%',
     animation: `${shimmer} 1.5s linear infinite`,
 }));

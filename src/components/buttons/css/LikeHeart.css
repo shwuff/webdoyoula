@@ -1,7 +1,6 @@
 .heartIcon {
-    width: 28px;
-    height: 28px;
-    /* Плавное свойство, чтобы не дёргалось, если захотите переходы */
+    width: 32px;
+    height: 32px;
     transition: transform 0.2s ease;
 }
 

@@ -2,8 +2,8 @@ import React from 'react';
 import {useSelector} from "react-redux";
 import marketStyles from "../modals/css/PhotoMarketModule.module.css";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import {useWebSocket} from "../../context/WebSocketContext";
-import {useAuth} from "../../context/UserContext";
+import {useWebSocket} from "../../app/providers/WebSocketContext";
+import {useAuth} from "../../app/providers/UserContext";
 import {FaMinus, FaPlus} from "react-icons/fa";
 import styles from './css/BasketButton.module.css';
 

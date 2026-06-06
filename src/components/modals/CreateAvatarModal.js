@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import RightModal from "../modal/RightModal";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
-import { useWebSocket } from "../../context/WebSocketContext";
-import { useAuth } from "../../context/UserContext";
+import { useWebSocket } from "../../app/providers/WebSocketContext";
+import { useAuth } from "../../app/providers/UserContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';

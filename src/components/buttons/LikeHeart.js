@@ -18,9 +18,7 @@ const LikeHeart = ({ liked }) => {
         if (liked) {
 
             const hapticInterval = setInterval(() => {
-                if (window.Telegram?.WebApp?.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                }
+                window.Telegram.WebApp?.HapticFeedback?.notificationOccurred('success');
             }, 500);
 
             const timer = setTimeout(() => {

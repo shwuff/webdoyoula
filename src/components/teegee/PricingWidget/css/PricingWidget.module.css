@@ -1,12 +1,12 @@
 .container {
     background-color: var(--glass-bg);
     border-radius: 20px;
-    padding: 24px;
+    padding: 8px;
     width: 100%;
-    max-width: 380px;
     margin: 0 auto;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: relative;
 }
 
 .toggleWrapper {
@@ -28,6 +28,7 @@
     background-color: var(--glass-bg);
     transition: transform 0.3s ease;
     z-index: 1;
+    outline: none;
 }
 
 .toggleButton {
@@ -41,11 +42,20 @@
     cursor: pointer;
     z-index: 2;
     position: relative;
+    outline: none;
+    display: flex;
+    justify-content: center;
+}
+
+.toggleButton:hover {
+    border: none;
+    background: none;
 }
 
 .activeToggle {
     font-weight: 600;
     color: var(--text-color);
+    outline: none;
 }
 
 .plansWrapper {
@@ -57,7 +67,7 @@
 
 .planCard {
     border-radius: 16px;
-    padding: 16px;
+    padding: 8px;
     cursor: pointer;
     position: relative;
     transition: border 0.2s, box-shadow 0.2s;
@@ -78,7 +88,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 8px;
+    /*margin-bottom: 8px;*/
 }
 
 .planName {
@@ -97,6 +107,7 @@
 
 .radio {
     width: 20px;
+    min-width: 20px;
     height: 20px;
     border-radius: 50%;
     background: #edeef0;
@@ -119,6 +130,7 @@
     display: flex;
     align-items: center;
     font-weight: 500;
+    color: var(--text-color);
 }
 
 .per {
@@ -137,6 +149,9 @@
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s;
+    position: fixed !important;
+    bottom: 10px;
+    max-width: calc(100% - 70px);
 }
 
 .movingHighlight {
